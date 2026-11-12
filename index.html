@@ -281,6 +281,14 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
 .gtable tr.cur td{background:var(--cmp-soft)}
 .stage-top{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:8px}
 
+/* key terms */
+.terms-head{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:flex-end;justify-content:space-between}
+.terms-head .field input{height:36px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:0 10px;width:220px;max-width:100%}
+.terms{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin:0}
+.terms > div{background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;display:grid;gap:3px;align-content:start}
+.terms dt{font-family:var(--f-display);font-weight:700;font-size:1rem}
+.terms dd{margin:0;font-size:.9rem;color:var(--muted)}
+
 /* activity */
 .hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin:8px 0 28px}
 .hub-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:8px;align-content:start;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .15s}
@@ -408,6 +416,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 
   <div class="notes">
+    <section class="terms-sec" data-glossary="stack"></section>
     <section>
       <h2>How a stack works</h2>
       <div class="cols">
@@ -484,6 +493,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 
   <div class="notes">
+    <section class="terms-sec" data-glossary="queue"></section>
     <section>
       <h2>How a queue works</h2>
       <div class="cols">
@@ -562,6 +572,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 
   <div class="notes">
+    <section class="terms-sec" data-glossary="hash"></section>
     <section>
       <h2>How a hash table works</h2>
       <div class="cols">
@@ -656,6 +667,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 
   <div class="notes">
+    <section class="terms-sec" data-glossary="sorting"></section>
     <section>
       <h2>How the algorithms compare</h2>
       <p>The highlighted card is the algorithm loaded above. Watch the <b>comparisons</b> and <b>swaps / writes</b> counters in the stage: they are the real cost of each algorithm on that exact input.</p>
@@ -745,6 +757,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 
   <div class="notes">
+    <section class="terms-sec" data-glossary="tree"></section>
     <section>
       <h2>How trees work</h2>
       <div class="cols">
@@ -824,6 +837,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 
   <div class="notes">
+    <section class="terms-sec" data-glossary="graph"></section>
     <section>
       <h2>How graphs work</h2>
       <div class="cols">
@@ -1883,6 +1897,149 @@ document.addEventListener('keydown',e=>{
 });
 })();
 </script>
+<script>
+/* ======================================================
+   GLOSSARY: shared by the Key terms sections and the activities
+   ====================================================== */
+window.DSA_GLOSSARY={
+  stack:[
+    ['Stack','A collection where items are added and removed at only one end, called the top.'],
+    ['LIFO','The ordering rule in which the most recently added item is the first one removed (last in, first out).'],
+    ['Push','The operation that adds a new item on top.'],
+    ['Pop','The operation that removes the top item and returns it.'],
+    ['Peek','The operation that returns the top item without removing it.'],
+    ['Top','The position of the most recently added item: the only place where items can be added or removed.'],
+    ['isEmpty','A check that tells whether the structure holds no items; in an array stack, top equals -1.'],
+    ['Capacity','The maximum number of items a fixed-size, array-based stack can hold.'],
+    ['Stack overflow','The error when pushing onto a stack that is already full.'],
+    ['Stack underflow','The error when popping or peeking from a stack that is empty.'],
+    ['Call stack','The stack a program uses to track active function calls: each call pushes a frame and each return pops it.'],
+    ['Stack frame','The record pushed for one function call, holding its parameters, local variables and return address.'],
+    ['Base case','The condition that stops a recursive function; without it, calls keep piling up on the call stack.'],
+    ['Postfix notation','A way of writing expressions with each operator after its operands (such as 3 4 +), which can be evaluated with a stack.']
+  ],
+  queue:[
+    ['Queue','A collection where items join at one end (the rear) and leave from the other end (the front).'],
+    ['FIFO','The ordering rule in which the item added earliest is the first one removed (first in, first out).'],
+    ['Enqueue','The operation that adds an item at the rear.'],
+    ['Dequeue','The operation that removes and returns the item at the front.'],
+    ['Front','The end where items leave; it holds the item that has waited the longest.'],
+    ['Rear','The end where new items join.'],
+    ['Peek','The operation that returns the front item without removing it.'],
+    ['Circular array','An array whose indexes wrap from the last slot back to slot 0, so space freed at the start can be reused.'],
+    ['Wrap-around','Moving an index from the last position back to 0, usually written (i + 1) % capacity.'],
+    ['Queue overflow','The error when enqueueing while every slot is already in use.'],
+    ['Queue underflow','The error when dequeueing or peeking while there are no items.'],
+    ['Deque','A double-ended queue that allows adding and removing at both the front and the rear.'],
+    ['Priority queue','A collection where removal returns the item with the highest priority instead of the oldest one.'],
+    ['Ring buffer','A fixed-size circular buffer that overwrites its oldest data when it is full.'],
+    ['Buffer','Temporary storage that holds data between a producer and a consumer that work at different speeds.']
+  ],
+  hash:[
+    ['Hash table','A structure that stores key–value pairs in an array and uses a function of the key to find each pair\'s position.'],
+    ['Key','The unique identifier used to store and look up an entry.'],
+    ['Value','The data stored together with a key.'],
+    ['Hash function','A function that converts a key into a number used to pick an array position.'],
+    ['Hash code','The number produced from a key before it is reduced to a valid index.'],
+    ['Bucket','One position in the table\'s underlying array (also called a slot).'],
+    ['Compression','Reducing a large hash number to a valid index, usually with mod table size.'],
+    ['Collision','When two different keys are mapped to the same index.'],
+    ['Separate chaining','Collision handling where each position holds a linked list of every entry that maps there.'],
+    ['Open addressing','Collision handling where every entry lives directly in the array, and a collision means searching for another free position.'],
+    ['Linear probing','Trying the next position, then the next, using (i + 1) mod size, until a free one is found.'],
+    ['Probe','One check of a table position during an insert or a search.'],
+    ['Clustering','Runs of neighbouring filled positions that build up under linear probing and make probes longer.'],
+    ['Tombstone','A DELETED marker left behind so that later searches keep going past a removed entry.'],
+    ['Load factor','The number of entries divided by the number of positions in the table (α = n / m).'],
+    ['Rehashing','Building a bigger array and re-inserting every entry, because each entry\'s index depends on the table size.']
+  ],
+  sorting:[
+    ['Sorting','Putting items into a defined order, such as smallest to largest.'],
+    ['Ascending order','Order from smallest to largest.'],
+    ['Descending order','Order from largest to smallest.'],
+    ['Comparison','Checking which of two values should come first: the basic step most sorting algorithms count.'],
+    ['Swap','Exchanging the positions of two values.'],
+    ['Pass','One full sweep through the array, or through its unsorted part.'],
+    ['In-place','Needing only a constant amount of extra memory beyond the array itself.'],
+    ['Stable sort','A sort that keeps items with equal keys in their original relative order.'],
+    ['Adaptive sort','A sort that runs faster when the input is already partly in order.'],
+    ['Pivot','The value quick sort picks to split the array around.'],
+    ['Partition','Rearranging an array so values smaller than a chosen value come before it and the rest come after it.'],
+    ['Divide and conquer','Solving a problem by splitting it into smaller parts, solving each part, then combining the results.'],
+    ['Merge','Combining two lists that are already sorted into one sorted list.'],
+    ['Worst case','The input of a given size that makes an algorithm do the most work.'],
+    ['Best case','The input of a given size that makes an algorithm do the least work.'],
+    ['Time complexity','A description, usually in Big-O notation, of how running time grows as the input size n grows.'],
+    ['Comparison sort','A sort that learns about the order only by comparing pairs of values; it needs about n log n comparisons in the worst case.']
+  ],
+  tree:[
+    ['Tree','A hierarchy of nodes connected by edges, with a single root and no cycles.'],
+    ['Node','One element of a tree, holding a value and links to its children.'],
+    ['Edge','The link between a parent and one of its children.'],
+    ['Root','The top node: the only node with no parent.'],
+    ['Parent','A node directly above another node and linked to it.'],
+    ['Child','A node directly below another node and linked to it.'],
+    ['Siblings','Nodes that share the same parent.'],
+    ['Leaf','A node with no children.'],
+    ['Internal node','A node that has at least one child.'],
+    ['Subtree','A node together with all of the nodes below it.'],
+    ['Ancestor','Any node on the path from a given node up to the root.'],
+    ['Descendant','Any node reachable by going down from a given node through its children.'],
+    ['Depth','The number of edges from the root down to a given node.'],
+    ['Height','The number of edges on the longest path from the root down to a leaf.'],
+    ['Level','All the nodes that sit at the same depth.'],
+    ['Binary tree','A tree in which every node has at most two children, called left and right.'],
+    ['Binary search tree','A binary tree where every key in a node\'s left subtree is smaller and every key in its right subtree is larger.'],
+    ['Full binary tree','A binary tree in which every node has either 0 or 2 children.'],
+    ['Complete binary tree','A binary tree where every level is filled except possibly the last, which is filled from left to right.'],
+    ['Balanced tree','A tree whose height stays close to log₂ n, so searches stay fast.'],
+    ['Degenerate tree','A tree in which each node has only one child, so it behaves like a linked list.'],
+    ['Traversal','Visiting every node exactly once in a fixed order.'],
+    ['In-order traversal','Visit the left subtree, then the node, then the right subtree.'],
+    ['Pre-order traversal','Visit the node, then its left subtree, then its right subtree.'],
+    ['Post-order traversal','Visit the left subtree, then the right subtree, then the node.'],
+    ['Level-order traversal','Visit nodes level by level, left to right, using a queue.']
+  ],
+  graph:[
+    ['Graph','A set of vertices connected by edges, with no required root or hierarchy.'],
+    ['Vertex','One point or object in a graph (also called a node).'],
+    ['Edge','A connection between two vertices.'],
+    ['Adjacent','Describes two vertices that are joined directly by an edge.'],
+    ['Degree','The number of edges that touch a vertex.'],
+    ['Undirected graph','A graph whose edges can be travelled in both directions.'],
+    ['Directed graph','A graph whose edges point one way, from one vertex to another.'],
+    ['Weighted graph','A graph whose edges carry a number such as a distance, cost or time.'],
+    ['Path','A sequence of vertices in which each consecutive pair is joined by an edge.'],
+    ['Cycle','A path that starts and ends at the same vertex without reusing an edge.'],
+    ['Connected graph','A graph in which every vertex can be reached from every other vertex.'],
+    ['Connected component','A largest group of vertices that can all reach one another.'],
+    ['Adjacency list','A representation where each vertex stores a list of its neighbours.'],
+    ['Adjacency matrix','A V × V table whose cell [u][v] shows whether, or with what weight, u and v are joined.'],
+    ['Sparse graph','A graph with far fewer edges than the maximum possible.'],
+    ['Depth-first search','A traversal that follows one path as far as possible before backing up, using a stack.'],
+    ['Breadth-first search','A traversal that visits everything one edge away, then two edges away, and so on, using a queue.'],
+    ['Visited set','The record of vertices already reached, which stops a search from looping around cycles.'],
+    ['Shortest path','A route between two vertices with the smallest total weight, or the fewest edges when unweighted.'],
+    ['Relaxation','Updating a vertex\'s best known distance when a cheaper route to it is found.'],
+    ['Spanning tree','A set of edges that connects every vertex with no cycles, using exactly V − 1 edges.'],
+    ['Minimum spanning tree','A spanning tree with the smallest possible total edge weight.'],
+    ['Greedy algorithm','An algorithm that takes the choice that looks best at each step and never reconsiders it.'],
+    ['Union–find','A structure that tracks which vertices are already connected, used by Kruskal to detect cycles (also called disjoint sets).'],
+    ['Cut property','The rule that the cheapest edge crossing any split of the vertices into two groups belongs to some minimum spanning tree.']
+  ]
+};
+(function(){
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  document.querySelectorAll('.terms-sec[data-glossary]').forEach(sec=>{
+    const key=sec.dataset.glossary, G=window.DSA_GLOSSARY[key]||[];
+    sec.innerHTML='<div class="terms-head"><h2>Key terms</h2><div class="field"><label for="terms-filter-'+key+'">Filter terms</label><input type="text" id="terms-filter-'+key+'" placeholder="e.g. '+esc(G[1]?G[1][0]:'')+'" autocomplete="off"></div></div>'+
+      '<p>'+G.length+' words you will meet in this topic and in its activity.</p>'+
+      '<dl class="terms">'+G.map(([t,d])=>'<div><dt>'+esc(t)+'</dt><dd>'+esc(d)+'</dd></div>').join('')+'</dl><p class="hint" hidden>No terms match that filter.</p>';
+    const inp=sec.querySelector('input'), cards=[...sec.querySelectorAll('.terms > div')], none=sec.querySelector('.hint');
+    inp.addEventListener('input',()=>{const q=inp.value.trim().toLowerCase(); let shown=0; cards.forEach(c=>{const m=!q||c.textContent.toLowerCase().includes(q); c.hidden=!m; if(m) shown++;}); none.hidden=shown>0;});
+  });
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 /* ======================================================
@@ -2301,16 +2458,28 @@ function buildGraph(r){
   return K.items;
 }
 
+/* ---------- terminology items (appended after each topic's first 20) ---------- */
+function termItems(r,topic){
+  const G=(window.DSA_GLOSSARY||{})[topic]||[]; if(G.length<4) return [];
+  const K=kit(r), {shuffle,mc}=K;
+  shuffle(G.map((_,i)=>i)).slice(0,5).forEach((gi,k)=>{
+    const [t,d]=G[gi], others=shuffle(G.filter((_,i)=>i!==gi)).slice(0,3);
+    if(k%2===0) mc('Terminology','Which term matches this definition?',t,others.map(o=>o[0]),{given:'<span>'+esc(d)+'</span>'});
+    else mc('Terminology','What does <b>'+esc(t)+'</b> mean?',d,others.map(o=>o[1]));
+  });
+  return K.items;
+}
+const withTerms=(id,fn,sid)=>{const r=rngFor(id,sid); return fn(r).concat(termItems(r,id));};
 /* ---------- catalogue ---------- */
 const rngFor=(id,sid)=>mulberry(hashStr('dsa-act-'+id+'|'+normId(sid)));
 const ACTS=[
-  {id:'stack',short:'Stack',title:'Stack Activity',topic:'Stack',mins:25,desc:'LIFO order, array and linked-list stacks, overflow and underflow, bracket matching, postfix evaluation and the call stack.',key:'dsa-act-stack-v1',build:sid=>buildStack(rngFor('stack',sid))},
-  {id:'queue',short:'Queue',title:'Queue Activity',topic:'Queue',mins:25,desc:'FIFO order, circular arrays and wrap-around, front/rear arithmetic, deques, priority queues and ring buffers.',key:'dsa-act-queue-v1',build:sid=>buildQueue(rngFor('queue',sid))},
-  {id:'hash',short:'Hash',title:'Hash Table Activity',topic:'Hash table',mins:30,desc:'Hash functions, collisions, chaining, linear probing, tombstones, load factor and resizing.',key:'dsa-act-hash-v1',build:sid=>buildHash(rngFor('hash',sid))},
-  {id:'sorting',short:'Sorting',title:'Sorting Activity',topic:'Sorting',mins:35,desc:'Trace bubble, selection, insertion, merge and quick sort, count their work, and choose the right one for the job.',key:'dsa-act-sorting-v1',build:sid=>buildSorting(rngFor('sorting',sid))},
-  {id:'tree',short:'Trees',title:'Trees Activity',topic:'Trees',mins:35,desc:'Build a BST by hand, then work out its four traversals, height, leaves, searches and inserts.',key:'dsa-act-tree-v1',build:sid=>buildTree(rngFor('tree',sid))},
-  {id:'graph',short:'Graphs',title:'Graphs Activity',topic:'Graphs',mins:40,desc:'Degrees, DFS and BFS orders, Dijkstra\'s shortest paths, and minimum spanning trees with Prim–Jarník and Kruskal.',key:'dsa-act-graph-v1',build:sid=>buildGraph(rngFor('graph',sid))},
-  {id:'mixed',short:'Mixed',title:'Trace It by Hand',topic:'Mixed review',mins:30,desc:'The original 13-item review: stacks, queues, hash tables and sorting traces in one sitting.',key:'dsa-activity-v1',build:sid=>buildItems(sid),variant:sid=>hashStr('dsa-act|'+normId(sid)).toString(36).toUpperCase().padStart(6,'0').slice(-6)}
+  {id:'stack',short:'Stack',title:'Stack Activity',topic:'Stack',mins:25,desc:'LIFO order, array and linked-list stacks, overflow and underflow, bracket matching, postfix evaluation and the call stack.',key:'dsa-act-stack-v1',count:25,build:sid=>withTerms('stack',buildStack,sid)},
+  {id:'queue',short:'Queue',title:'Queue Activity',topic:'Queue',mins:25,desc:'FIFO order, circular arrays and wrap-around, front/rear arithmetic, deques, priority queues and ring buffers.',key:'dsa-act-queue-v1',count:25,build:sid=>withTerms('queue',buildQueue,sid)},
+  {id:'hash',short:'Hash',title:'Hash Table Activity',topic:'Hash table',mins:30,desc:'Hash functions, collisions, chaining, linear probing, tombstones, load factor and resizing.',key:'dsa-act-hash-v1',count:25,build:sid=>withTerms('hash',buildHash,sid)},
+  {id:'sorting',short:'Sorting',title:'Sorting Activity',topic:'Sorting',mins:35,desc:'Trace bubble, selection, insertion, merge and quick sort, count their work, and choose the right one for the job.',key:'dsa-act-sorting-v1',count:25,build:sid=>withTerms('sorting',buildSorting,sid)},
+  {id:'tree',short:'Trees',title:'Trees Activity',topic:'Trees',mins:35,desc:'Build a BST by hand, then work out its four traversals, height, leaves, searches and inserts.',key:'dsa-act-tree-v1',count:25,build:sid=>withTerms('tree',buildTree,sid)},
+  {id:'graph',short:'Graphs',title:'Graphs Activity',topic:'Graphs',mins:40,desc:'Degrees, DFS and BFS orders, Dijkstra\'s shortest paths, and minimum spanning trees with Prim–Jarník and Kruskal.',key:'dsa-act-graph-v1',count:25,build:sid=>withTerms('graph',buildGraph,sid)},
+  {id:'mixed',short:'Mixed',title:'Trace It by Hand',topic:'Mixed review',mins:30,desc:'The original 13-item review: stacks, queues, hash tables and sorting traces in one sitting.',key:'dsa-activity-v1',count:13,build:sid=>buildItems(sid),variant:sid=>hashStr('dsa-act|'+normId(sid)).toString(36).toUpperCase().padStart(6,'0').slice(-6)}
 ];
 const variantFor=(act,sid)=>act.variant?act.variant(sid):hashStr('dsa-act-'+act.id+'|'+normId(sid)).toString(36).toUpperCase().padStart(6,'0').slice(-6);
 
@@ -2378,11 +2547,11 @@ function openAct(id){
   ACT=ACTS.find(a=>a.id===id); if(!ACT){showHub(); return;}
   ST=storeFor(ACT.key); S=ST.get();
   $('act-hub').hidden=true; $('act-run').hidden=false;
-  $('act-eyebrow').textContent=ACT.topic+' · '+(ACT.id==='mixed'?13:20)+' items · about '+ACT.mins+' minutes';
+  $('act-eyebrow').textContent=ACT.topic+' · '+ACT.count+' items · about '+ACT.mins+' minutes';
   $('act-title').textContent=ACT.title; $('act-lede').textContent=ACT.desc;
   $('act-confirm').hidden=true; $('act-form-err').hidden=true;
   if(S&&S.sid&&S.name){
-    items=ACT.build(S.sid);
+    items=ACT.build(S.sid); if(S.submitted&&S.marks&&S.marks.length<items.length) items=items.slice(0,S.marks.length);
     $('act-start').hidden=true; $('act-body').hidden=false; $('act-result').hidden=true;
     $('act-submit').hidden=false; $('act-restart').textContent='Not you? Start over';
     showWho(); renderItems(); updateProgress();
@@ -2405,11 +2574,11 @@ function showHub(){
     $('hub-switch-yes').onclick=()=>{profile.clear(); ACTS.forEach(a=>storeFor(a.key).clear()); showHub();};
   };
   $('hub-grid').innerHTML=ACTS.map(a=>{
-    const st=storeFor(a.key).get(), n=a.id==='mixed'?13:20;
+    const st=storeFor(a.key).get(), n=(st&&st.submitted&&st.marks)?st.marks.length:a.count;
     let status='<span class="hs">Not started</span>';
     if(st&&st.submitted) status='<span class="hs done">Submitted · '+st.score+' / '+n+'</span>';
     else if(st&&st.sid) status='<span class="hs prog">In progress · '+answered(st)+' / '+n+' answered</span>';
-    return '<a class="hub-card" href="#activity-'+a.id+'"><span class="chip">'+esc(a.topic)+'</span><h3>'+esc(a.title)+'</h3><p>'+esc(a.desc)+'</p><div class="hub-meta"><span>'+n+' items · about '+a.mins+' min</span>'+status+'</div></a>';
+    return '<a class="hub-card" href="#activity-'+a.id+'"><span class="chip">'+esc(a.topic)+'</span><h3>'+esc(a.title)+'</h3><p>'+esc(a.desc)+'</p><div class="hub-meta"><span>'+a.count+' items · about '+a.mins+' min</span>'+status+'</div></a>';
   }).join('');
 }
 function fromHash(){
