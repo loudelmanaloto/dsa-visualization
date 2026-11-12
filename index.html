@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive, step-by-step visualizations of stacks, queues, hash tables and sorting algorithms.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Data Structure Stepper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: a lab bench per topic: operation bar, stage + (explanation, pseudocode) side panel, step player; reading notes below. */
+:root{
+  --bg:#edf0f5; --surface:#ffffff; --surface-2:#f5f7fb; --ink:#121826; --muted:#566178; --line:#d5dbe6; --line-2:#e6eaf1;
+  --accent:#2747d6; --accent-ink:#ffffff; --accent-soft:#e3e9ff;
+  --cmp:#c98e00; --cmp-soft:#fff2cc; --swap:#d73a40; --swap-soft:#ffe1e2; --done:#14895a; --done-soft:#d8f3e5;
+  --pivot:#7346d6; --pivot-soft:#ece3ff; --read:#08879a; --read-soft:#d4f1f5; --bar:#a8b7da; --grid:rgba(39,71,214,.06);
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,"Courier New",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b0f17; --surface:#131a25; --surface-2:#18202d; --ink:#e6eaf2; --muted:#96a1b7; --line:#283247; --line-2:#1f2838;
+  --accent:#8299ff; --accent-ink:#0b0f17; --accent-soft:#1d2647;
+  --cmp:#f0b429; --cmp-soft:#3a2f10; --swap:#ff6b71; --swap-soft:#3e1b1f; --done:#3dca8c; --done-soft:#11352a;
+  --pivot:#ab8dff; --pivot-soft:#2a2049; --read:#3cc5d7; --read-soft:#0e333a; --bar:#43527c; --grid:rgba(130,153,255,.05);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b0f17; --surface:#131a25; --surface-2:#18202d; --ink:#e6eaf2; --muted:#96a1b7; --line:#283247; --line-2:#1f2838;
+  --accent:#8299ff; --accent-ink:#0b0f17; --accent-soft:#1d2647;
+  --cmp:#f0b429; --cmp-soft:#3a2f10; --swap:#ff6b71; --swap-soft:#3e1b1f; --done:#3dca8c; --done-soft:#11352a;
+  --pivot:#ab8dff; --pivot-soft:#2a2049; --read:#3cc5d7; --read-soft:#0e333a; --bar:#43527c; --grid:rgba(130,153,255,.05);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+code,kbd{font-family:var(--f-mono);font-size:.9em}
+p code,li code,td code{background:var(--surface-2);border:1px solid var(--line-2);padding:0 .3em;border-radius:4px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* header */
+.top{border-bottom:1px solid var(--line);background:var(--surface)}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding-block:14px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand svg{flex:none}
+.brand b{font-family:var(--f-display);font-size:1.2rem;letter-spacing:-.01em}
+.brand span{display:block;font-size:.78rem;color:var(--muted);line-height:1.2}
+nav.tabs{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:4px;flex-wrap:wrap}
+nav.tabs a{padding:7px 14px;border-radius:7px;text-decoration:none;color:var(--muted);font-weight:500;font-size:.93rem}
+nav.tabs a:hover{color:var(--ink)}
+nav.tabs a[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+
+/* intro */
+.intro{padding-block:32px 20px;display:grid;gap:8px;max-width:760px}
+.eyebrow{font-family:var(--f-mono);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:0}
+.intro h1{font-size:clamp(2rem,4.5vw,3rem);letter-spacing:-.02em}
+.lede{color:var(--muted);font-size:1.05rem;margin:0;max-width:65ch}
+
+/* lab */
+.lab{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ops{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end;padding:14px 16px;border-bottom:1px solid var(--line)}
+.field{display:grid;gap:3px}
+.field label,.lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+.field input[type=text],.field select{height:36px;border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:0 10px;min-width:0}
+.field input[type=text]{width:120px}
+.field.wide input[type=text]{width:200px}
+.group{display:flex;gap:6px;flex-wrap:wrap}
+.vsep{width:1px;align-self:stretch;background:var(--line);margin:0 2px}
+.btn{height:36px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08);color:var(--accent-ink)}
+.btn.soft{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+.btn.ghost{background:transparent;color:var(--muted)}
+.btn:disabled{opacity:.4;cursor:not-allowed;border-color:var(--line);color:inherit}
+.btn.icon{width:36px;padding:0;justify-content:center}
+.btn svg{width:14px;height:14px;fill:currentColor}
+.hint{font-size:.82rem;color:var(--muted);flex-basis:100%;margin:0}
+.hint.err{color:var(--swap)}
+
+.lab-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px}
+.stage{min-height:380px;padding:20px;background-color:var(--surface-2);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;min-width:0;position:relative}
+.side{border-left:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
+.explain{padding:16px;border-bottom:1px solid var(--line);min-height:150px}
+.ex-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;font-size:.78rem;color:var(--muted);font-family:var(--f-mono)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:99px;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;background:var(--accent-soft);color:var(--accent);font-family:var(--f-body)}
+.chip.ok{background:var(--done-soft);color:var(--done)}
+.chip.error{background:var(--swap-soft);color:var(--swap)}
+.explain p{margin:0;font-size:.97rem}
+.code{margin:0;padding:12px 0;font-family:var(--f-mono);font-size:.8rem;line-height:1.7;overflow-x:auto;flex:1}
+.code-title{padding:0 16px 6px;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-family:var(--f-body);font-weight:600}
+.ln{display:block;padding:0 16px 0 10px;white-space:pre;border-left:3px solid transparent;color:var(--muted)}
+.ln i{display:inline-block;width:2.2em;font-style:normal;opacity:.5;user-select:none}
+.ln.active{background:var(--accent-soft);border-left-color:var(--accent);color:var(--ink);font-weight:500}
+
+.player{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:12px 16px;border-top:1px solid var(--line)}
+.pc-buttons{display:flex;gap:6px}
+.pc-count{font-family:var(--f-mono);font-size:.85rem;font-variant-numeric:tabular-nums;color:var(--muted)}
+.pc-count b{color:var(--ink);font-weight:600}
+.pc-scrub{flex:1 1 160px;min-width:120px;accent-color:var(--accent)}
+.pc-speed,.pc-auto{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted)}
+.pc-speed input{width:90px;accent-color:var(--accent)}
+.pc-auto input{accent-color:var(--accent);width:16px;height:16px}
+.keys{font-size:.78rem;color:var(--muted)}
+.keys kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--surface)}
+
+/* shared cell look */
+.cell{height:40px;display:flex;align-items:center;justify-content:center;border:2px solid var(--line);border-radius:7px;background:var(--surface);font-family:var(--f-mono);font-weight:600;font-size:.95rem;transition:background .2s,border-color .2s,opacity .2s}
+.cell.empty{border-style:dashed;background:transparent}
+.cell.ghost{border-style:dashed;opacity:.38;text-decoration:line-through}
+.cell.cmp,.node.cmp,.slot.cmp{border-color:var(--cmp);background:var(--cmp-soft)}
+.cell.add,.node.add,.slot.add{border-color:var(--done);background:var(--done-soft);animation:popin .35s ease}
+.cell.read,.node.read,.slot.read{border-color:var(--read);background:var(--read-soft)}
+.cell.remove,.node.remove,.slot.remove{border-color:var(--swap);background:var(--swap-soft)}
+@keyframes popin{from{transform:scale(.7);opacity:.2}to{transform:scale(1);opacity:1}}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:8px;margin:0}
+.facts div{background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:6px 10px}
+.facts dt{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+.facts dd{margin:0;font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums}
+.outbox{border:2px dashed var(--line);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.8rem;color:var(--muted)}
+.outbox b{font-family:var(--f-mono);font-size:1.1rem;color:var(--muted)}
+.outbox.show{border-style:solid;border-color:var(--read);background:var(--read-soft);color:var(--ink)}
+.outbox.show b{color:var(--ink)}
+
+/* stack */
+.stack-main{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-end;justify-content:center}
+.stack-col{display:grid;gap:5px}
+.srow{display:grid;grid-template-columns:36px 110px 70px;align-items:center;gap:8px}
+.srow .idx{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);text-align:right}
+.ptr{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);font-weight:600}
+.floor{grid-column:2;border-top:3px solid var(--ink);padding-top:4px;text-align:center;font-family:var(--f-mono);font-size:.72rem;color:var(--muted)}
+.stack-info{display:grid;gap:10px;width:230px;max-width:100%}
+.strip{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-bottom:18px}
+.strip .ch{width:30px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-family:var(--f-mono);font-weight:600}
+.strip .ch.done{opacity:.4}
+.strip .ch.cur{border:2px solid var(--cmp);background:var(--cmp-soft)}
+.strip .ch.cur.bad{border-color:var(--swap);background:var(--swap-soft)}
+.strip .ch.cur.good{border-color:var(--done);background:var(--done-soft)}
+
+/* queue */
+.q-array{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;max-width:600px;margin:0 auto}
+.qcol{display:grid;gap:4px;justify-items:stretch;text-align:center}
+.qcol .idx{font-family:var(--f-mono);font-size:.72rem;color:var(--muted)}
+.qptr{min-height:42px;display:grid;gap:2px;align-content:start}
+.tag{font-family:var(--f-mono);font-size:.68rem;font-weight:600;border-radius:4px;padding:1px 0}
+.tag.f{background:var(--read-soft);color:var(--read)}
+.tag.r{background:var(--pivot-soft);color:var(--pivot)}
+.wrapnote{max-width:600px;margin:4px auto 0;display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.7rem;color:var(--muted)}
+.q-line{margin:22px auto 0;max-width:600px;display:grid;gap:8px}
+.q-line .lbl{display:block}
+.line-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:40px;padding:8px;border:1px solid var(--line-2);border-radius:10px;background:var(--surface)}
+.line-row .person{min-width:40px;padding:0 10px;height:30px;border-radius:99px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-weight:600;font-size:.85rem}
+.line-row .end{font-family:var(--f-mono);font-size:.7rem;color:var(--muted)}
+.q-bottom{max-width:600px;margin:16px auto 0;display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:10px}
+
+/* hash */
+.calc{background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:10px 12px;margin-bottom:14px;display:grid;gap:6px}
+.calc.idle{color:var(--muted);font-size:.85rem}
+.calc-key{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.codes{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-family:var(--f-mono)}
+.code-chip{display:inline-grid;text-align:center;border:1px solid var(--line);border-radius:6px;padding:1px 6px;background:var(--surface-2);line-height:1.25}
+.code-chip b{font-size:.9rem}
+.code-chip i{font-style:normal;font-size:.7rem;color:var(--muted)}
+.plus,.eq{color:var(--muted);font-size:.85rem}
+.eq b,.mod b{color:var(--accent)}
+.mod{font-family:var(--f-mono);font-size:.95rem;animation:popin .3s ease}
+.htable{display:grid;gap:6px}
+.brow{display:grid;grid-template-columns:40px minmax(0,1fr);gap:8px;align-items:center;padding:4px;border-radius:8px;border:1px solid transparent}
+.brow.active{background:var(--accent-soft);border-color:var(--accent)}
+.brow.probed:not(.active){border:1px dashed var(--cmp)}
+.brow .idx{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);text-align:right}
+.chain{display:flex;align-items:center;gap:4px;overflow-x:auto;padding:2px}
+.node,.slot{display:inline-flex;align-items:stretch;border:2px solid var(--line);border-radius:7px;background:var(--surface);font-family:var(--f-mono);font-size:.82rem;flex:none;overflow:hidden;transition:background .2s,border-color .2s}
+.node .k,.slot .k{padding:5px 8px;font-weight:600}
+.node .v,.slot .v{padding:5px 8px;border-left:1px solid var(--line);color:var(--muted)}
+.slot{min-width:140px}
+.slot.empty{border-style:dashed;background:transparent;color:var(--muted);padding:5px 10px;font-size:.75rem}
+.slot.tomb{border-style:dashed;color:var(--swap);padding:5px 10px;font-size:.75rem;background:transparent}
+.link{color:var(--muted);font-family:var(--f-mono);font-size:.8rem}
+.nil{color:var(--muted);font-family:var(--f-mono);font-size:.72rem}
+.hash-bottom{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:10px;margin-top:14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;height:36px}
+.seg button{border:0;background:var(--surface);padding:0 12px;cursor:pointer;font-size:.88rem}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+
+/* sorting */
+.sort-head{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:12px}
+.held{font-family:var(--f-mono);font-size:.85rem;background:var(--pivot-soft);color:var(--pivot);border-radius:8px;padding:4px 10px;font-weight:600}
+.bars{height:240px;display:flex;align-items:flex-end;gap:4px;border-bottom:2px solid var(--line)}
+.bar{flex:1 1 0;min-width:0;background:var(--bar);border-radius:4px 4px 0 0;transition:height .18s ease,background .15s,opacity .15s;position:relative}
+.bar.prefix{background:color-mix(in srgb,var(--done) 45%,var(--bar))}
+.bar.sorted{background:var(--done)}
+.bar.pivot{background:var(--pivot)}
+.bar.cmp{background:var(--cmp)}
+.bar.swap,.bar.write{background:var(--swap)}
+.bar.dim{opacity:.28}
+.blabels,.bmarks{display:flex;gap:4px;margin-top:4px}
+.blabels span,.bmarks span{flex:1 1 0;min-width:0;text-align:center;font-family:var(--f-mono);font-size:.72rem;font-variant-numeric:tabular-nums}
+.blabels span{color:var(--ink)}
+.bmarks span{color:var(--accent);font-weight:600;min-height:1.2em;font-size:.68rem}
+.blabels.idx span{color:var(--muted);font-size:.62rem}
+.tmp{margin-top:12px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-family:var(--f-mono);font-size:.78rem}
+.tmp .t{border:1px solid var(--line);border-radius:5px;padding:1px 6px;background:var(--surface)}
+.tmp .t.used{opacity:.3}
+.tmp .t.cur{border-color:var(--cmp);background:var(--cmp-soft);font-weight:600}
+.tmp .mid{width:2px;height:18px;background:var(--muted);margin:0 3px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:16px;font-size:.8rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+/* notes */
+.notes{padding-block:36px 56px;display:grid;gap:36px}
+.notes section{display:grid;gap:12px}
+.notes h2{font-size:1.6rem;letter-spacing:-.01em}
+.notes h3{font-size:1.1rem}
+.notes p,.notes li{max-width:68ch}
+.notes p{margin:0}
+.notes ul,.notes ol{margin:0;padding-left:1.2em;display:grid;gap:4px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px 32px}
+.cols > div{display:grid;gap:8px;align-content:start;min-width:0}
+.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line-2);vertical-align:top}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);background:var(--surface-2)}
+tr:last-child td{border-bottom:0}
+td.o{font-family:var(--f-mono);white-space:nowrap}
+.good{color:var(--done);font-weight:600}.bad{color:var(--swap);font-weight:600}
+.callout{border:1px solid var(--line);border-left:4px solid var(--accent);background:var(--surface);border-radius:8px;padding:12px 14px;max-width:80ch}
+.algo-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.algo-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:8px;align-content:start}
+.algo-card.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.algo-card h3{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.algo-card h3 small{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);font-weight:500}
+.algo-card p{font-size:.9rem}
+.algo-card .meta{display:flex;flex-wrap:wrap;gap:6px}
+.algo-card .meta span{font-family:var(--f-mono);font-size:.72rem;background:var(--surface-2);border:1px solid var(--line-2);border-radius:5px;padding:1px 6px}
+footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);font-size:.82rem}
+
+@media (max-width:920px){
+  .lab-grid{grid-template-columns:minmax(0,1fr)}
+  .side{border-left:0;border-top:1px solid var(--line)}
+  .code{max-height:260px}
+}
+@media (max-width:560px){
+  .stage{padding:14px 10px;min-height:300px}
+  .srow{grid-template-columns:30px 90px 58px}
+  .q-bottom,.hash-bottom{grid-template-columns:minmax(0,1fr)}
+  .q-array{gap:3px}
+  .qcol .cell{font-size:.75rem}
+  .tag{font-size:.58rem}
+  .bars{height:190px;gap:2px}
+  .blabels,.bmarks{gap:2px}
+  .field input[type=text],.field.wide input[type=text]{width:100%}
+  .field{flex:1 1 130px}
+  .pc-scrub{flex-basis:100%;order:5}
+  .slot{min-width:110px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#stack">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="8" fill="var(--accent)"/><rect x="8" y="20" width="18" height="5" rx="1.5" fill="var(--accent-ink)"/><rect x="8" y="13" width="18" height="5" rx="1.5" fill="var(--accent-ink)" opacity=".75"/><rect x="8" y="6" width="18" height="5" rx="1.5" fill="var(--accent-ink)" opacity=".45"/></svg>
+      <div><b>Data Structure Stepper</b><span>Watch every operation, one step at a time</span></div>
+    </a>
+    <nav class="tabs" aria-label="Topics">
+      <a href="#stack" data-view="stack">Stack</a>
+      <a href="#queue" data-view="queue">Queue</a>
+      <a href="#hash" data-view="hash">Hash Table</a>
+      <a href="#sorting" data-view="sorting">Sorting</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ===================== STACK ===================== -->
+<section class="view" id="view-stack">
+  <div class="intro">
+    <p class="eyebrow">LIFO · Last in, first out</p>
+    <h1>Stack</h1>
+    <p class="lede">A stack only lets you touch the item on top. You add (push) and remove (pop) at the same end, so the last thing in is the first thing out, like a pile of plates.</p>
+  </div>
+
+  <div class="lab">
+    <div class="ops">
+      <div class="field"><label for="stack-input">Value</label><input type="text" id="stack-input" maxlength="4" placeholder="e.g. 42" autocomplete="off"></div>
+      <div class="group">
+        <button class="btn primary" id="stack-push">Push</button>
+        <button class="btn" id="stack-pop">Pop</button>
+        <button class="btn" id="stack-peek">Peek</button>
+      </div>
+      <span class="vsep" aria-hidden="true"></span>
+      <div class="field wide"><label for="stack-brackets">Bracket string</label><input type="text" id="stack-brackets" maxlength="16" value="{[()()]}" autocomplete="off"></div>
+      <button class="btn soft" id="stack-check">Check balance</button>
+      <button class="btn ghost" id="stack-clear">Reset</button>
+      <p class="hint">Each button loads that operation as a series of steps. Click <b>Next</b> to walk through it, or <b>Play</b> to animate it. Try <code>([)]</code> in the bracket checker to see a mismatch.</p>
+    </div>
+    <div class="lab-grid">
+      <div class="stage" id="stack-stage"></div>
+      <aside class="side"><div class="explain" id="stack-explain"></div><pre class="code" id="stack-code"></pre></aside>
+    </div>
+    <div class="player" id="stack-player"></div>
+  </div>
+
+  <div class="notes">
+    <section>
+      <h2>How a stack works</h2>
+      <div class="cols">
+        <div>
+          <p>A stack is a list with one rule: you can only add or remove at the <b>top</b>. That rule gives it <b>LIFO</b> order (last in, first out). The item you pushed most recently is always the next one to come off.</p>
+          <p>The demo above uses an <b>array of fixed capacity 8</b> plus one integer, <code>top</code>, holding the index of the top item. An empty stack has <code>top = -1</code>. Push moves <code>top</code> up one and writes there. Pop reads <code>data[top]</code> and moves <code>top</code> down. Nothing else in the array ever moves, which is why every operation is constant time.</p>
+        </div>
+        <div>
+          <h3>Two errors to know</h3>
+          <ul>
+            <li><b>Overflow</b>: pushing when <code>top == capacity - 1</code>. A fixed array has no room left. Dynamic arrays (Python lists, Java <code>ArrayList</code>) avoid this by copying into a bigger array, which is still O(1) on average.</li>
+            <li><b>Underflow</b>: popping or peeking when <code>top == -1</code>. Always check <code>isEmpty()</code> first.</li>
+          </ul>
+          <p>A stack can also be built from a <b>linked list</b>: push inserts a new head node, pop removes the head. No capacity limit, but each node costs extra memory for its pointer.</p>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h3>Operations and cost</h3>
+      <div class="tablebox"><table>
+        <thead><tr><th>Operation</th><th>What it does</th><th>Time</th></tr></thead>
+        <tbody>
+          <tr><td><code>push(x)</code></td><td>Put x on top</td><td class="o">O(1)</td></tr>
+          <tr><td><code>pop()</code></td><td>Remove and return the top item</td><td class="o">O(1)</td></tr>
+          <tr><td><code>peek()</code> / <code>top()</code></td><td>Return the top item without removing it</td><td class="o">O(1)</td></tr>
+          <tr><td><code>isEmpty()</code></td><td>Check whether <code>top == -1</code></td><td class="o">O(1)</td></tr>
+          <tr><td>search for a value</td><td>Pop or scan through items until found</td><td class="o">O(n)</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+    <section>
+      <h3>Where stacks show up</h3>
+      <div class="cols">
+        <ul>
+          <li><b>The call stack.</b> Every function call pushes a frame (its local variables and return address); returning pops it. Infinite recursion fills it up, which is literally a <i>stack overflow</i>.</li>
+          <li><b>Undo / redo</b> in editors, and the <b>Back</b> button in a browser.</li>
+          <li><b>Bracket matching</b> in compilers and code editors (the demo above).</li>
+        </ul>
+        <ul>
+          <li><b>Expression evaluation.</b> Converting <code>3 + 4 * 2</code> to postfix and evaluating it uses a stack of operators and one of operands.</li>
+          <li><b>Depth-first search</b> and backtracking (maze solving, sudoku solvers).</li>
+          <li><b>Reversing</b> anything: push every character of a string, then pop them all.</li>
+        </ul>
+      </div>
+      <p class="callout"><b>Why the bracket checker works:</b> the most recently opened bracket must be the first one closed. That is exactly LIFO order, so when a closer arrives, the opener it must match is always on top of the stack.</p>
+    </section>
+  </div>
+</section>
+
+<!-- ===================== QUEUE ===================== -->
+<section class="view" id="view-queue" hidden>
+  <div class="intro">
+    <p class="eyebrow">FIFO · First in, first out</p>
+    <h1>Queue</h1>
+    <p class="lede">A queue works like a line at a ticket counter. New arrivals join at the rear (enqueue) and service happens at the front (dequeue), so items leave in the order they arrived.</p>
+  </div>
+
+  <div class="lab">
+    <div class="ops">
+      <div class="field"><label for="queue-input">Value</label><input type="text" id="queue-input" maxlength="4" placeholder="e.g. 42" autocomplete="off"></div>
+      <div class="group">
+        <button class="btn primary" id="queue-enq">Enqueue</button>
+        <button class="btn" id="queue-deq">Dequeue</button>
+        <button class="btn" id="queue-peek">Peek</button>
+      </div>
+      <button class="btn ghost" id="queue-clear">Reset</button>
+      <p class="hint">This queue is a <b>circular array</b> of 8 slots. Enqueue a few values and watch <code>rear</code> wrap from index 7 back to 0.</p>
+    </div>
+    <div class="lab-grid">
+      <div class="stage" id="queue-stage"></div>
+      <aside class="side"><div class="explain" id="queue-explain"></div><pre class="code" id="queue-code"></pre></aside>
+    </div>
+    <div class="player" id="queue-player"></div>
+  </div>
+
+  <div class="notes">
+    <section>
+      <h2>How a queue works</h2>
+      <div class="cols">
+        <div>
+          <p>A queue keeps two ends: the <b>front</b>, where items leave, and the <b>rear</b>, where items join. That gives <b>FIFO</b> order (first in, first out). Nobody cuts the line.</p>
+          <p><b>The naive array problem.</b> If you store the queue in an array and always keep the front at index 0, every dequeue has to shift all remaining items left by one. That makes dequeue O(n). If instead you just move a <code>front</code> index forward, the slots behind it are wasted forever.</p>
+        </div>
+        <div>
+          <p><b>The fix: a circular buffer.</b> Treat the array as a ring. Both indices move forward with <code>(index + 1) % capacity</code>, so after the last slot they wrap back to slot 0 and reuse the space freed by earlier dequeues. Nothing is ever shifted, so both operations are O(1).</p>
+          <p><b>Full or empty?</b> In a ring, a full queue and an empty one can leave <code>front</code> and <code>rear</code> in the same relative positions. The demo keeps a separate <code>count</code> to tell them apart. (Another common trick is to always leave one slot unused.)</p>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h3>Operations and cost</h3>
+      <div class="tablebox"><table>
+        <thead><tr><th>Operation</th><th>What it does</th><th>Circular array</th><th>Naive array (shifting)</th></tr></thead>
+        <tbody>
+          <tr><td><code>enqueue(x)</code></td><td>Add x at the rear</td><td class="o good">O(1)</td><td class="o">O(1)</td></tr>
+          <tr><td><code>dequeue()</code></td><td>Remove and return the front item</td><td class="o good">O(1)</td><td class="o bad">O(n)</td></tr>
+          <tr><td><code>peek()</code> / <code>front()</code></td><td>Look at the front item</td><td class="o">O(1)</td><td class="o">O(1)</td></tr>
+          <tr><td><code>isEmpty()</code> / <code>isFull()</code></td><td>Compare <code>count</code> with 0 or capacity</td><td class="o">O(1)</td><td class="o">O(1)</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+    <section>
+      <h3>Variants and uses</h3>
+      <div class="cols">
+        <ul>
+          <li><b>Deque</b> (double-ended queue): add and remove at both ends. Python's <code>collections.deque</code>, Java's <code>ArrayDeque</code>.</li>
+          <li><b>Priority queue</b>: the item with the highest priority leaves first, not the oldest. Usually built on a binary heap with O(log n) operations.</li>
+          <li><b>Ring buffer</b>: a fixed-size circular queue that overwrites the oldest data when full. Common in audio, logging and network drivers.</li>
+        </ul>
+        <ul>
+          <li><b>Breadth-first search</b>: visit a graph level by level by queueing neighbours.</li>
+          <li><b>Scheduling</b>: print jobs, CPU round-robin, customer support tickets.</li>
+          <li><b>Buffers between producers and consumers</b>: keyboard input, message queues such as RabbitMQ or Kafka, video streaming.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</section>
+
+<!-- ===================== HASH TABLE ===================== -->
+<section class="view" id="view-hash" hidden>
+  <div class="intro">
+    <p class="eyebrow">Key → hash → index</p>
+    <h1>Hash Table</h1>
+    <p class="lede">A hash table stores key–value pairs and finds them almost instantly. A hash function turns the key into an array index, so instead of searching you jump straight to the right bucket.</p>
+  </div>
+
+  <div class="lab">
+    <div class="ops">
+      <div class="field"><label for="hash-key">Key</label><input type="text" id="hash-key" maxlength="10" placeholder="e.g. grape" autocomplete="off"></div>
+      <div class="field"><label for="hash-val">Value</label><input type="text" id="hash-val" maxlength="5" placeholder="e.g. 9" autocomplete="off"></div>
+      <div class="group">
+        <button class="btn primary" id="hash-put">Put</button>
+        <button class="btn" id="hash-get">Get</button>
+        <button class="btn" id="hash-del">Remove</button>
+      </div>
+      <span class="vsep" aria-hidden="true"></span>
+      <div class="field"><span class="lbl" id="hash-mode-lbl">Collision strategy</span>
+        <div class="seg" role="group" aria-labelledby="hash-mode-lbl">
+          <button id="hash-mode-chain" aria-pressed="true">Chaining</button>
+          <button id="hash-mode-probe" aria-pressed="false">Linear probing</button>
+        </div>
+      </div>
+      <button class="btn ghost" id="hash-clear">Reset</button>
+      <p class="hint" id="hash-hint">The table has 7 buckets. <code>apple</code> and <code>mango</code> already collide in bucket 5. Try putting <code>listen</code> and then <code>silent</code>: anagrams always collide with this hash function.</p>
+    </div>
+    <div class="lab-grid">
+      <div class="stage" id="hash-stage"></div>
+      <aside class="side"><div class="explain" id="hash-explain"></div><pre class="code" id="hash-code"></pre></aside>
+    </div>
+    <div class="player" id="hash-player"></div>
+  </div>
+
+  <div class="notes">
+    <section>
+      <h2>How a hash table works</h2>
+      <div class="cols">
+        <div>
+          <p>Searching an unsorted list means checking items one by one: O(n). A hash table avoids that by computing <b>where</b> a key should live. Every operation follows the same two steps:</p>
+          <ol>
+            <li><b>Hash</b> the key into a number: <code>h = hash(key)</code>.</li>
+            <li><b>Compress</b> it into a valid index: <code>i = h mod size</code>. Then look only in bucket <code>i</code>.</li>
+          </ol>
+          <p>If keys spread evenly, each bucket holds about one item, so put, get and remove take O(1) on average.</p>
+        </div>
+        <div>
+          <h3>What makes a good hash function</h3>
+          <ul>
+            <li><b>Deterministic</b>: the same key always gives the same number.</li>
+            <li><b>Uniform</b>: keys spread evenly across buckets.</li>
+            <li><b>Fast</b> to compute.</li>
+          </ul>
+          <p>This demo adds up character codes because you can follow the arithmetic by hand. It is a <b>weak</b> hash: any two words with the same letters (<code>listen</code>, <code>silent</code>) collide. Real string hashes weight each position, e.g. Java's <code>s[0]·31<sup>n-1</sup> + s[1]·31<sup>n-2</sup> + …</code>. Table sizes are often prime (like 7 here) so patterns in the hash values don't all pile into the same few buckets.</p>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h3>Collisions: two keys, one index</h3>
+      <p>With more possible keys than buckets, collisions are guaranteed. There are two main ways to handle them, and the toggle above switches between them:</p>
+      <div class="cols">
+        <div>
+          <h3>Separate chaining</h3>
+          <p>Each bucket holds a <b>linked list</b>. Colliding keys are appended to the list. Lookups hash to the bucket, then walk the chain comparing keys. Simple, and the table never "fills up", but long chains slow it down.</p>
+        </div>
+        <div>
+          <h3>Open addressing (linear probing)</h3>
+          <p>Every slot holds at most one entry. On a collision, try the <b>next slot</b>: <code>i = (i + 1) mod size</code>, until an empty one appears. Cache-friendly, but neighbouring entries clump into <b>clusters</b> that make probes longer. Quadratic probing and double hashing spread entries out to reduce clustering.</p>
+        </div>
+      </div>
+      <p class="callout"><b>Why removal leaves a tombstone:</b> with probing, a lookup stops at the first EMPTY slot. If remove simply emptied a slot, any key that had probed past it would become unreachable. A DELETED marker says "something used to be here, keep looking". Try it: remove <code>kiwi</code> in probing mode, then get <code>fig</code>.</p>
+    </section>
+    <section>
+      <h3>Load factor and resizing</h3>
+      <p>The <b>load factor</b> is <code>α = entries / buckets</code>. As α grows, chains get longer and probe runs get longer. Real implementations <b>resize</b> once α crosses a threshold (Java's <code>HashMap</code> uses 0.75; Python's <code>dict</code> about 2/3): they allocate a bigger array and re-insert every entry, because each key's index depends on the table size. That one rehash is O(n), but it happens rarely, so the average cost per insert stays O(1).</p>
+      <div class="tablebox"><table>
+        <thead><tr><th>Operation</th><th>Average</th><th>Worst case</th><th>Worst case happens when</th></tr></thead>
+        <tbody>
+          <tr><td><code>put(key, value)</code></td><td class="o good">O(1)</td><td class="o bad">O(n)</td><td>Every key hashes to the same bucket</td></tr>
+          <tr><td><code>get(key)</code></td><td class="o good">O(1)</td><td class="o bad">O(n)</td><td>Long chain or long probe run</td></tr>
+          <tr><td><code>remove(key)</code></td><td class="o good">O(1)</td><td class="o bad">O(n)</td><td>Same as get</td></tr>
+          <tr><td>iterate in sorted key order</td><td class="o">O(n log n)</td><td class="o">O(n log n)</td><td>Hash tables keep no order; you must sort the keys</td></tr>
+        </tbody>
+      </table></div>
+      <p>Hash tables power Python's <code>dict</code> and <code>set</code>, JavaScript's <code>Map</code> and objects, Java's <code>HashMap</code>, caches, database indexes, compilers' symbol tables, and every "count how many times each word appears" program.</p>
+    </section>
+  </div>
+</section>
+
+<!-- ===================== SORTING ===================== -->
+<section class="view" id="view-sorting" hidden>
+  <div class="intro">
+    <p class="eyebrow">Comparisons · swaps · divide and conquer</p>
+    <h1>Sorting Algorithms</h1>
+    <p class="lede">Five classic ways to put values in order. Every comparison, swap and write is its own step, with the pseudocode line that caused it highlighted on the right.</p>
+  </div>
+
+  <div class="lab">
+    <div class="ops">
+      <div class="field"><label for="sort-algo">Algorithm</label>
+        <select id="sort-algo">
+          <option value="bubble">Bubble sort</option>
+          <option value="selection">Selection sort</option>
+          <option value="insertion">Insertion sort</option>
+          <option value="merge">Merge sort</option>
+          <option value="quick">Quick sort</option>
+        </select></div>
+      <div class="field"><label for="sort-preset">Input</label>
+        <select id="sort-preset">
+          <option value="random">Random</option>
+          <option value="nearly">Nearly sorted</option>
+          <option value="reversed">Reversed</option>
+          <option value="few">Few unique values</option>
+        </select></div>
+      <div class="field"><label for="sort-size">Size: <span id="sort-size-out">10</span></label><input type="range" id="sort-size" min="5" max="30" value="10" style="height:36px;accent-color:var(--accent)"></div>
+      <button class="btn" id="sort-new">New array</button>
+      <span class="vsep" aria-hidden="true"></span>
+      <div class="field wide"><label for="sort-custom">Your own values</label><input type="text" id="sort-custom" placeholder="e.g. 38, 27, 43, 3, 9" autocomplete="off"></div>
+      <button class="btn soft" id="sort-apply">Use these</button>
+      <p class="hint" id="sort-msg">Changing the algorithm keeps the same input, so you can compare how many steps each one needs.</p>
+    </div>
+    <div class="lab-grid">
+      <div class="stage" id="sort-stage"></div>
+      <aside class="side"><div class="explain" id="sort-explain"></div><pre class="code" id="sort-code"></pre></aside>
+    </div>
+    <div class="player" id="sort-player"></div>
+  </div>
+
+  <div class="notes">
+    <section>
+      <h2>How the algorithms compare</h2>
+      <p>The highlighted card is the algorithm loaded above. Watch the <b>comparisons</b> and <b>swaps / writes</b> counters in the stage: they are the real cost of each algorithm on that exact input.</p>
+      <div class="algo-cards">
+        <article class="algo-card" id="card-bubble"><h3>Bubble sort <small>O(n²)</small></h3>
+          <p>Walk through the array comparing neighbours and swap any pair that is out of order. After each pass the largest remaining value has "bubbled" to the end. Stops early if a pass makes no swaps.</p>
+          <div class="meta"><span>best O(n)</span><span>worst O(n²)</span><span>space O(1)</span><span>stable</span></div></article>
+        <article class="algo-card" id="card-selection"><h3>Selection sort <small>O(n²)</small></h3>
+          <p>Scan the unsorted part for its minimum and swap it to the front of that part. Always does about n²/2 comparisons, but at most n − 1 swaps, which helps when writes are expensive.</p>
+          <div class="meta"><span>best O(n²)</span><span>worst O(n²)</span><span>space O(1)</span><span>not stable</span></div></article>
+        <article class="algo-card" id="card-insertion"><h3>Insertion sort <small>O(n²)</small></h3>
+          <p>Grow a sorted prefix one value at a time: lift out the next value (the key), shift bigger values right, drop the key into the gap. Very fast on small or nearly sorted inputs, which is why real libraries use it for short runs.</p>
+          <div class="meta"><span>best O(n)</span><span>worst O(n²)</span><span>space O(1)</span><span>stable</span></div></article>
+        <article class="algo-card" id="card-merge"><h3>Merge sort <small>O(n log n)</small></h3>
+          <p>Divide and conquer: split the array in half, sort each half recursively, then merge the two sorted halves by repeatedly taking the smaller front value. Guaranteed n log n, at the cost of a temporary array.</p>
+          <div class="meta"><span>best O(n log n)</span><span>worst O(n log n)</span><span>space O(n)</span><span>stable</span></div></article>
+        <article class="algo-card" id="card-quick"><h3>Quick sort <small>O(n log n) avg</small></h3>
+          <p>Pick a pivot (here: the last element) and partition so smaller values go left and the rest go right. The pivot lands in its final position; recurse on each side. Usually the fastest in practice, but a bad pivot on already sorted or reversed input degrades it to O(n²).</p>
+          <div class="meta"><span>best O(n log n)</span><span>worst O(n²)</span><span>space O(log n)</span><span>not stable</span></div></article>
+      </div>
+    </section>
+    <section>
+      <h3>Summary table</h3>
+      <div class="tablebox"><table>
+        <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Extra space</th><th>Stable</th><th>In-place</th></tr></thead>
+        <tbody>
+          <tr><td>Bubble</td><td class="o">O(n)</td><td class="o">O(n²)</td><td class="o">O(n²)</td><td class="o">O(1)</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Selection</td><td class="o">O(n²)</td><td class="o">O(n²)</td><td class="o">O(n²)</td><td class="o">O(1)</td><td>No</td><td>Yes</td></tr>
+          <tr><td>Insertion</td><td class="o">O(n)</td><td class="o">O(n²)</td><td class="o">O(n²)</td><td class="o">O(1)</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Merge</td><td class="o">O(n log n)</td><td class="o">O(n log n)</td><td class="o">O(n log n)</td><td class="o">O(n)</td><td>Yes</td><td>No</td></tr>
+          <tr><td>Quick (Lomuto)</td><td class="o">O(n log n)</td><td class="o">O(n log n)</td><td class="o">O(n²)</td><td class="o">O(log n)</td><td>No</td><td>Yes</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+    <section>
+      <h3>Terms worth knowing</h3>
+      <div class="cols">
+        <ul>
+          <li><b>Stable</b>: equal values keep their original relative order. Matters when you sort records by one field after another (sort by name, then stably by grade).</li>
+          <li><b>In-place</b>: needs only a constant amount of extra memory beyond the array.</li>
+          <li><b>Adaptive</b>: runs faster when the input is already partly sorted (bubble with early exit, insertion).</li>
+        </ul>
+        <ul>
+          <li><b>The n log n barrier</b>: any sort that works only by comparing pairs needs at least about n log₂ n comparisons in the worst case. Merge sort reaches that bound.</li>
+          <li><b>What real libraries use</b>: Python and Java (for objects) use <b>Timsort</b>, a merge/insertion hybrid. C++ <code>std::sort</code> uses <b>introsort</b>: quick sort that falls back to heap sort and finishes small ranges with insertion sort.</li>
+        </ul>
+      </div>
+      <p class="callout"><b>Experiments to try:</b> pick <i>Nearly sorted</i> and compare insertion sort with selection sort. Then pick <i>Reversed</i> with quick sort and watch every partition peel off just one element: that's the O(n²) worst case.</p>
+    </section>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Keyboard: <kbd>←</kbd> / <kbd>→</kbd> step back and forward, <kbd>Space</kbd> plays or pauses (when no field is focused).</div></footer>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rand=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const SPEEDS=[1700,1200,850,600,420,280,180,110,60,25];
+const ICON={
+  first:'<svg viewBox="0 0 16 16"><rect x="2" y="3" width="2" height="10"/><path d="M14 3v10L5 8z"/></svg>',
+  last:'<svg viewBox="0 0 16 16"><rect x="12" y="3" width="2" height="10"/><path d="M2 3v10l9-5z"/></svg>',
+  prev:'<svg viewBox="0 0 16 16"><path d="M12 3v10L4 8z"/></svg>',
+  next:'<svg viewBox="0 0 16 16"><path d="M4 3v10l8-5z"/></svg>',
+  play:'<svg viewBox="0 0 16 16"><path d="M4 2.5v11l9.5-5.5z"/></svg>',
+  pause:'<svg viewBox="0 0 16 16"><rect x="3.5" y="3" width="3" height="10"/><rect x="9.5" y="3" width="3" height="10"/></svg>'
+};
+
+/* frame builder: every frame stores a full snapshot so stepping back is trivial */
+function maker(){
+  const F=[]; const ctx={};
+  const fr=(line,msg,s,hl={},kind,out)=>F.push({line,msg,s:clone(s),hl:Object.assign({},ctx,hl),kind,out});
+  return {F,fr,ctx};
+}
+
+/* ---------------- Player ---------------- */
+class Player{
+  constructor(key,render,defSpeed,withAuto){
+    this.key=key; this.render=render; this.frames=[]; this.i=0; this.playing=false; this.timer=null; this.code=null; this.op='';
+    const root=$(key+'-player');
+    root.innerHTML=
+      '<div class="pc-buttons">'+
+        '<button class="btn icon" data-a="first" title="First step" aria-label="First step">'+ICON.first+'</button>'+
+        '<button class="btn" data-a="prev" aria-label="Previous step">'+ICON.prev+'Prev</button>'+
+        '<button class="btn primary" data-a="next" aria-label="Next step">Next'+ICON.next+'</button>'+
+        '<button class="btn icon" data-a="last" title="Jump to end" aria-label="Jump to last step">'+ICON.last+'</button>'+
+        '<button class="btn soft" data-a="play" style="min-width:86px">'+ICON.play+'Play</button>'+
+      '</div>'+
+      '<div class="pc-count"><span>Step </span><b data-r="count">0 / 0</b></div>'+
+      '<input type="range" class="pc-scrub" id="'+key+'-scrub" min="0" max="0" value="0" aria-label="Jump to step">'+
+      '<label class="pc-speed" for="'+key+'-speed">Speed <input type="range" id="'+key+'-speed" min="1" max="10" value="'+defSpeed+'"></label>'+
+      (withAuto?'<label class="pc-auto" for="'+key+'-auto"><input type="checkbox" id="'+key+'-auto"> Auto-play new operations</label>':'');
+    this.b={}; root.querySelectorAll('[data-a]').forEach(el=>{this.b[el.dataset.a]=el; el.addEventListener('click',()=>this[el.dataset.a]());});
+    this.countEl=root.querySelector('[data-r=count]');
+    this.scrub=$(key+'-scrub'); this.speed=$(key+'-speed'); this.auto=withAuto?$(key+'-auto'):null;
+    this.scrub.addEventListener('input',()=>{this.pause(); this.i=+this.scrub.value; this.show();});
+    this.explainEl=$(key+'-explain'); this.codeEl=$(key+'-code');
+  }
+  get autoOn(){return this.auto?this.auto.checked:false}
+  load(frames,code,op,autoplay){
+    this.pause(); this.frames=frames; this.code=code; this.op=op; this.i=0;
+    this.codeEl.innerHTML='<div class="code-title">Pseudocode · '+esc(code.title)+'</div>'+code.lines.map((l,k)=>'<span class="ln" data-n="'+(k+1)+'"><i>'+(k+1)+'</i>'+esc(l)+'</span>').join('');
+    this.scrub.max=Math.max(0,frames.length-1);
+    this.show();
+    if((autoplay===undefined?this.autoOn:autoplay) && frames.length>1) this.play();
+  }
+  show(){
+    const f=this.frames[this.i]; if(!f) return;
+    this.render(f);
+    const kind=f.kind||'', label=kind==='error'?'Stopped':kind==='ok'?'Result':'Explanation';
+    this.explainEl.innerHTML='<div class="ex-head"><span class="chip '+kind+'">'+label+'</span><span>'+esc(this.op)+'</span></div><p>'+f.msg+'</p>';
+    this.codeEl.querySelectorAll('.ln.active').forEach(e=>e.classList.remove('active'));
+    if(f.line){const ln=this.codeEl.querySelector('.ln[data-n="'+f.line+'"]'); if(ln){ln.classList.add('active'); const box=this.codeEl; const top=ln.offsetTop-box.offsetTop; if(top<box.scrollTop||top>box.scrollTop+box.clientHeight-30) box.scrollTop=Math.max(0,top-40);}}
+    this.countEl.textContent=(this.i+1)+' / '+this.frames.length;
+    this.scrub.value=this.i;
+    this.upd();
+  }
+  upd(){
+    const end=this.i>=this.frames.length-1;
+    this.b.prev.disabled=this.b.first.disabled=this.i===0;
+    this.b.next.disabled=this.b.last.disabled=end;
+    this.b.play.innerHTML=this.playing?ICON.pause+'Pause':(end&&this.frames.length>1?ICON.play+'Replay':ICON.play+'Play');
+    this.b.play.disabled=this.frames.length<2;
+  }
+  delay(){return SPEEDS[(+this.speed.value||5)-1]}
+  next(){this.pause(); if(this.i<this.frames.length-1){this.i++; this.show();}}
+  prev(){this.pause(); if(this.i>0){this.i--; this.show();}}
+  first(){this.pause(); this.i=0; this.show();}
+  last(){this.pause(); this.i=this.frames.length-1; this.show();}
+  play(){
+    if(this.playing){this.pause(); return;}
+    if(this.i>=this.frames.length-1){this.i=0; this.show();}
+    this.playing=true; this.upd(); this.schedule();
+  }
+  schedule(){
+    clearTimeout(this.timer);
+    this.timer=setTimeout(()=>{
+      if(!this.playing) return;
+      if(this.i<this.frames.length-1){this.i++; this.show();}
+      if(this.i>=this.frames.length-1) this.pause(); else this.schedule();
+    },this.delay());
+  }
+  pause(){this.playing=false; clearTimeout(this.timer); if(this.b) this.upd();}
+}
+
+/* ======================================================
+   STACK
+   ====================================================== */
+const SCAP=8;
+const STACK_CODE={
+  push:{title:'push(x)',lines:['function push(x):','  if top == capacity - 1:','    error "Stack Overflow"','  top = top + 1','  data[top] = x']},
+  pop:{title:'pop()',lines:['function pop():','  if top == -1:','    error "Stack Underflow"','  x = data[top]','  top = top - 1','  return x']},
+  peek:{title:'peek()',lines:['function peek():','  if top == -1:','    error "Stack is empty"','  return data[top]']},
+  brackets:{title:'isBalanced(s)',lines:['function isBalanced(s):','  for each ch in s:','    if ch is an opener ( [ {:','      push(ch)','    else if ch is a closer ) ] }:','      if stack is empty: return false','      open = pop()','      if open does not pair with ch: return false','  return stack is empty']},
+  idle:{title:'ready',lines:['// Choose Push, Pop, Peek or Check balance.','// The steps of that operation load here.']}
+};
+let stackState={items:['12','7','31']};
+const stackSnap=(items,top)=>({items:items.slice(),top:top===undefined?items.length-1:top});
+
+function stackPush(st,x){
+  const {F,fr}=maker(); const it=st.items.slice(), n=it.length;
+  fr(1,'<b>push('+esc(x)+')</b> is called. The stack holds '+n+' item'+(n===1?'':'s')+', so <code>top = '+(n-1)+'</code>.',stackSnap(it));
+  if(n===SCAP){
+    fr(2,'Is the stack full? <code>top</code> is '+(n-1)+' and capacity − 1 is '+(SCAP-1)+'. They are equal, so <b>yes</b>.',stackSnap(it),{i:n-1,kind:'cmp'});
+    fr(3,'<b>Stack Overflow.</b> All '+SCAP+' slots are used, so there is nowhere to put '+esc(x)+'. A fixed-size array stack must refuse the push. Pop something first.',stackSnap(it),{},'error');
+    return {F,st};
+  }
+  fr(2,'Is the stack full? <code>top</code> ('+(n-1)+') == capacity − 1 ('+(SCAP-1)+')? <b>No</b>, there is room.',stackSnap(it),{i:n?n-1:undefined,kind:'cmp'});
+  fr(4,'Move <code>top</code> up from '+(n-1)+' to '+n+'. It now points at the empty slot just above the old top.',stackSnap(it,n),{i:n,kind:'cmp'});
+  it.push(x);
+  fr(5,'Write '+esc(x)+' into <code>data['+n+']</code>. '+esc(x)+' is the new top. Push took the same 3 steps no matter how many items are below, so it is <b>O(1)</b>.',stackSnap(it),{i:n,kind:'add'},'ok');
+  return {F,st:{items:it}};
+}
+function stackPop(st,peekOnly){
+  const {F,fr}=maker(); const it=st.items.slice(), n=it.length;
+  const name=peekOnly?'peek()':'pop()';
+  fr(1,'<b>'+name+'</b> is called. '+(peekOnly?'Peek looks at the top item without removing it.':'Pop removes the top item and hands it back.'),stackSnap(it));
+  if(n===0){
+    fr(2,'Is the stack empty? <code>top == -1</code>? <b>Yes</b>.',stackSnap(it));
+    fr(3,'<b>'+(peekOnly?'Stack is empty':'Stack Underflow')+'.</b> There is no top item to '+(peekOnly?'look at':'remove')+'. Code that uses a stack should check <code>isEmpty()</code> first.',stackSnap(it),{},'error');
+    return {F,st};
+  }
+  fr(2,'Is the stack empty? <code>top</code> is '+(n-1)+', not −1, so <b>no</b>.',stackSnap(it),{i:n-1,kind:'cmp'});
+  const x=it[n-1];
+  if(peekOnly){
+    fr(4,'Return <code>data['+(n-1)+']</code> = <b>'+esc(x)+'</b>. The stack is unchanged; <code>top</code> stays at '+(n-1)+'.',stackSnap(it),{i:n-1,kind:'read'},'ok',{label:'peek() returned',val:x});
+    return {F,st};
+  }
+  fr(4,'Read the top item: <code>x = data['+(n-1)+']</code> = <b>'+esc(x)+'</b>.',stackSnap(it),{i:n-1,kind:'read'},null,{label:'x',val:x});
+  fr(5,'Move <code>top</code> down to '+(n-2)+'. Slot '+(n-1)+' still physically holds '+esc(x)+', but it is now above <code>top</code>, so the stack treats it as free space. The next push will overwrite it.',stackSnap(it,n-2),{i:n-1,kind:'remove'},null,{label:'x',val:x});
+  it.pop();
+  fr(6,'Return <b>'+esc(x)+'</b>. '+(n-1===0?'The stack is now empty (<code>top = -1</code>).':'The new top is '+esc(it[n-2])+'.')+' Pop is <b>O(1)</b>: nothing else moved.',stackSnap(it),n-2>=0?{i:n-2,kind:'read'}:{},'ok',{label:'pop() returned',val:x});
+  return {F,st:{items:it}};
+}
+function stackBrackets(str){
+  const {F,fr}=maker(); const it=[]; const pairs={')':'(',']':'[','}':'{'};
+  const S=(i,cls)=>({str:{text:str,i,cls}});
+  fr(1,'Check <code>'+esc(str||'(empty string)')+'</code> using a fresh, empty stack. Openers get pushed; each closer must match the opener on top.',stackSnap(it),S(-1));
+  for(let i=0;i<str.length;i++){
+    const ch=str[i];
+    fr(2,'Read character '+i+': <code>'+esc(ch)+'</code>.',stackSnap(it),S(i));
+    if('([{'.includes(ch)){
+      if(it.length===SCAP){fr(4,'Push '+esc(ch)+'? The stack already holds '+SCAP+' openers. <b>Stack Overflow</b>: this demo stack is too small for this string.',stackSnap(it),S(i,'bad'),'error');return {F,st:{items:it}};}
+      it.push(ch);
+      fr(4,'<code>'+esc(ch)+'</code> is an opener, so push it. The stack now remembers '+it.length+' bracket'+(it.length===1?'':'s')+' still waiting to be closed.',stackSnap(it),Object.assign(S(i),{i:it.length-1,kind:'add'}));
+    }else if(pairs[ch]){
+      if(!it.length){fr(6,'<code>'+esc(ch)+'</code> is a closer, but the stack is empty: nothing was opened that it could close. <b>Not balanced.</b>',stackSnap(it),S(i,'bad'),'error',{label:'isBalanced',val:'false'});return {F,st:{items:it}};}
+      const o=it[it.length-1];
+      fr(7,'<code>'+esc(ch)+'</code> is a closer. Pop the most recent opener: <code>'+esc(o)+'</code>.',stackSnap(it),Object.assign(S(i),{i:it.length-1,kind:'read'}));
+      it.pop();
+      if(pairs[ch]!==o){fr(8,'<code>'+esc(o)+'</code> does not pair with <code>'+esc(ch)+'</code> (it needed <code>'+esc(pairs[ch])+'</code>). The brackets cross each other. <b>Not balanced.</b>',stackSnap(it),S(i,'bad'),'error',{label:'isBalanced',val:'false'});return {F,st:{items:it}};}
+      fr(8,'<code>'+esc(o)+'</code> pairs with <code>'+esc(ch)+'</code>. That pair is closed correctly.',stackSnap(it),S(i,'good'));
+    }else{
+      fr(2,'<code>'+esc(ch)+'</code> is not a bracket, so skip it.',stackSnap(it),S(i));
+    }
+  }
+  if(it.length) fr(9,'End of string, but '+it.length+' opener'+(it.length===1?'':'s')+' (<code>'+esc(it.join(' '))+'</code>) never got closed. <b>Not balanced.</b>',stackSnap(it),S(str.length),'error',{label:'isBalanced',val:'false'});
+  else fr(9,'End of string and the stack is empty: every opener found its matching closer in the right order. <b>Balanced.</b>',stackSnap(it),S(str.length),'ok',{label:'isBalanced',val:'true'});
+  return {F,st:{items:it}};
+}
+function renderStack(f){
+  const s=f.s, hl=f.hl||{}; let rows='';
+  for(let k=SCAP-1;k>=0;k--){
+    const has=k<s.items.length; let cls=has?(k<=s.top?'filled':'ghost'):'empty';
+    if(hl.i===k&&hl.kind) cls+=' '+hl.kind;
+    rows+='<div class="srow"><span class="idx">['+k+']</span><div class="cell '+cls+'">'+(has?esc(s.items[k]):'')+'</div><span class="ptr">'+(k===s.top?'◀ top':'')+'</span></div>';
+  }
+  rows+='<div class="srow"><span class="idx"></span><div class="floor">'+(s.top===-1?'top = −1 · empty':'bottom')+'</div><span></span></div>';
+  let strip='';
+  if(hl.str){
+    strip='<div class="strip" aria-label="Bracket string">'+[...hl.str.text].map((c,k)=>'<span class="ch '+(k<hl.str.i?'done':k===hl.str.i?'cur '+(hl.str.cls||''):'')+'">'+esc(c)+'</span>').join('')+'</div>';
+  }
+  const out=f.out;
+  $('stack-stage').innerHTML=strip+'<div class="stack-main"><div class="stack-col">'+rows+'</div><div class="stack-info">'+
+    '<dl class="facts"><div><dt>Size</dt><dd>'+(s.top+1)+'</dd></div><div><dt>top</dt><dd>'+s.top+'</dd></div><div><dt>Capacity</dt><dd>'+SCAP+'</dd></div></dl>'+
+    '<div class="outbox'+(out?' show':'')+'"><span>'+(out?esc(out.label):'Returned value')+'</span><b>'+(out?esc(out.val):'—')+'</b></div></div></div>';
+}
+const stackPlayer=new Player('stack',renderStack,3,true);
+function stackRun(gen,code,op){const r=gen(); stackState=r.st; stackPlayer.load(r.F,code,op);}
+function readVal(inp){let v=inp.value.trim().slice(0,4); if(!v) v=String(rand(1,99)); inp.value=''; return v;}
+$('stack-push').onclick=()=>{const x=readVal($('stack-input')); stackRun(()=>stackPush(stackState,x),STACK_CODE.push,'push('+x+')');};
+$('stack-pop').onclick=()=>stackRun(()=>stackPop(stackState,false),STACK_CODE.pop,'pop()');
+$('stack-peek').onclick=()=>stackRun(()=>stackPop(stackState,true),STACK_CODE.peek,'peek()');
+$('stack-check').onclick=()=>{const s=$('stack-brackets').value.slice(0,16); stackRun(()=>stackBrackets(s),STACK_CODE.brackets,'isBalanced("'+s+'")');};
+$('stack-input').addEventListener('keydown',e=>{if(e.key==='Enter') $('stack-push').click();});
+$('stack-brackets').addEventListener('keydown',e=>{if(e.key==='Enter') $('stack-check').click();});
+function stackIdle(msg){stackPlayer.load([{line:0,msg,s:stackSnap(stackState.items),hl:{}}],STACK_CODE.idle,'ready',false);}
+$('stack-clear').onclick=()=>{stackState={items:['12','7','31']}; stackIdle('Stack reset to 12, 7, 31. Type a value and press <b>Push</b>, or press <b>Pop</b>.');};
+stackIdle('This stack already holds <b>12, 7, 31</b> (31 is on top). Type a value and press <b>Push</b>, or press <b>Pop</b> or <b>Peek</b>. Then click <b>Next</b> to move through the operation one step at a time.');
+
+/* ======================================================
+   QUEUE (circular array)
+   ====================================================== */
+const QCAP=8;
+const QUEUE_CODE={
+  enq:{title:'enqueue(x)',lines:['function enqueue(x):','  if count == capacity:','    error "Queue Overflow"','  rear = (rear + 1) % capacity','  data[rear] = x','  count = count + 1']},
+  deq:{title:'dequeue()',lines:['function dequeue():','  if count == 0:','    error "Queue Underflow"','  x = data[front]','  data[front] = empty','  front = (front + 1) % capacity','  count = count - 1','  return x']},
+  peek:{title:'peek()',lines:['function peek():','  if count == 0:','    error "Queue is empty"','  return data[front]']},
+  idle:{title:'ready',lines:['// Choose Enqueue, Dequeue or Peek.','// The steps of that operation load here.']}
+};
+function queueInit(){const d=Array(QCAP).fill(null); d[3]='14'; d[4]='9'; d[5]='27'; return {d,front:3,rear:5,count:3};}
+let queueState=queueInit();
+function wrapMsg(name,from,to){return '<code>'+name+' = ('+from+' + 1) % '+QCAP+' = '+to+'</code>.'+(to===0&&from===QCAP-1?' The index <b>wraps around</b> from the last slot back to slot 0. This is what makes the array circular: space freed at the start gets reused.':'');}
+function queueEnq(st,x){
+  const {F,fr}=maker(); const s=clone(st);
+  fr(1,'<b>enqueue('+esc(x)+')</b> is called. '+esc(x)+' will join at the rear of the line.',s);
+  if(s.count===QCAP){fr(2,'Is the queue full? <code>count</code> ('+s.count+') == capacity ('+QCAP+')? <b>Yes</b>.',s);fr(3,'<b>Queue Overflow.</b> Every slot is in use. Dequeue something first.',s,{},'error');return {F,st};}
+  fr(2,'Is the queue full? <code>count</code> ('+s.count+') == capacity ('+QCAP+')? <b>No</b>.',s);
+  const old=s.rear; s.rear=(s.rear+1)%QCAP;
+  fr(4,'Advance rear: '+wrapMsg('rear',old,s.rear),s,{i:s.rear,kind:'cmp'});
+  s.d[s.rear]=x;
+  fr(5,'Store '+esc(x)+' in <code>data['+s.rear+']</code>.',s,{i:s.rear,kind:'add'});
+  s.count++;
+  fr(6,'Increase <code>count</code> to '+s.count+'. '+esc(x)+' is now last in line. No other item moved, so enqueue is <b>O(1)</b>.',s,{i:s.rear,kind:'add'},'ok');
+  return {F,st:s};
+}
+function queueDeq(st,peekOnly){
+  const {F,fr}=maker(); const s=clone(st); const name=peekOnly?'peek()':'dequeue()';
+  fr(1,'<b>'+name+'</b> is called. '+(peekOnly?'Peek looks at the front item without removing it.':'The item at the front, the one that has waited longest, leaves first.'),s);
+  if(s.count===0){fr(2,'Is the queue empty? <code>count == 0</code>? <b>Yes</b>.',s);fr(3,'<b>'+(peekOnly?'Queue is empty':'Queue Underflow')+'.</b> There is no front item.',s,{},'error');return {F,st};}
+  fr(2,'Is the queue empty? <code>count</code> is '+s.count+', so <b>no</b>.',s,{i:s.front,kind:'cmp'});
+  const x=s.d[s.front];
+  if(peekOnly){fr(4,'Return <code>data['+s.front+']</code> = <b>'+esc(x)+'</b>. Nothing changes.',s,{i:s.front,kind:'read'},'ok',{label:'peek() returned',val:x});return {F,st};}
+  fr(4,'Read the front item: <code>x = data['+s.front+']</code> = <b>'+esc(x)+'</b>.',s,{i:s.front,kind:'read'},null,{label:'x',val:x});
+  s.d[s.front]=null;
+  fr(5,'Clear slot '+s.front+'. Notice we do <b>not</b> shift the remaining items left; that would cost O(n).',s,{i:s.front,kind:'remove'},null,{label:'x',val:x});
+  const old=s.front; s.front=(s.front+1)%QCAP;
+  fr(6,'Advance front: '+wrapMsg('front',old,s.front),s,{i:s.front,kind:'cmp'},null,{label:'x',val:x});
+  s.count--;
+  fr(7,'Decrease <code>count</code> to '+s.count+'.',s,{},null,{label:'x',val:x});
+  fr(8,'Return <b>'+esc(x)+'</b>. '+(s.count?'The new front is '+esc(s.d[s.front])+'.':'The queue is now empty.')+' Dequeue is <b>O(1)</b>.',s,s.count?{i:s.front,kind:'read'}:{},'ok',{label:'dequeue() returned',val:x});
+  return {F,st:s};
+}
+function renderQueue(f){
+  const s=f.s, hl=f.hl||{};
+  let cols='';
+  for(let k=0;k<QCAP;k++){
+    const v=s.d[k]; let cls=v==null?'empty':'filled'; if(hl.i===k&&hl.kind) cls+=' '+hl.kind;
+    cols+='<div class="qcol"><span class="idx">['+k+']</span><div class="cell '+cls+'">'+(v==null?'':esc(v))+'</div><div class="qptr">'+(k===s.front?'<span class="tag f">front</span>':'')+(k===s.rear?'<span class="tag r">rear</span>':'')+'</div></div>';
+  }
+  const order=[]; for(let j=0;j<s.count;j++){order.push(s.d[(s.front+j)%QCAP]);}
+  const out=f.out;
+  $('queue-stage').innerHTML='<span class="lbl" style="display:block;text-align:center;margin-bottom:8px">Underlying array (circular)</span><div class="q-array">'+cols+'</div>'+
+    '<div class="wrapnote"><span>↺ slot 0 follows slot 7</span><span>(i + 1) % 8</span></div>'+
+    '<div class="q-line"><span class="lbl">Logical order: what the queue looks like to its user</span><div class="line-row"><span class="end">front →</span>'+
+    (order.length?order.map(v=>'<span class="person">'+esc(v)+'</span>').join(''):'<span class="end">(empty)</span>')+'<span class="end">← rear</span></div></div>'+
+    '<div class="q-bottom"><dl class="facts"><div><dt>count</dt><dd>'+s.count+'</dd></div><div><dt>front</dt><dd>'+s.front+'</dd></div><div><dt>rear</dt><dd>'+s.rear+'</dd></div><div><dt>capacity</dt><dd>'+QCAP+'</dd></div></dl>'+
+    '<div class="outbox'+(out?' show':'')+'"><span>'+(out?esc(out.label):'Returned value')+'</span><b>'+(out?esc(out.val):'—')+'</b></div></div>';
+}
+const queuePlayer=new Player('queue',renderQueue,3,true);
+function queueRun(r,code,op){queueState=r.st; queuePlayer.load(r.F,code,op);}
+$('queue-enq').onclick=()=>{const x=readVal($('queue-input')); queueRun(queueEnq(queueState,x),QUEUE_CODE.enq,'enqueue('+x+')');};
+$('queue-deq').onclick=()=>queueRun(queueDeq(queueState,false),QUEUE_CODE.deq,'dequeue()');
+$('queue-peek').onclick=()=>queueRun(queueDeq(queueState,true),QUEUE_CODE.peek,'peek()');
+$('queue-input').addEventListener('keydown',e=>{if(e.key==='Enter') $('queue-enq').click();});
+function queueIdle(msg){queuePlayer.load([{line:0,msg,s:clone(queueState),hl:{}}],QUEUE_CODE.idle,'ready',false);}
+$('queue-clear').onclick=()=>{queueState=queueInit(); queueIdle('Queue reset to 14, 9, 27 sitting in slots 3 to 5.');};
+queueIdle('The queue holds <b>14, 9, 27</b> in slots 3 to 5: earlier dequeues already moved <code>front</code> to 3. Enqueue three more values and <code>rear</code> will wrap from slot 7 to slot 0.');
+
+/* ======================================================
+   HASH TABLE
+   ====================================================== */
+const HSIZE=7;
+const HASH_CODE={
+  chain:{
+    put:{title:'put(key, value) · chaining',lines:['function put(key, value):','  i = hash(key) % size','  for each node in bucket[i]:','    if node.key == key:','      node.value = value; return','  append (key, value) to bucket[i]']},
+    get:{title:'get(key) · chaining',lines:['function get(key):','  i = hash(key) % size','  for each node in bucket[i]:','    if node.key == key:','      return node.value','  return NOT FOUND']},
+    del:{title:'remove(key) · chaining',lines:['function remove(key):','  i = hash(key) % size','  for each node in bucket[i]:','    if node.key == key:','      unlink node from bucket[i]; return','  return NOT FOUND']}
+  },
+  probe:{
+    put:{title:'put(key, value) · linear probing',lines:['function put(key, value):','  i = hash(key) % size','  repeat size times:','    if slot[i] is EMPTY:','      slot[i] = (key, value); return','    if slot[i] is not DELETED and slot[i].key == key:','      slot[i].value = value; return','    i = (i + 1) % size     // collision: try next','  error "Table is full"']},
+    get:{title:'get(key) · linear probing',lines:['function get(key):','  i = hash(key) % size','  repeat size times:','    if slot[i] is EMPTY: return NOT FOUND','    if slot[i] is not DELETED and slot[i].key == key:','      return slot[i].value','    i = (i + 1) % size','  return NOT FOUND']},
+    del:{title:'remove(key) · linear probing',lines:['function remove(key):','  i = hash(key) % size','  repeat size times:','    if slot[i] is EMPTY: return NOT FOUND','    if slot[i] is not DELETED and slot[i].key == key:','      slot[i] = DELETED    // tombstone, not EMPTY','      return','    i = (i + 1) % size','  return NOT FOUND']}
+  },
+  idle:{title:'ready',lines:['// Enter a key and choose Put, Get or Remove.','// The steps of that operation load here.']}
+};
+const SAMPLE=[['apple','12'],['mango','5'],['kiwi','30'],['lemon','8'],['fig','17']];
+let hashMode='chain', hashState=null;
+function hashParts(key){const codes=[...key].map(c=>[c,c.codePointAt(0)]); const sum=codes.reduce((a,c)=>a+c[1],0); return {key,codes,sum,idx:sum%HSIZE};}
+function emptyTable(mode){return mode==='chain'?{b:Array.from({length:HSIZE},()=>[])}:{slots:Array(HSIZE).fill(null)};}
+function entriesOf(st,mode){return mode==='chain'?st.b.flat().map(e=>[e.k,e.v]):st.slots.filter(e=>e&&e!=='DEL').map(e=>[e.k,e.v]);}
+function hashFrames(fr,ctx,s,H){
+  fr(2,'Hash the key. This demo adds up the character codes of <code>"'+esc(H.key)+'"</code>: '+H.codes.map(c=>c[1]).join(' + ')+' = <b>'+H.sum+'</b>.',s,{hash:Object.assign({},H,{stage:1})});
+  ctx.hash=Object.assign({},H,{stage:2});
+  fr(2,'Compress it into a valid index: <code>'+H.sum+' mod '+HSIZE+' = '+H.idx+'</code>. So <code>"'+esc(H.key)+'"</code> belongs in <b>'+(hashMode==='chain'?'bucket':'slot')+' '+H.idx+'</b>. We jump straight there; no other bucket is looked at.',s,{b:H.idx});
+}
+function hChain(op,st,key,val){
+  const {F,fr,ctx}=maker(); const s=clone(st); const H=hashParts(key); const callName=op==='put'?'put("'+esc(key)+'", '+esc(val)+')':(op==='get'?'get':'remove')+'("'+esc(key)+'")';
+  fr(1,'<b>'+callName+'</b> is called.',s);
+  if(op==='put'&&s.b.flat().length>=21&&!s.b.flat().some(e=>e.k===key)){fr(1,'This demo caps the table at 21 entries to keep it readable. Remove something first.',s,{},'error');return {F,st};}
+  hashFrames(fr,ctx,s,H);
+  const bk=s.b[H.idx], b=H.idx;
+  if(!bk.length) fr(3,'Bucket '+b+' is empty, so there is nothing to scan.',s,{b});
+  for(let j=0;j<bk.length;j++){
+    const e=bk[j];
+    if(e.k===key){
+      fr(4,'Compare <code>"'+esc(key)+'"</code> with node '+j+' (<code>"'+esc(e.k)+'"</code>). <b>Same key.</b>',s,{b,node:j,kind:'cmp'});
+      if(op==='put'){const ov=e.v; e.v=val; fr(5,'Overwrite its value: '+esc(ov)+' → <b>'+esc(val)+'</b>. Keys are unique, so put updates instead of adding a duplicate.',s,{b,node:j,kind:'add'},'ok');}
+      else if(op==='get'){fr(5,'Return its value: <b>'+esc(e.v)+'</b>. We compared '+(j+1)+' key'+(j?'s':'')+' instead of searching the whole table.',s,{b,node:j,kind:'read'},'ok',{label:'get returned',val:e.v});}
+      else{fr(5,'Found it. Unlink this node: the previous node (or the bucket head) now points to the node after it.',s,{b,node:j,kind:'remove'});bk.splice(j,1);fr(5,'<code>"'+esc(key)+'"</code> is gone. Bucket '+b+' now has '+bk.length+' node'+(bk.length===1?'':'s')+'.',s,{b},'ok');}
+      return {F,st:s};
+    }
+    fr(4,'Compare <code>"'+esc(key)+'"</code> with node '+j+' (<code>"'+esc(e.k)+'"</code>). Different key'+(j<bk.length-1?', so follow the link to the next node.':'. That was the last node in the chain.'),s,{b,node:j,kind:'cmp'});
+  }
+  if(op==='put'){
+    bk.push({k:key,v:val});
+    fr(6,bk.length>1?'Key not in the chain, so append <code>("'+esc(key)+'", '+esc(val)+')</code> to the end. <b>Collision handled:</b> bucket '+b+' now holds '+bk.length+' entries in a linked list.':'Append <code>("'+esc(key)+'", '+esc(val)+')</code> as the first node of bucket '+b+'. No collision.',s,{b,node:bk.length-1,kind:'add'},'ok');
+  }else{
+    fr(6,'<code>"'+esc(key)+'"</code> is not in bucket '+b+'. Because it could only ever live there, it is not in the table at all. <b>NOT FOUND.</b>',s,{b},'error',{label:op==='get'?'get returned':'remove returned',val:'NOT FOUND'});
+  }
+  return {F,st:s};
+}
+function hProbe(op,st,key,val){
+  const {F,fr,ctx}=maker(); const s=clone(st); const H=hashParts(key); const callName=op==='put'?'put("'+esc(key)+'", '+esc(val)+')':(op==='get'?'get':'remove')+'("'+esc(key)+'")';
+  const L={cmp:op==='put'?6:5,adv:op==='get'?7:8,found:op==='put'?7:6,end:op==='get'?8:9};
+  fr(1,'<b>'+callName+'</b> is called.',s);
+  hashFrames(fr,ctx,s,H);
+  let i=H.idx; const probed=[];
+  for(let t=0;t<HSIZE;t++){
+    probed.push(i); const sl=s.slots[i]; const P={b:i,probed:probed.slice()};
+    if(sl===null){
+      if(op==='put'){fr(4,'Slot '+i+' is EMPTY, so it is free to use.',s,Object.assign({kind:'cmp'},P)); s.slots[i]={k:key,v:val};
+        fr(5,'Store <code>("'+esc(key)+'", '+esc(val)+')</code> in slot '+i+'.'+(t>0?' It took <b>'+(t+1)+' probes</b> because of collisions. Neighbouring filled slots like these form a <i>cluster</i>.':' First try, no collision.'),s,Object.assign({kind:'add'},P),'ok');}
+      else fr(4,'Slot '+i+' is EMPTY. If <code>"'+esc(key)+'"</code> had been inserted, it would sit here or earlier in this probe run, so the search stops. <b>NOT FOUND.</b>',s,Object.assign({kind:'cmp'},P),'error',{label:op==='get'?'get returned':'remove returned',val:'NOT FOUND'});
+      return {F,st:s};
+    }
+    if(sl!=='DEL'&&sl.k===key){
+      fr(L.cmp,'Slot '+i+' holds <code>"'+esc(sl.k)+'"</code>. <b>Same key.</b>',s,Object.assign({kind:'cmp'},P));
+      if(op==='put'){const ov=sl.v; sl.v=val; fr(7,'Overwrite its value: '+esc(ov)+' → <b>'+esc(val)+'</b>.',s,Object.assign({kind:'add'},P),'ok');}
+      else if(op==='get'){fr(6,'Return its value: <b>'+esc(sl.v)+'</b>.'+(t?' Found after '+(t+1)+' probes.':''),s,Object.assign({kind:'read'},P),'ok',{label:'get returned',val:sl.v});}
+      else{s.slots[i]='DEL'; fr(6,'Replace the entry with a <b>tombstone</b> (DELETED), not EMPTY. Keys inserted after it may have probed past this slot; an EMPTY here would make later searches stop too early and lose them.',s,Object.assign({kind:'remove'},P));
+        fr(7,'Done. <code>"'+esc(key)+'"</code> is removed. Searches will skip over the tombstone.',s,P,'ok');}
+      return {F,st:s};
+    }
+    fr(L.cmp,sl==='DEL'?'Slot '+i+' holds a <b>tombstone</b>. It is not our key, but something used to be here, so keep probing.':'Slot '+i+' holds <code>"'+esc(sl.k)+'"</code>, a different key. <b>Collision</b>, keep probing.',s,Object.assign({kind:'cmp'},P));
+    const ni=(i+1)%HSIZE;
+    fr(L.adv,'Linear probing moves to the next slot: <code>i = ('+i+' + 1) mod '+HSIZE+' = '+ni+'</code>.',s,{b:ni,probed:probed.slice()});
+    i=ni;
+  }
+  if(op==='put') fr(9,'Checked all '+HSIZE+' slots and none is EMPTY. <b>Table is full.</b> A real hash table would have resized long before this (usually when the load factor passes about 0.7) and rehashed every entry, which also clears tombstones.',s,{probed},'error');
+  else fr(L.end,'Probed every slot without finding <code>"'+esc(key)+'"</code>. <b>NOT FOUND.</b>',s,{probed},'error',{label:'returned',val:'NOT FOUND'});
+  return {F,st:s};
+}
+function buildTable(mode,entries){let st=emptyTable(mode); for(const [k,v] of entries){st=(mode==='chain'?hChain:hProbe)('put',st,k,v).st;} return st;}
+function renderHash(f){
+  const s=f.s, hl=f.hl||{}, H=hl.hash;
+  const calc=H?'<div class="calc"><div class="calc-key">hash("'+esc(H.key)+'") = sum of character codes</div><div class="codes">'+H.codes.map(c=>'<span class="code-chip"><b>'+esc(c[0])+'</b><i>'+c[1]+'</i></span>').join('<span class="plus">+</span>')+'<span class="eq">= <b>'+H.sum+'</b></span></div>'+(H.stage>=2?'<div class="mod">'+H.sum+' mod '+HSIZE+' = <b>'+H.idx+'</b> → index '+H.idx+'</div>':'')+'</div>'
+    :'<div class="calc idle">The hash calculation for each operation appears here, character by character.</div>';
+  let rows='', n=0, longest=0;
+  if(s.b){
+    s.b.forEach((bk,i)=>{
+      n+=bk.length; longest=Math.max(longest,bk.length);
+      const act=hl.b===i;
+      const nodes=bk.length?bk.map((e,j)=>(j?'<span class="link">→</span>':'')+'<div class="node '+(act&&hl.node===j&&hl.kind?hl.kind:'')+'"><span class="k">'+esc(e.k)+'</span><span class="v">'+esc(e.v)+'</span></div>').join('')+'<span class="link">→</span><span class="nil">null</span>':'<span class="nil">empty</span>';
+      rows+='<div class="brow'+(act?' active':'')+'"><span class="idx">['+i+']</span><div class="chain">'+nodes+'</div></div>';
+    });
+  }else{
+    s.slots.forEach((sl,i)=>{
+      const act=hl.b===i, pr=hl.probed&&hl.probed.includes(i);
+      let cell;
+      if(sl===null) cell='<span class="slot empty'+(act&&hl.kind?' '+hl.kind:'')+'">EMPTY</span>';
+      else if(sl==='DEL') cell='<span class="slot tomb'+(act&&hl.kind?' '+hl.kind:'')+'">DELETED (tombstone)</span>';
+      else {n++; cell='<span class="slot '+(act&&hl.kind?hl.kind:'')+'"><span class="k">'+esc(sl.k)+'</span><span class="v">'+esc(sl.v)+'</span></span>';}
+      if(sl&&sl!=='DEL'){const home=hashParts(sl.k).idx; cell+=home!==i?'<span class="nil">home '+home+', displaced '+((i-home+HSIZE)%HSIZE)+'</span>':'';}
+      rows+='<div class="brow'+(act?' active':'')+(pr?' probed':'')+'"><span class="idx">['+i+']</span><div class="chain">'+cell+'</div></div>';
+    });
+  }
+  const out=f.out, lf=(n/HSIZE).toFixed(2);
+  $('hash-stage').innerHTML=calc+'<div class="htable">'+rows+'</div><div class="hash-bottom"><dl class="facts"><div><dt>Entries</dt><dd>'+n+'</dd></div><div><dt>'+(s.b?'Buckets':'Slots')+'</dt><dd>'+HSIZE+'</dd></div><div><dt>Load α</dt><dd>'+lf+'</dd></div>'+(s.b?'<div><dt>Longest chain</dt><dd>'+longest+'</dd></div>':'')+'</dl>'+
+    '<div class="outbox'+(out?' show':'')+'"><span>'+(out?esc(out.label):'Returned value')+'</span><b>'+(out?esc(out.val):'—')+'</b></div></div>';
+}
+const hashPlayer=new Player('hash',renderHash,3,true);
+function hashIdle(msg){hashPlayer.load([{line:0,msg,s:clone(hashState),hl:{}}],HASH_CODE.idle,'ready',false);}
+function hashOp(op){
+  const k=$('hash-key').value.trim().slice(0,10);
+  if(!k){$('hash-hint').innerHTML='Type a key first, for example <code>grape</code>.'; $('hash-hint').classList.add('err'); $('hash-key').focus(); return;}
+  $('hash-hint').classList.remove('err');
+  let v=$('hash-val').value.trim().slice(0,5); if(op==='put'&&!v) v=String(rand(1,50));
+  const r=(hashMode==='chain'?hChain:hProbe)(op,hashState,k,v);
+  hashState=r.st; $('hash-val').value='';
+  const name=op==='put'?'put("'+k+'", '+v+')':(op==='get'?'get':'remove')+'("'+k+'")';
+  hashPlayer.load(r.F,HASH_CODE[hashMode][op],name);
+}
+$('hash-put').onclick=()=>hashOp('put');
+$('hash-get').onclick=()=>hashOp('get');
+$('hash-del').onclick=()=>hashOp('del');
+['hash-key','hash-val'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter') hashOp('put');}));
+function setMode(m){
+  if(m===hashMode) return;
+  let ents=entriesOf(hashState,hashMode), dropped=0;
+  if(m==='probe'&&ents.length>HSIZE){dropped=ents.length-HSIZE; ents=ents.slice(0,HSIZE);}
+  hashMode=m; hashState=buildTable(m,ents);
+  $('hash-mode-chain').setAttribute('aria-pressed',m==='chain'); $('hash-mode-probe').setAttribute('aria-pressed',m==='probe');
+  hashIdle(m==='chain'?'Switched to <b>separate chaining</b>. The same entries were re-inserted: colliding keys now share a bucket as a linked list.'
+    :'Switched to <b>linear probing</b>. The same entries were re-inserted one per slot. Keys that collided got pushed to the next free slot (see the "home / displaced" notes).'+(dropped?' '+dropped+' entr'+(dropped===1?'y':'ies')+' did not fit in 7 slots and were dropped.':''));
+}
+$('hash-mode-chain').onclick=()=>setMode('chain');
+$('hash-mode-probe').onclick=()=>setMode('probe');
+$('hash-clear').onclick=()=>{hashState=buildTable(hashMode,SAMPLE); hashIdle('Table reset to the five sample fruits.');};
+hashState=buildTable('chain',SAMPLE);
+hashIdle('The table holds five fruits and their stock counts. <code>apple</code> and <code>mango</code> both hash to bucket 5; <code>kiwi</code> and <code>fig</code> share bucket 2. Type a key and press <b>Put</b>, <b>Get</b> or <b>Remove</b>, then step through with <b>Next</b>.');
+
+/* ======================================================
+   SORTING
+   ====================================================== */
+const SORT_CODE={
+  bubble:{title:'bubbleSort(a)',lines:['procedure bubbleSort(a):','  for i = 0 to n-2:','    swapped = false','    for j = 0 to n-2-i:','      if a[j] > a[j+1]:','        swap(a[j], a[j+1]); swapped = true','    a[n-1-i] is now in its final place','    if not swapped: stop early']},
+  selection:{title:'selectionSort(a)',lines:['procedure selectionSort(a):','  for i = 0 to n-2:','    min = i','    for j = i+1 to n-1:','      if a[j] < a[min]:','        min = j','    swap(a[i], a[min])','    a[i] is now in its final place']},
+  insertion:{title:'insertionSort(a)',lines:['procedure insertionSort(a):','  for i = 1 to n-1:','    key = a[i]','    j = i - 1','    while j >= 0 and a[j] > key:','      a[j+1] = a[j]        // shift right','      j = j - 1','    a[j+1] = key           // drop key in the gap']},
+  merge:{title:'mergeSort(a, lo, hi)',lines:['procedure mergeSort(a, lo, hi):','  if lo >= hi: return','  mid = (lo + hi) / 2','  mergeSort(a, lo, mid)','  mergeSort(a, mid+1, hi)','  merge(a, lo, mid, hi):','    copy a[lo..hi] into temp','    repeatedly take the smaller front value → a[k]','    copy whatever is left of either half']},
+  quick:{title:'quickSort(a, lo, hi)',lines:['procedure quickSort(a, lo, hi):','  if lo >= hi: return','  pivot = a[hi]; i = lo','  for j = lo to hi-1:','    if a[j] < pivot:','      swap(a[i], a[j]); i = i + 1','  swap(a[i], a[hi])     // pivot to final spot','  quickSort(a, lo, i-1)','  quickSort(a, i+1, hi)']}
+};
+const ALGO_NAME={bubble:'Bubble sort',selection:'Selection sort',insertion:'Insertion sort',merge:'Merge sort',quick:'Quick sort'};
+function sortFrames(algo,input){
+  const a=input.slice(), n=a.length, F=[], st={cmp:0,swp:0}, sorted=new Set();
+  const emit=(line,msg,hl={},kind)=>F.push({line,msg,s:{a:a.slice(),st:Object.assign({},st),sorted:[...sorted]},hl,kind});
+  emit(1,ALGO_NAME[algo]+' on '+n+' values: <code>['+a.join(', ')+']</code>. Click <b>Next</b> to see the first comparison, or <b>Play</b> to watch it run.');
+  const A={
+    bubble(){
+      for(let i=0;i<n-1;i++){
+        let swapped=false;
+        emit(2,'<b>Pass '+(i+1)+'.</b> Walk from index 0 to '+(n-2-i)+', comparing neighbours. The largest value in this range will end up at index '+(n-1-i)+'.',{range:[0,n-1-i]});
+        for(let j=0;j<n-1-i;j++){
+          st.cmp++; const gt=a[j]>a[j+1];
+          emit(5,'Compare a['+j+'] = '+a[j]+' with a['+(j+1)+'] = '+a[j+1]+'. '+(gt?a[j]+' &gt; '+a[j+1]+', so they are out of order.':a[j]+' ≤ '+a[j+1]+', already in order. No swap.'),{cmp:[j,j+1],range:[0,n-1-i],marks:{[j]:'j',[j+1]:'j+1'}});
+          if(gt){const t=a[j];a[j]=a[j+1];a[j+1]=t;st.swp++;swapped=true;
+            emit(6,'Swap them. '+a[j+1]+' moves right, '+a[j]+' moves left.',{swap:[j,j+1],range:[0,n-1-i],marks:{[j]:'j',[j+1]:'j+1'}});}
+        }
+        sorted.add(n-1-i);
+        emit(7,'End of pass '+(i+1)+': <b>'+a[n-1-i]+'</b> has bubbled to index '+(n-1-i)+' and will never move again.',{});
+        if(!swapped){emit(8,'This pass made <b>no swaps</b>, which proves every neighbour pair is in order. The array is sorted, so bubble sort stops early.',{});break;}
+      }
+    },
+    selection(){
+      for(let i=0;i<n-1;i++){
+        let m=i;
+        emit(3,'<b>Pass '+(i+1)+'.</b> Find the smallest value in a['+i+'..'+(n-1)+']. Start by assuming it is a['+i+'] = '+a[i]+'.',{range:[i,n-1],min:i,marks:{[i]:'min'}});
+        for(let j=i+1;j<n;j++){
+          st.cmp++; const lt=a[j]<a[m];
+          emit(5,'Compare a['+j+'] = '+a[j]+' with the current minimum a['+m+'] = '+a[m]+'. '+(lt?a[j]+' is smaller.':'Not smaller, keep the minimum.'),{cmp:[j],min:m,range:[i,n-1],marks:{[j]:'j',[m]:'min'}});
+          if(lt){m=j; emit(6,'New minimum: <code>min = '+j+'</code> (value '+a[j]+').',{min:m,range:[i,n-1],marks:{[m]:'min'}});}
+        }
+        if(m!==i){const t=a[i];a[i]=a[m];a[m]=t;st.swp++;
+          emit(7,'Swap a['+i+'] and a['+m+']. The minimum, '+a[i]+', moves to the front of the unsorted part.',{swap:[i,m],range:[i,n-1]});}
+        else emit(7,'The minimum is already at index '+i+', so no swap is needed.',{min:i,range:[i,n-1]});
+        sorted.add(i);
+        emit(8,'<b>'+a[i]+'</b> is now final at index '+i+'.',{});
+      }
+      sorted.add(n-1);
+    },
+    insertion(){
+      emit(2,'A single value is trivially sorted, so the sorted prefix starts as just a[0] = '+a[0]+'.',{prefix:1});
+      for(let i=1;i<n;i++){
+        const key=a[i]; let j=i-1;
+        emit(3,'Lift out <b>key = a['+i+'] = '+key+'</b>. Values a[0..'+(i-1)+'] are sorted among themselves; find where '+key+' belongs among them.',{held:key,cur:i,prefix:i,marks:{[i]:'key'}});
+        while(j>=0){
+          st.cmp++;
+          if(a[j]>key){
+            emit(5,'a['+j+'] = '+a[j]+' &gt; '+key+', so '+a[j]+' must move one place right.',{cmp:[j],held:key,prefix:i+1,marks:{[j]:'j'}});
+            a[j+1]=a[j]; st.swp++;
+            emit(6,'Shift: a['+(j+1)+'] = '+a[j]+'. (For a moment the value appears twice; the key is safely held aside.)',{write:[j+1],held:key,prefix:i+1,marks:{[j]:'j'}});
+            j--;
+          }else{
+            emit(5,'a['+j+'] = '+a[j]+' ≤ '+key+'. Stop: the key belongs right after it.',{cmp:[j],held:key,prefix:i+1,marks:{[j]:'j'}});
+            break;
+          }
+        }
+        a[j+1]=key; st.swp++;
+        emit(8,(j<0?'Reached the left end: '+key+' is the smallest so far. ':'')+'Drop the key into a['+(j+1)+']. Now the first '+(i+1)+' values are in order.',{write:[j+1],prefix:i+1});
+      }
+    },
+    merge(){
+      const ms=(lo,hi)=>{
+        if(lo>=hi) return;
+        const mid=(lo+hi)>>1;
+        emit(3,'Split a['+lo+'..'+hi+'] at mid = '+mid+' into a['+lo+'..'+mid+'] and a['+(mid+1)+'..'+hi+']. Sort each half first.',{range:[lo,hi],marks:{[lo]:'lo',[mid]:'mid',[hi]:'hi'}});
+        ms(lo,mid); ms(mid+1,hi);
+        const tmp=a.slice(lo,hi+1), m=mid-lo;
+        emit(7,'Both halves are sorted. Merge a['+lo+'..'+mid+'] and a['+(mid+1)+'..'+hi+']: copy them into temp ['+tmp.join(', ')+'].',{range:[lo,hi],tmp:{v:tmp,m,li:0,ri:m+1}});
+        let i=0,j=m+1,k=lo;
+        while(i<=m&&j<tmp.length){
+          const L=tmp[i],R=tmp[j]; st.cmp++;
+          const T={v:tmp,m,li:i,ri:j};
+          if(L<=R){a[k]=L;i++;emit(8,'Compare the fronts: left '+L+' vs right '+R+'. '+L+' ≤ '+R+', so take <b>'+L+'</b> from the left half → a['+k+'].',{range:[lo,hi],write:[k],tmp:T});}
+          else{a[k]=R;j++;emit(8,'Compare the fronts: left '+L+' vs right '+R+'. '+R+' &lt; '+L+', so take <b>'+R+'</b> from the right half → a['+k+'].',{range:[lo,hi],write:[k],tmp:T});}
+          st.swp++;k++;
+        }
+        while(i<=m){a[k]=tmp[i];st.swp++;emit(9,'The right half is used up. Copy the leftover '+tmp[i]+' → a['+k+'].',{range:[lo,hi],write:[k],tmp:{v:tmp,m,li:i,ri:j}});i++;k++;}
+        while(j<tmp.length){a[k]=tmp[j];st.swp++;emit(9,'The left half is used up. Copy the leftover '+tmp[j]+' → a['+k+'].',{range:[lo,hi],write:[k],tmp:{v:tmp,m,li:i,ri:j}});j++;k++;}
+        if(lo===0&&hi===n-1) for(let x=0;x<n;x++) sorted.add(x);
+        emit(9,'a['+lo+'..'+hi+'] is now one sorted run: ['+a.slice(lo,hi+1).join(', ')+'].',{range:[lo,hi]});
+      };
+      ms(0,n-1);
+    },
+    quick(){
+      const qs=(lo,hi)=>{
+        if(lo>hi) return;
+        if(lo===hi){sorted.add(lo);emit(2,'a['+lo+'] = '+a[lo]+' is a range of one value, so it is already in its final place.',{range:[lo,hi]});return;}
+        const p=a[hi]; let i=lo;
+        emit(3,'Partition a['+lo+'..'+hi+']. Pivot = last value, a['+hi+'] = <b>'+p+'</b>. Index <code>i</code> marks where the next value smaller than the pivot will go.',{range:[lo,hi],pivot:hi,marks:{[i]:'i',[hi]:'pivot'}});
+        for(let j=lo;j<hi;j++){
+          st.cmp++; const lt=a[j]<p;
+          emit(5,'Compare a['+j+'] = '+a[j]+' with pivot '+p+'. '+(lt?'Smaller, so it belongs on the left side.':'Not smaller, so it stays on the right side.'),{cmp:[j],range:[lo,hi],pivot:hi,marks:Object.assign({[hi]:'pivot'},{[i]:'i'},{[j]:i===j?'i,j':'j'})});
+          if(lt){
+            if(i!==j){const t=a[i];a[i]=a[j];a[j]=t;st.swp++;emit(6,'Swap a['+i+'] and a['+j+'] to move '+a[i]+' into the "smaller" zone, then i = '+(i+1)+'.',{swap:[i,j],range:[lo,hi],pivot:hi,marks:{[i+1]:'i',[hi]:'pivot'}});}
+            else emit(6,'a['+j+'] is already at position i, so no swap is needed. Advance i to '+(i+1)+'.',{range:[lo,hi],pivot:hi,marks:{[i+1]:'i',[hi]:'pivot'}});
+            i++;
+          }
+        }
+        if(i!==hi){const t=a[i];a[i]=a[hi];a[hi]=t;st.swp++;}
+        sorted.add(i);
+        emit(7,'Put the pivot '+p+' at index '+i+'. Everything to its left is smaller and everything to its right is ≥ '+p+', so <b>'+p+' is in its final position</b>. Next: sort each side.',{swap:i!==hi?[i,hi]:null,range:[lo,hi]});
+        qs(lo,i-1); qs(i+1,hi);
+      };
+      qs(0,n-1);
+    }
+  };
+  A[algo]();
+  for(let x=0;x<n;x++) sorted.add(x);
+  emit(0,'<b>Sorted:</b> <code>['+a.join(', ')+']</code>. '+ALGO_NAME[algo]+' made <b>'+st.cmp+'</b> comparisons and <b>'+st.swp+'</b> '+(algo==='insertion'||algo==='merge'?'writes':'swaps')+' on this input of '+n+' values.',{},'ok');
+  return F;
+}
+function renderSort(f){
+  const a=f.s.a, n=a.length, hl=f.hl||{}, max=Math.max(...a,1), sorted=new Set(f.s.sorted);
+  const has=(k,x)=>Array.isArray(hl[k])&&hl[k].includes(x);
+  const showVals=n<=22;
+  let bars='',labels='',marks='',idx='';
+  for(let i=0;i<n;i++){
+    let c='';
+    if(has('swap',i)) c='swap'; else if(has('write',i)) c='write'; else if(has('cmp',i)) c='cmp';
+    else if(hl.pivot===i) c='pivot'; else if(hl.min===i) c='pivot'; else if(sorted.has(i)) c='sorted'; else if(hl.prefix&&i<hl.prefix) c='prefix';
+    if(hl.range&&(i<hl.range[0]||i>hl.range[1])&&!sorted.has(i)) c+=' dim';
+    bars+='<div class="bar '+c+'" style="height:'+Math.max(3,a[i]/max*100)+'%" title="a['+i+'] = '+a[i]+'"></div>';
+    labels+='<span>'+(showVals?a[i]:'')+'</span>';
+    idx+='<span>'+(showVals?i:'')+'</span>';
+    marks+='<span>'+(hl.marks&&hl.marks[i]!==undefined?esc(hl.marks[i]):'')+'</span>';
+  }
+  let tmp='';
+  if(hl.tmp){const T=hl.tmp; tmp='<div class="tmp"><span class="lbl">temp</span>'+T.v.map((v,k)=>{const used=(k<=T.m&&k<T.li)||(k>T.m&&k<T.ri); const cur=k===T.li&&T.li<=T.m||k===T.ri&&T.ri<T.v.length; return (k===T.m+1?'<span class="mid"></span>':'')+'<span class="t'+(used?' used':'')+(cur?' cur':'')+'">'+v+'</span>';}).join('')+'</div>';}
+  const st=f.s.st, algo=sortAlgo;
+  $('sort-stage').innerHTML='<div class="sort-head"><dl class="facts" style="flex:1 1 300px"><div><dt>Comparisons</dt><dd>'+st.cmp+'</dd></div><div><dt>'+(algo==='insertion'||algo==='merge'?'Writes':'Swaps')+'</dt><dd>'+st.swp+'</dd></div><div><dt>n</dt><dd>'+n+'</dd></div></dl>'+(hl.held!==undefined?'<span class="held">key = '+hl.held+'</span>':'')+'</div>'+
+    '<div class="bars">'+bars+'</div><div class="blabels">'+labels+'</div><div class="blabels idx">'+idx+'</div><div class="bmarks">'+marks+'</div>'+tmp+
+    '<div class="legend"><span><i style="background:var(--cmp)"></i>Comparing</span><span><i style="background:var(--swap)"></i>Swap / write</span><span><i style="background:var(--pivot)"></i>Pivot / current min</span><span><i style="background:var(--done)"></i>Final position</span><span><i style="background:var(--bar);opacity:.35"></i>Outside active range</span></div>';
+}
+let sortAlgo='bubble', sortInput=[];
+const sortPlayer=new Player('sort',renderSort,5,false);
+function makeArray(kind,n){
+  const lin=i=>Math.round(8+i*(90/(n-1)));
+  let a;
+  if(kind==='nearly'){a=Array.from({length:n},(_,i)=>lin(i)); for(let t=0;t<Math.max(1,Math.floor(n/6));t++){const i=rand(0,n-2); const x=a[i]; a[i]=a[i+1]; a[i+1]=x;}}
+  else if(kind==='reversed') a=Array.from({length:n},(_,i)=>lin(n-1-i));
+  else if(kind==='few'){const vals=[20,45,70,95]; a=Array.from({length:n},()=>vals[rand(0,3)]);}
+  else a=Array.from({length:n},()=>rand(5,99));
+  return a;
+}
+function sortLoad(){
+  sortPlayer.load(sortFrames(sortAlgo,sortInput),SORT_CODE[sortAlgo],ALGO_NAME[sortAlgo],false);
+  document.querySelectorAll('.algo-card').forEach(c=>c.classList.toggle('sel',c.id==='card-'+sortAlgo));
+}
+function sortNew(){sortInput=makeArray($('sort-preset').value,+$('sort-size').value); $('sort-msg').classList.remove('err'); sortLoad();}
+$('sort-algo').onchange=e=>{sortAlgo=e.target.value; sortLoad();};
+$('sort-preset').onchange=sortNew;
+$('sort-new').onclick=sortNew;
+$('sort-size').oninput=e=>{$('sort-size-out').textContent=e.target.value;};
+$('sort-size').onchange=sortNew;
+$('sort-apply').onclick=()=>{
+  const nums=$('sort-custom').value.split(/[\s,;]+/).filter(Boolean).map(Number);
+  const msg=$('sort-msg');
+  if(nums.length<2||nums.length>30||nums.some(x=>!Number.isFinite(x)||x<0||x>999)){msg.textContent='Enter 2 to 30 whole numbers between 0 and 999, separated by commas or spaces.'; msg.classList.add('err'); return;}
+  msg.classList.remove('err'); msg.textContent='Using your '+nums.length+' values. Switch algorithms to compare them on the same input.';
+  sortInput=nums.map(x=>Math.round(x)); sortLoad();
+};
+$('sort-custom').addEventListener('keydown',e=>{if(e.key==='Enter') $('sort-apply').click();});
+sortInput=[38,27,43,3,9,82,10,56,21,64]; sortLoad();
+
+/* ---------------- routing + keyboard ---------------- */
+const PLAYERS={stack:stackPlayer,queue:queuePlayer,hash:hashPlayer,sorting:sortPlayer};
+let current='stack';
+function route(){
+  let v=location.hash.slice(1); if(!PLAYERS[v]) v='stack';
+  if(v!==current) PLAYERS[current].pause();
+  current=v;
+  Object.keys(PLAYERS).forEach(k=>{$('view-'+k).hidden=k!==v;});
+  document.querySelectorAll('nav.tabs a').forEach(a=>{if(a.dataset.view===v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');});
+}
+window.addEventListener('hashchange',()=>{route(); window.scrollTo(0,0);});
+route();
+document.addEventListener('keydown',e=>{
+  const t=e.target, tag=t&&t.tagName;
+  if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA'||e.altKey||e.ctrlKey||e.metaKey) return;
+  const p=PLAYERS[current];
+  if(e.key==='ArrowRight'){e.preventDefault(); p.next();}
+  else if(e.key==='ArrowLeft'){e.preventDefault(); p.prev();}
+  else if(e.key===' '&&tag!=='BUTTON'){e.preventDefault(); p.play();}
+});
+})();
+</script>
+</body>
+</html>
