@@ -4,6 +4,6 @@ Interactive, step-by-step visualizations of stacks, queues, hash tables (chainin
 
 Single static page (`index.html`), no build step. Hosted with GitHub Pages.
 
-## Mini activity
+## Activities
 
-The **Activity** tab (`#activity`) is a 13-item tracing exercise. Each student gets their own numbers, generated from their student ID. Answers are graded in the browser when submitted, and students download a result PDF to upload to the class submission page.
+The **Activity** tab (`#activity`) is a hub with seven graded activities: one 20-item activity per topic (`#activity-stack`, `#activity-queue`, `#activity-hash`, `#activity-sorting`, `#activity-tree`, `#activity-graph`) plus the original 13-item mixed review (`#activity-mixed`). Each student gets their own numbers, generated from their student ID. Answers are graded in the browser when submitted, and students download a result PDF to upload to the class submission page.

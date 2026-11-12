@@ -282,6 +282,20 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
 .stage-top{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:8px}
 
 /* activity */
+.hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin:8px 0 28px}
+.hub-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:8px;align-content:start;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .15s}
+.hub-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.hub-card .chip{justify-self:start}
+.hub-card h3{font-size:1.15rem}
+.hub-card p{margin:0;font-size:.9rem;color:var(--muted)}
+.hub-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;font-size:.8rem;color:var(--muted);border-top:1px solid var(--line-2);padding-top:8px;margin-top:2px}
+.hs{font-weight:600}.hs.done{color:var(--done)}.hs.prog{color:var(--cmp)}
+#hub-who{align-items:center}
+.back-row{margin:20px 0 -16px}
+.back{color:var(--accent);text-decoration:none;font-weight:500}
+.back:hover{text-decoration:underline}
+.fig-wrap{background:var(--surface-2);border:1px solid var(--line-2);border-radius:10px;padding:6px}
+.act-fig{max-width:520px;margin:0 auto}
 .act-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:14px;max-width:860px}
 .act-card h2{font-size:1.3rem}
 .act-card ul{margin:0;padding-left:1.2em;display:grid;gap:4px;max-width:70ch}
@@ -883,41 +897,56 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 </section>
 
-<!-- ===================== ACTIVITY ===================== -->
+<!-- ===================== ACTIVITIES ===================== -->
 <section class="view" id="view-activity" hidden>
-  <div class="intro">
-    <p class="eyebrow">Mini activity · 13 items · about 30 minutes</p>
-    <h1>Trace It by Hand</h1>
-    <p class="lede">Work out what each data structure and sorting algorithm does, step by step, the way you would on paper in an exam. Every student gets their own numbers, generated from their student ID.</p>
+  <div id="act-hub">
+    <div class="intro">
+      <p class="eyebrow">Activities · your own version · graded when you submit</p>
+      <h1>Activities</h1>
+      <p class="lede">Pick a topic. Every activity is generated from your student ID, so your numbers differ from your classmates'. Submit to see your score, then download the result PDF and upload it to the class submission page.</p>
+    </div>
+    <div class="act-who" id="hub-who"></div>
+    <div class="hub-grid" id="hub-grid"></div>
+    <div class="confirm" id="hub-confirm" hidden></div>
   </div>
 
-  <div class="act-card" id="act-start">
-    <h2>Before you start</h2>
-    <ul>
-      <li>Enter your details exactly as they appear in the class list. Your student ID decides your version of the activity.</li>
-      <li>Your answers are saved in this browser as you type, so a page refresh won't lose them.</li>
-      <li>You won't see whether an answer is right until you submit. After submitting, answers are locked and you'll see your score.</li>
-      <li>Then click <b>Download result PDF</b> and upload that file to the class submission page.</li>
-    </ul>
-    <form class="act-form" id="act-form" novalidate>
-      <div class="field"><label for="act-name">Full name</label><input type="text" id="act-name" maxlength="60" autocomplete="name" placeholder="Juan Dela Cruz"></div>
-      <div class="field"><label for="act-sid">Student ID</label><input type="text" id="act-sid" maxlength="20" autocomplete="off" placeholder="202312345"></div>
-      <div class="field"><label for="act-section">Section</label><input type="text" id="act-section" maxlength="20" autocomplete="off" placeholder="BSCS 2A"></div>
-      <button class="btn primary" type="submit">Start activity</button>
-    </form>
-    <p class="err-text" id="act-form-err" hidden></p>
-  </div>
+  <div id="act-run" hidden>
+    <p class="back-row"><a href="#activity" class="back">← All activities</a></p>
+    <div class="intro">
+      <p class="eyebrow" id="act-eyebrow"></p>
+      <h1 id="act-title"></h1>
+      <p class="lede" id="act-lede"></p>
+    </div>
 
-  <div id="act-body" hidden>
-    <div class="act-card" id="act-result" hidden></div>
-    <div class="act-who" id="act-who"></div>
-    <ol class="aq-list" id="act-items"></ol>
-    <div class="act-bar" id="act-bar">
-      <span class="prog" id="act-prog"></span>
-      <span class="grow"></span>
-      <button class="btn ghost danger" id="act-restart" type="button">Not you? Start over</button>
-      <button class="btn primary" id="act-submit" type="button">Submit answers</button>
-      <div class="confirm" id="act-confirm" hidden></div>
+    <div class="act-card" id="act-start">
+      <h2>Before you start</h2>
+      <ul>
+        <li>Enter your details exactly as they appear in the class list. Your student ID decides your version of the activity.</li>
+        <li>Your answers are saved in this browser as you type, so a page refresh won't lose them.</li>
+        <li>Work each item out by hand, the way you would on paper in an exam. Typed answers can be separated by commas or spaces.</li>
+        <li>You won't see whether an answer is right until you submit. After submitting, answers are locked and you'll see your score.</li>
+        <li>Then click <b>Download result PDF</b> and upload that file to the class submission page.</li>
+      </ul>
+      <form class="act-form" id="act-form" novalidate>
+        <div class="field"><label for="act-name">Full name</label><input type="text" id="act-name" maxlength="60" autocomplete="name" placeholder="Juan Dela Cruz"></div>
+        <div class="field"><label for="act-sid">Student ID</label><input type="text" id="act-sid" maxlength="20" autocomplete="off" placeholder="202312345"></div>
+        <div class="field"><label for="act-section">Section</label><input type="text" id="act-section" maxlength="20" autocomplete="off" placeholder="BSCS 2A"></div>
+        <button class="btn primary" type="submit">Start activity</button>
+      </form>
+      <p class="err-text" id="act-form-err" hidden></p>
+    </div>
+
+    <div id="act-body" hidden>
+      <div class="act-card" id="act-result" hidden></div>
+      <div class="act-who" id="act-who"></div>
+      <ol class="aq-list" id="act-items"></ol>
+      <div class="act-bar" id="act-bar">
+        <span class="prog" id="act-prog"></span>
+        <span class="grow"></span>
+        <button class="btn ghost danger" id="act-restart" type="button">Not you? Start over</button>
+        <button class="btn primary" id="act-submit" type="button">Submit answers</button>
+        <div class="confirm" id="act-confirm" hidden></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1836,7 +1865,7 @@ const PLAYERS={stack:stackPlayer,queue:queuePlayer,hash:hashPlayer,sorting:sortP
 let current='stack';
 function route(){
   const VIEWS=['stack','queue','hash','sorting','tree','graph','activity'];
-  let v=location.hash.slice(1); if(!VIEWS.includes(v)) v='stack';
+  let v=location.hash.slice(1); if(v.indexOf('activity-')===0) v='activity'; if(!VIEWS.includes(v)) v='stack';
   if(v!==current&&PLAYERS[current]) PLAYERS[current].pause();
   current=v;
   VIEWS.forEach(k=>{$('view-'+k).hidden=k!==v;});
@@ -1857,23 +1886,23 @@ document.addEventListener('keydown',e=>{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 /* ======================================================
-   MINI ACTIVITY: per-student variants, graded on submit, PDF result
+   ACTIVITIES: per-student variants, graded on submit, PDF result
    ====================================================== */
 (function(){
 "use strict";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const KEY='dsa-activity-v1';
-const store={
-  get(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}},
-  set(v){try{localStorage.setItem(KEY,JSON.stringify(v));}catch(e){}},
-  clear(){try{localStorage.removeItem(KEY);}catch(e){}}
-};
+const storeFor=key=>({
+  get(){try{return JSON.parse(localStorage.getItem(key)||'null');}catch(e){return null;}},
+  set(v){try{localStorage.setItem(key,JSON.stringify(v));}catch(e){}},
+  clear(){try{localStorage.removeItem(key);}catch(e){}}
+});
+const profile=storeFor('dsa-profile-v1');
 function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
 function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 const normId=s=>String(s||'').trim().toUpperCase().replace(/\s+/g,'');
-const variantOf=sid=>hashStr('dsa-act|'+normId(sid)).toString(36).toUpperCase().padStart(6,'0').slice(-6);
 
+/* ---------- original mixed activity (kept exactly, so existing versions don't change) ---------- */
 function buildItems(sid){
   const r=mulberry(hashStr('dsa-act|'+normId(sid)));
   const ri=(a,b)=>a+Math.floor(r()*(b-a+1));
@@ -1966,24 +1995,351 @@ function buildItems(sid){
   return items;
 }
 
+
+/* ---------- toolkit for the topic activities ---------- */
+function kit(r){
+  const ri=(a,b)=>a+Math.floor(r()*(b-a+1));
+  const pick=a=>a[Math.floor(r()*a.length)];
+  const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;};
+  const distinct=(n,lo,hi)=>{const s=new Set();while(s.size<n)s.add(ri(lo,hi));return [...s];};
+  const chips=a=>'<span class="arr">'+a.map(x=>'<span>'+esc(x)+'</span>').join('')+'</span>';
+  const items=[];
+  const add=o=>{items.push(o);};
+  const mc=(tag,prompt,correct,wrongs,extra)=>{const opts=shuffle([correct].concat(wrongs)); add(Object.assign({topic:tag,type:'choice',choices:opts,answer:String(opts.indexOf(correct)),prompt},extra||{}));};
+  const tfPool=(pool,n)=>shuffle(pool).slice(0,n).forEach(([p,t])=>add({topic:'True or false',type:'choice',choices:['True','False'],answer:t?'0':'1',prompt:p}));
+  const num=(tag,prompt,answer,given,ph,extra)=>add(Object.assign({topic:tag,type:'number',answer:String(answer),prompt,given,ph:ph||'a number'},extra||{}));
+  const lst=(tag,prompt,arr,given,ph,extra)=>add(Object.assign({topic:tag,type:'list',answer:arr.map(x=>typeof x==='number'?String(x):String(x).toUpperCase()).join(','),prompt,given,ph:ph||'separate with commas'},extra||{}));
+  const chars=(tag,prompt,s,given,ph)=>add({topic:tag,type:'chars',answer:s,prompt,given,ph});
+  const dec=(tag,prompt,val,given)=>add({topic:tag,type:'decimal',answer:String(val),prompt,given,ph:'e.g. 0.5'});
+  return {ri,pick,shuffle,distinct,chips,items,mc,tfPool,num,lst,chars,dec};
+}
+const sortNum=a=>a.slice().sort((x,y)=>x-y);
+const BAL=['{[()()]}','([]{[]})','[({})()]','{()[{}]}','(([]){})','({[]})[]'];
+const UNBAL=['([)]','(()','{[}]','())(','[(])','{{}','({)}','[[]]]','{(})'];
+const BADPOS=['([)]','{[(])}','(]','{(})','[(])','([{}])]','())(','{[}]'];
+function firstErr(s){const st=[],pr={')':'(',']':'[','}':'{'};for(let i=0;i<s.length;i++){const c=s[i];if('([{'.includes(c))st.push(c);else{if(!st.length||st.pop()!==pr[c])return i;}}return s.length;}
+
+/* ---------- STACK ---------- */
+function buildStack(r){
+  const K=kit(r), {ri,pick,shuffle,distinct,chips,mc,tfPool,num,lst,chars}=K;
+  mc('Concept','Which item does <code>pop()</code> remove from a stack?','The item that was pushed most recently',['The item that was pushed first','The smallest item in the stack','The item in the middle of the stack']);
+  const pat=pick(['PPOPPPOP','PPPOPOPP','PPOPPOPP','PPPOOPPP','PPOPPPOO']);
+  const sv=distinct(8,10,99); let k=0; const st=[], so=[];
+  for(const c of pat){if(c==='P'){const x=sv[k++];st.push(x);so.push('push('+x+')');}else{st.pop();so.push('pop()');}}
+  const sOps='<code>'+so.join(', ')+'</code>';
+  lst('Trace','Start with an empty stack and run these operations in order. Write the final contents from <b>bottom to top</b>.',st,sOps,'e.g. 4, 18, 7');
+  num('Trace','After the same operations, what does <code>peek()</code> return?',st[st.length-1],sOps);
+  const a=ri(5,9), b=ri(2,a-1), c=ri(2,6), d=ri(1,3);
+  num('Trace','A stack starts empty. You push '+a+' items, pop '+b+', push '+c+' more, then pop '+d+'. How many items are in the stack now?',a-b+c-d);
+  const p=ri(4,7), q=ri(1,p-1);
+  num('Array stack','An array-based stack has capacity 8 and starts with <code>top = -1</code>. After '+p+' pushes and then '+q+' pops, what is the value of <code>top</code>?',p-q-1,null,'index');
+  mc('Array stack','An array stack has capacity <code>n</code> and <code>top</code> starts at -1. When must <code>push</code> report <b>overflow</b>?','top == n - 1',['top == n','top == 0','top == -1'],{mono:true});
+  mc('Errors','What happens when <code>pop()</code> is called on an empty stack?','Stack underflow: there is nothing to remove, so it must report an error',['Stack overflow: the stack is too full','It returns 0 and carries on normally','It removes the bottom item instead']);
+  mc('Complexity','In an array-based stack that still has room, how long do <code>push</code> and <code>pop</code> take?','O(1)',['O(n)','O(log n)','O(n²)']);
+  const rv=distinct(5,1,9);
+  lst('Code reading','What does this code print, in order?',rv.slice().reverse(),'<code>s = empty stack<br>for x in ['+rv.join(', ')+']: s.push(x)<br>while not s.isEmpty(): print(s.pop())</code>');
+  mc('Brackets','A stack-based checker reads each string from left to right. Which string is <b>balanced</b>?',pick(BAL),shuffle(UNBAL).slice(0,3),{mono:true});
+  const es=pick(BADPOS);
+  num('Brackets','The checker reads <code>'+esc(es)+'</code>. At which character index (counting from 0) does it <b>first</b> detect a problem?',firstErr(es),null,'index');
+  const bal=pick(BAL), kk=ri(2,bal.length-3), stk=[];
+  for(let i=0;i<=kk;i++){const ch=bal[i]; if('([{'.includes(ch)) stk.push(ch); else stk.pop();}
+  chars('Brackets','The checker reads <code>'+esc(bal)+'</code>. What is on the stack, <b>bottom to top</b>, right after it processes the character at index '+kk+' (counting from 0)? Type the brackets with no spaces, or type <code>empty</code>.',stk.join('')||'EMPTY',null,'e.g. {[(');
+  const x=ri(2,9), y=ri(2,9), z=ri(2,9);
+  const pf=pick([{e:x+' '+y+' + '+z+' *',v:(x+y)*z},{e:x+' '+y+' '+z+' * +',v:x+y*z},{e:x+' '+y+' * '+z+' +',v:x*y+z}]);
+  num('Postfix','Evaluate the postfix expression <code>'+pf.e+'</code> with a stack: numbers are pushed, and each operator pops two values and pushes the result.',pf.v);
+  lst('Postfix','While evaluating <code>'+x+' '+y+' '+z+' * +</code>, what is on the stack (bottom to top) right <b>before</b> the <code>+</code> is processed?',[x,y*z]);
+  mc('Application','Which of these is naturally implemented with a stack?',pick(['Undo in a text editor','The browser Back button','Matching opening and closing HTML tags','Keeping track of function calls and returns']),shuffle(['A printer handling jobs in the order they arrive','Serving customers in order of arrival','Round-robin CPU scheduling','Looking up a word\'s definition by its spelling']).slice(0,3));
+  mc('Call stack','<code>main</code> calls <code>f</code>, <code>f</code> calls <code>g</code>, and <code>g</code> calls <code>h</code>. While <code>h</code> is running, what is on the call stack from bottom to top?','main, f, g, h',['h, g, f, main','main, h','h only'],{mono:true});
+  const fk=ri(3,7);
+  num('Recursion','<code>fact(n)</code> returns 1 when <code>n == 0</code> and otherwise returns <code>n * fact(n - 1)</code>. When you call <code>fact('+fk+')</code>, how many <code>fact</code> calls are on the call stack at the deepest point?',fk+1);
+  mc('Linked-list stack','A stack is built on a singly linked list. Where should <code>push</code> add the new node so that push and pop are both O(1)?','At the head (front) of the list',['At the tail, after walking to the end','In sorted position','In the middle of the list']);
+  tfPool([['<code>peek()</code> removes the top item from the stack.',false],['Popping every item off a stack returns them in the reverse of the order they were pushed.',true],['A stack can be implemented with either an array or a linked list.',true],['Using only push, pop and peek, you can read the bottom item of a stack without changing the stack.',false],['The call stack overflows when a recursive function never reaches its base case.',true],['In a stack, the first item pushed is the first item popped.',false]],2);
+  return K.items;
+}
+
+/* ---------- QUEUE ---------- */
+function buildQueue(r){
+  const K=kit(r), {ri,pick,shuffle,distinct,chips,mc,tfPool,num,lst}=K;
+  mc('Concept','Which item does <code>dequeue()</code> remove from a queue?','The item that has waited longest (it was enqueued first)',['The item that was enqueued most recently','The smallest item','A random item']);
+  const pat=pick(['EEDEEDED','EEEDDEEE','EEDEDEEE','EEEDEEDD','EEDEEEDD']);
+  const qv=distinct(6,10,99); let k=0; const q=[], qo=[]; let lastD=null;
+  for(const c of pat){if(c==='E'){const x=qv[k++];q.push(x);qo.push('enqueue('+x+')');}else{lastD=q.shift();qo.push('dequeue()');}}
+  const g='<code>'+qo.join(', ')+'</code>';
+  lst('Trace','Start with an empty queue and run these operations. Write the final contents from <b>front to rear</b>.',q,g,'e.g. 12, 40, 7');
+  num('Trace','In the same sequence, what value does the <b>last</b> <code>dequeue()</code> return?',lastD,g);
+  const kq=ri(4,6), mq=ri(2,3), eq=ri(Math.max(7-kq,1),6-kq+mq);
+  const Q={front:0,rear:5}, cops=[], cv=distinct(kq+eq,10,99); let qi=0;
+  for(let t=0;t<kq;t++){Q.rear=(Q.rear+1)%6;cops.push('enqueue('+cv[qi++]+')');}
+  for(let t=0;t<mq;t++){Q.front=(Q.front+1)%6;cops.push('dequeue()');}
+  for(let t=0;t<eq;t++){Q.rear=(Q.rear+1)%6;cops.push('enqueue('+cv[qi++]+')');}
+  const cg='<span>Circular array, capacity 6. Starts empty: front = 0, rear = 5, count = 0.</span><span>enqueue: rear = (rear + 1) % 6 · dequeue: front = (front + 1) % 6</span><code>'+cops.join(', ')+'</code>';
+  num('Circular array','Run these operations on the circular queue below. What is <code>front</code> afterwards?',Q.front,cg,'index');
+  num('Circular array','After the same operations, what is <code>rear</code>?',Q.rear,cg,'index');
+  const cap=pick([5,6,8,10]), rr=pick([cap-1,cap-1,ri(0,cap-2)]);
+  num('Circular array','In a circular queue with capacity '+cap+', <code>rear</code> is '+rr+'. After one more enqueue, what is <code>rear</code>?',(rr+1)%cap,null,'index');
+  mc('Circular array','Why are array-based queues usually treated as circular?','So slots freed by dequeue at the start can be reused without shifting items',['To keep the items in sorted order','To reach the middle item in O(1)','So that enqueue can run in O(log n)']);
+  mc('Complexity','A queue is stored in a plain array with the front always at index 0, so every dequeue shifts the remaining items left. How long does dequeue take?','O(n)',['O(1)','O(log n)','O(n²)']);
+  const c2=pick([8,10,12]), f2=ri(Math.floor(c2/2),c2-1), len=ri(3,c2-2), r2=(f2+len-1)%c2;
+  num('Circular array','A circular queue has capacity '+c2+', <code>front = '+f2+'</code> and <code>rear = '+r2+'</code>, and it is not empty. How many items does it hold?',len);
+  mc('Circular array','A circular queue stores only <code>front</code> and <code>rear</code>, with no <code>count</code>. Why do many implementations leave one slot unused?','Otherwise a full queue and an empty queue would look the same',['To make dequeue faster','Because the last index can never be used','To store the queue size in that slot']);
+  mc('Application','Which of these is naturally handled with a queue?',pick(['Breadth-first search','A printer handling jobs in arrival order','Serving customers in the order they arrive','Buffering keystrokes before a program reads them']),shuffle(['Undo in a text editor','Checking balanced brackets','The browser Back button','Evaluating a postfix expression']).slice(0,3));
+  mc('Variants','What does a <b>deque</b> (double-ended queue) allow in O(1)?','Adding and removing at both the front and the rear',['Adding at the rear and removing from the middle','Finding the smallest item','Removing only the most recently added item']);
+  mc('Variants','In a <b>priority queue</b>, which item does <code>remove()</code> return?','The item with the highest priority',['The item that was added first','The item that was added last','A random item']);
+  const nm=shuffle(['A','B','C','D','E','F']).slice(0,5), pr=shuffle([1,2,3,4,5,6,7,8,9]).slice(0,5);
+  const order=nm.map((n,i)=>[n,pr[i]]).sort((a,b)=>a[1]-b[1]).map(x=>x[0]);
+  lst('Variants','Tasks are inserted into a priority queue in this order, where a <b>smaller number means higher priority</b>. In what order are they removed?',order,'<code>'+nm.map((n,i)=>n+' (priority '+pr[i]+')').join(', ')+'</code>','e.g. B, A, C');
+  const n=ri(4,6), vals=distinct(n,10,99), rot=ri(n+1,2*n+2);
+  num('Code reading','What does this code print?',vals[rot%n],'<code>q = queue holding ['+vals.join(', ')+']   (front first)<br>repeat '+rot+' times: q.enqueue(q.dequeue())<br>print(q.peek())</code>');
+  const hp=distinct(ri(5,7),10,99), m=ri(2,4);
+  num('Simulation','People stand in a queue (front first). Each round, the person at the front moves to the rear '+(m-1)+' time'+(m-1===1?'':'s')+', and then the person now at the front is removed. Who is removed in the first round?',hp[(m-1)%hp.length],'<code>['+hp.join(', ')+']</code>');
+  mc('Variants','A logger keeps only the newest 100 messages in a fixed-size array and overwrites the oldest one when it is full. What structure is this?','A ring (circular) buffer',['A stack','A hash table','A binary search tree']);
+  mc('Errors','What happens when <code>dequeue()</code> is called on an empty queue?','Queue underflow: there is nothing to remove, so it must report an error',['Queue overflow','It returns the rear item instead','It resets front and rear to 0 and returns 0']);
+  tfPool([['In a queue, the first item enqueued is the first item dequeued.',true],['<code>enqueue</code> adds the new item at the front of the queue.',false],['A linked-list queue that keeps both head and tail pointers can enqueue and dequeue in O(1).',true],['In a circular array with capacity 8, the index that comes after 7 is 8.',false],['<code>peek()</code> on a queue removes the front item.',false],['Breadth-first search keeps the nodes waiting to be visited in a queue.',true]],2);
+  return K.items;
+}
+
+/* ---------- HASH TABLE ---------- */
+function buildHash(r){
+  const K=kit(r), {ri,pick,shuffle,distinct,mc,tfPool,num,lst,dec}=K;
+  mc('Concept','What is the job of the hash function in a hash table?','Turn a key into the array index where its entry belongs',['Sort the keys','Encrypt the stored values','Count how many entries there are']);
+  const w=pick(['cat','dog','sun','map','box','key','owl','pen','ice','jar','web','fox','bee','hat']);
+  num('Hash function','A table with 7 buckets computes <code>index = (sum of the key\'s character codes) mod 7</code>. Which bucket does <code>"'+w+'"</code> go to?',[...w].reduce((a,c)=>a+c.charCodeAt(0),0)%7,'<span>Character codes: a = 97, b = 98, c = 99, d = 100, … , z = 122</span>','0 to 6');
+  const k1=ri(100,999), m1=pick([7,11,13]);
+  num('Hash function','A table with '+m1+' buckets uses <code>index = key mod '+m1+'</code>. Which bucket does key <b>'+k1+'</b> go to?',k1%m1,null,'index');
+  mc('Collisions','What is a <b>collision</b> in a hash table?','Two different keys map to the same index',['The same key is inserted twice','The table runs out of memory','A key maps to an index outside the array']);
+  const ana=pick([['listen','silent'],['evil','vile'],['stop','pots'],['night','thing'],['dusty','study'],['heart','earth']]);
+  mc('Collisions','The hash function adds up the character codes of the key. Which pair of keys collides <b>no matter how many buckets</b> the table has?','"'+ana[0]+'" and "'+ana[1]+'"',shuffle(['"cat" and "car"','"tree" and "trek"','"book" and "look"','"pen" and "pin"','"rain" and "ruin"']).slice(0,3));
+  const ck=distinct(7,10,60), B=[[],[],[],[],[]]; ck.forEach(x=>B[x%5].push(x));
+  let bi=0; B.forEach((b,i)=>{if(b.length>B[bi].length) bi=i;});
+  const cg='<span>5 buckets · separate chaining · index = key mod 5 · insert in this order:</span><code>'+ck.join(', ')+'</code>';
+  lst('Chaining','Which keys end up in bucket '+bi+', in chain order? (New keys are appended to the end of the chain.)',B[bi],cg);
+  num('Chaining','After all the inserts, how many buckets are <b>empty</b>?',B.filter(b=>!b.length).length,cg);
+  let pk=[], fin=0, probes=1;
+  for(let t=0;t<400;t++){pk=distinct(5,10,80); const sl=[null,null,null,null,null,null,null]; pk.forEach(x=>{let i=x%7,p=1; while(sl[i]!==null){i=(i+1)%7;p++;} sl[i]=x; fin=i; probes=p;}); if(probes>=3) break;}
+  const pg='<span>7 slots · linear probing · index = key mod 7 · insert in this order:</span><code>'+pk.join(', ')+'</code>';
+  num('Linear probing','Which slot does the last key, '+pk[4]+', end up in?',fin,pg,'0 to 6');
+  num('Linear probing','How many slots are examined while inserting that last key, counting the slot it finally lands in?',probes,pg);
+  const lf=pick([[3,4],[6,8],[9,12],[5,10],[7,10],[12,16],[10,8],[14,7]]);
+  dec('Load factor','A hash table has '+lf[1]+' buckets and holds '+lf[0]+' entries. What is its load factor α? (A decimal or a fraction is fine.)',lf[0]/lf[1]);
+  mc('Resizing','The load factor goes past the table\'s limit (say 0.75). What does a typical implementation do?','Allocate a bigger array and re-insert every entry',['Refuse all new inserts','Delete the oldest entries','Sort the entries to make room']);
+  mc('Resizing','When the table grows, why can\'t entries just be copied to the same positions in the new array?','Each key\'s index depends on the table size, so it must be recomputed',['The new array holds different keys','Copying is slower than re-inserting','Hash values change every time they are computed']);
+  mc('Deletion','With linear probing, why does <code>remove</code> leave a DELETED marker (tombstone) instead of making the slot EMPTY?','An EMPTY slot would stop later searches early and hide keys that probed past it',['To save memory','Because EMPTY slots can never be reused','So that the keys stay sorted']);
+  const h0=ri(0,6), L=ri(3,4), ch=shuffle([1,2,3,4,5,6,7,8,9,10,11]).slice(0,L).map(j=>h0+7*j), dp=ri(1,L-2);
+  const slots=[null,null,null,null,null,null,null]; ch.forEach((x,j)=>{slots[(h0+j)%7]=j===dp?'DELETED':x;});
+  num('Deletion','This linear-probing table (7 slots, index = key mod 7) has a tombstone where a key was removed. How many slots does <code>search('+ch[L-1]+')</code> examine, counting the slot where it finds the key?',L,'<code>'+slots.map((s,i)=>'['+i+'] '+(s===null?'EMPTY':s)).join('   ')+'</code>');
+  mc('Complexity','With a good hash function and a low load factor, what is the <b>average</b> time for <code>get</code>?','O(1)',['O(log n)','O(n)','O(n log n)']);
+  mc('Complexity','What makes a hash table lookup take O(n) in the worst case?','Every key hashes to the same bucket',['The table has a prime number of buckets','The keys are strings','The values are very large']);
+  mc('Design','Why are hash table sizes often chosen to be prime numbers?','Keys that share a pattern spread more evenly across the buckets',['A prime size uses less memory','The mod operation only works with primes','It keeps the keys sorted']);
+  mc('Application','Which task is a hash table best suited for?','Counting how many times each word appears in a text',['Printing all keys in sorted order','Always finding the smallest key quickly','Processing jobs in the order they arrive']);
+  tfPool([['A hash function must always give the same index for the same key.',true],['With separate chaining, the load factor can be greater than 1.',true],['With linear probing, the load factor can be greater than 1.',false],['A hash table keeps its keys in sorted order.',false],['Two different keys can never have the same hash value.',false],['In a linear-probing table, setting a deleted slot back to EMPTY is always safe.',false]],2);
+  return K.items;
+}
+
+/* ---------- SORTING ---------- */
+function buildSorting(r){
+  const K=kit(r), {ri,pick,shuffle,distinct,chips,mc,tfPool,num,lst}=K;
+  const ba=distinct(6,10,99), b1=ba.slice(); let sw=0;
+  for(let j=0;j<5;j++) if(b1[j]>b1[j+1]){const t=b1[j];b1[j]=b1[j+1];b1[j+1]=t;sw++;}
+  lst('Bubble sort','Bubble sort (ascending) makes its <b>first pass</b> over this array, comparing neighbours left to right and swapping when the left one is bigger. Write the array after that pass.',b1,chips(ba),'6 numbers');
+  num('Bubble sort','During that same first pass, how many swaps happen?',sw,chips(ba));
+  const sa=distinct(6,10,99), s2=sa.slice();
+  for(let i=0;i<2;i++){let m=i;for(let j=i+1;j<6;j++) if(s2[j]<s2[m]) m=j; const t=s2[i];s2[i]=s2[m];s2[m]=t;}
+  lst('Selection sort','Selection sort (ascending) runs <b>two passes</b> on this array. Each pass finds the minimum of the unsorted part and swaps it to the front of that part. Write the array after two passes.',s2,chips(sa),'6 numbers');
+  const nn=ri(5,10);
+  num('Selection sort','Selection sort runs on '+nn+' values. How many comparisons does it make in total? (It compares the same pairs whatever the input order.)',nn*(nn-1)/2);
+  const ia=distinct(6,10,99), i3=ia.slice();
+  for(let i=1;i<=3;i++){const key=i3[i];let j=i-1;while(j>=0&&i3[j]>key){i3[j+1]=i3[j];j--;}i3[j+1]=key;}
+  lst('Insertion sort','Insertion sort (ascending) runs its outer loop for <code>i = 1, 2, 3</code> on this array, inserting each key into the sorted part on its left. Write the array after those three iterations.',i3,chips(ia),'6 numbers');
+  const pre=sortNum(distinct(5,10,99)); let key; do{key=ri(10,99);}while(pre.includes(key));
+  num('Insertion sort','The sorted part of the array is shown below. Insertion sort now inserts <b>key = '+key+'</b>. How many values must shift one place to the right?',pre.filter(x=>x>key).length,chips(pre));
+  const sp=shuffle(distinct(8,10,99)), L=sortNum(sp.slice(0,4)), R=sortNum(sp.slice(4)); let cmp=0;
+  {let i=0,j=0; while(i<4&&j<4){cmp++; if(L[i]<=R[j]) i++; else j++;}}
+  num('Merge sort','Merge the sorted lists L and R into one sorted list by repeatedly comparing their front values. How many comparisons does the merge make?',cmp,'<span>L = ['+L.join(', ')+']</span><span>R = ['+R.join(', ')+']</span>');
+  const ma=distinct(8,10,99);
+  lst('Merge sort','Merge sort splits this 8-value array into two halves and sorts each half recursively. What does the array look like just <b>before the final merge</b>?',sortNum(ma.slice(0,4)).concat(sortNum(ma.slice(4))),chips(ma),'8 numbers');
+  let qa=distinct(6,10,99);
+  for(let t=0;t<300;t++){const p=qa[5],rank=qa.filter(x=>x<p).length; if(rank>=2&&rank<=3) break; qa=distinct(6,10,99);}
+  const qp=qa.slice(), pv=qp[5]; let pi=0;
+  for(let j=0;j<5;j++) if(qp[j]<pv){const t=qp[pi];qp[pi]=qp[j];qp[j]=t;pi++;}
+  {const t=qp[pi];qp[pi]=qp[5];qp[5]=t;}
+  const qtxt='Quick sort runs <b>one Lomuto partition</b> on this array with the <b>last element</b> as pivot (<code>i</code> starts at 0; for each <code>j</code>, if <code>a[j] &lt; pivot</code>, swap <code>a[i]</code> and <code>a[j]</code> and increase <code>i</code>; finally swap the pivot into <code>a[i]</code>).';
+  lst('Quick sort',qtxt+' Write the array after the partition.',qp,chips(qa),'6 numbers');
+  num('Quick sort','In that same partition, at which index does the pivot '+pv+' end up?',pi,chips(qa),'index');
+  mc('Stability','Students (name, score) are listed in this order: (Ana, 85), (Ben, 90), (Cy, 85). They are sorted by score, lowest first, using a <b>stable</b> sort. What is the result?','Ana, Cy, Ben',['Cy, Ana, Ben','Ben, Ana, Cy','Ana, Ben, Cy']);
+  mc('Choosing','The input is already <b>nearly sorted</b>: only a few values are out of place. Which algorithm handles it fastest?','Insertion sort',['Selection sort','Merge sort','Quick sort with the last element as pivot']);
+  mc('Choosing','Which algorithm is <b>guaranteed</b> O(n log n) even in the worst case?','Merge sort',['Quick sort','Insertion sort','Bubble sort']);
+  mc('Complexity','Quick sort always picks the last element as pivot. Which input gives its O(n²) worst case?','An array that is already sorted',['A randomly shuffled array','An array with all distinct values','An array of length 2']);
+  mc('Choosing','Writing to memory is very expensive on your device. Which algorithm keeps the number of swaps lowest?','Selection sort (at most n − 1 swaps)',['Bubble sort','Insertion sort','Quick sort']);
+  mc('Complexity','Bubble sort with the early-exit check runs on an array that is already sorted. What is its running time?','O(n)',['O(1)','O(n log n)','O(n²)']);
+  mc('Complexity','How much extra memory does standard merge sort need for its temporary array?','O(n)',['O(1)','O(log n)','O(n²)']);
+  let bp=[], passes=0;
+  for(let t=0;t<300;t++){
+    bp=sortNum(distinct(7,10,99)); const s=ri(1,2);
+    for(let u=0;u<s;u++){const i=ri(0,5); const x=bp[i]; bp[i]=bp[i+1]; bp[i+1]=x;}
+    const a=bp.slice(); passes=0;
+    for(let i=0;i<6;i++){let swd=false; passes++; for(let j=0;j<6-i;j++) if(a[j]>a[j+1]){const x=a[j];a[j]=a[j+1];a[j+1]=x;swd=true;} if(!swd) break;}
+    if(passes>=2) break;
+  }
+  num('Bubble sort','Bubble sort with early exit stops after the first pass that makes no swaps. How many passes does it make on this array, <b>including</b> that final pass with no swaps?',passes,chips(bp));
+  mc('Theory','Any sort that works only by comparing pairs of values needs, in the worst case, at least about how many comparisons?','n log n',['n','log n','n²/2']);
+  tfPool([['Insertion sort sorts the array in place.',true],['Standard merge sort sorts the array in place.',false],['Quick sort (Lomuto partition) is stable.',false],['Selection sort makes the same number of comparisons whatever the input order.',true],['An already sorted array is the best case for bubble sort with early exit.',true],['Merge sort runs in O(n) on an already sorted array.',false]],1);
+  return K.items;
+}
+
+/* ---------- TREES ---------- */
+function bstBuild(vals){let root=null; vals.forEach(v=>{const nd={v,l:null,r:null}; if(!root){root=nd;return;} let n=root; for(;;){const s=v<n.v?'l':'r'; if(!n[s]){n[s]=nd;break;} n=n[s];}}); return root;}
+function bstOrders(root){
+  const pre=[],ino=[],post=[],lvl=[]; let leaves=0;
+  const h=n=>n?1+Math.max(h(n.l),h(n.r)):0;
+  const w=n=>{if(!n) return; pre.push(n.v); w(n.l); ino.push(n.v); w(n.r); post.push(n.v); if(!n.l&&!n.r) leaves++;};
+  w(root); const q=[root]; while(q.length){const n=q.shift(); lvl.push(n.v); if(n.l) q.push(n.l); if(n.r) q.push(n.r);}
+  return {pre,ino,post,lvl,leaves,height:h(root)-1};
+}
+function buildTree(r){
+  const K=kit(r), {ri,pick,shuffle,distinct,mc,tfPool,num,lst}=K;
+  let vals=[], root=null, O=null;
+  for(let t=0;t<300;t++){vals=distinct(8,10,99); root=bstBuild(vals); O=bstOrders(root); if(O.height>=3&&O.height<=4) break;}
+  const g='<span>Insert these keys into an empty binary search tree, in this order:</span><code>'+vals.join(', ')+'</code>';
+  mc('Terms','In a tree, what do we call a node that has no children?','A leaf',['The root','A parent','An internal node']);
+  num('Shape','Draw the BST. What is its <b>height</b> (the number of edges on the longest path from the root down to a leaf)?',O.height,g);
+  lst('In-order','Write the <b>in-order</b> traversal (left, node, right) of this BST.',O.ino,g);
+  lst('Pre-order','Write the <b>pre-order</b> traversal (node, left, right) of this BST.',O.pre,g);
+  lst('Post-order','Write the <b>post-order</b> traversal (left, right, node) of this BST.',O.post,g);
+  lst('Level-order','Write the <b>level-order</b> (breadth-first) traversal of this BST: level by level, left to right.',O.lvl,g);
+  num('Shape','How many <b>leaves</b> does this BST have?',O.leaves,g);
+  const xs=vals.slice(1); const x=pick(xs); let d=0; {let n=root; while(n.v!==x){n=x<n.v?n.l:n.r; d++;}}
+  num('Search','Searching this BST for '+x+', how many nodes are compared, counting the node where it is found?',d+1,g);
+  let y; do{y=ri(10,99);}while(vals.includes(y));
+  let par=null; {let n=root; while(n){par=n.v; n=y<n.v?n.l:n.r;}}
+  num('Insert','You now insert '+y+' into this BST. Which node becomes its parent?',par,g,'a key');
+  const five=distinct(5,10,99), sorted=sortNum(five);
+  const mono=a=>a.every((v,i)=>i===0||v>a[i-1])||a.every((v,i)=>i===0||v<a[i-1]);
+  const wr=[]; while(wr.length<3){const s=shuffle(five); const t=s.join(', '); if(!mono(s)&&!wr.includes(t)) wr.push(t);}
+  mc('Shape','Which insertion order produces a BST shaped like a straight line (the worst case for searching)?',sorted.join(', '),wr,{mono:true});
+  const hh=ri(2,5);
+  num('Shape','What is the <b>maximum</b> number of nodes a binary tree of height '+hh+' can have?',2**(hh+1)-1);
+  const nn=ri(10,60);
+  num('Shape','What is the <b>smallest</b> possible height of a binary tree with '+nn+' nodes?',Math.floor(Math.log2(nn)));
+  let sv=[], so=null;
+  for(let t=0;t<300;t++){sv=distinct(5,10,99); so=bstOrders(bstBuild(sv)); if(so.height===2) break;}
+  lst('Reconstruct','A binary search tree has the pre-order traversal below. (Its in-order traversal is simply its keys in sorted order.) Rebuild the tree and write its <b>post-order</b> traversal.',so.post,'<code>pre-order: '+so.pre.join(', ')+'</code>');
+  mc('Traversals','Which traversal of a binary search tree lists the keys in sorted order?','In-order',['Pre-order','Post-order','Level-order']);
+  mc('Traversals','To free every node of a tree, each node must be freed only after both of its children. Which traversal gives that order?','Post-order',['Pre-order','In-order','Level-order']);
+  mc('Traversals','Which data structure does a level-order traversal use to remember the nodes waiting to be visited?','A queue',['A stack','A hash table','A sorted array']);
+  mc('Traversals','Recursive in-order, pre-order and post-order traversals remember where to come back to using…','The call stack',['A queue','A hash table','The tree\'s level numbers']);
+  mc('Complexity','What is the worst-case time to search a binary search tree with n nodes that is <b>not</b> kept balanced?','O(n)',['O(1)','O(log n)','O(n log n)']);
+  mc('BST rule','Which statement is the binary search tree property?','Every key in a node\'s left subtree is smaller than the node\'s key, and every key in its right subtree is larger',['Each node\'s left child is smaller and its right child is larger, but deeper nodes can be anything','The tree is always perfectly balanced','The smallest keys are always stored in the leaves']);
+  tfPool([['The in-order traversal of any BST is in ascending order.',true],['Pre-order visits a node before either of its subtrees.',true],['Level-order is a depth-first traversal.',false],['A node in a binary tree can have three children.',false],['The smallest key in a BST is found by always following left children from the root.',true],['Post-order visits a node before its children.',false]],1);
+  return K.items;
+}
+
+/* ---------- GRAPHS ---------- */
+const GT={
+  a:{nodes:{A:[80,180],B:[220,70],C:[220,290],D:[360,180],E:[500,70],F:[500,290],G:[600,180]},
+     edges:[['A','B'],['A','C'],['B','C'],['B','D'],['C','D'],['C','F'],['D','E'],['D','F'],['E','G'],['F','G'],['E','F']]},
+  b:{nodes:{A:[90,90],B:[250,60],C:[420,80],D:[570,120],E:[110,280],F:[270,220],G:[430,290],H:[580,270]},
+     edges:[['A','B'],['B','C'],['C','D'],['A','E'],['A','F'],['B','F'],['C','F'],['C','G'],['D','H'],['E','F'],['F','G'],['G','H'],['D','G'],['E','G']]}
+};
+function analyzeGraph(names,E,S){
+  const adj={}; names.forEach(n=>{adj[n]=[];}); E.forEach(e=>{adj[e.u].push({v:e.v,w:e.w}); adj[e.v].push({v:e.u,w:e.w});});
+  names.forEach(n=>adj[n].sort((a,b)=>a.v<b.v?-1:1));
+  const dfs=[], seen=new Set(); const go=u=>{seen.add(u); dfs.push(u); adj[u].forEach(({v})=>{if(!seen.has(v)) go(v);});}; go(S);
+  const bfs=[], hops={[S]:0}, q=[S]; while(q.length){const u=q.shift(); bfs.push(u); adj[u].forEach(({v})=>{if(hops[v]===undefined){hops[v]=hops[u]+1; q.push(v);}});}
+  const dist={}, ways={}, prev={}, done=new Set(), fin=[]; names.forEach(n=>{dist[n]=Infinity; ways[n]=0;}); dist[S]=0; ways[S]=1;
+  for(;;){const open=names.filter(n=>!done.has(n)&&dist[n]<Infinity); if(!open.length) break; const u=open.reduce((a,b)=>dist[b]<dist[a]?b:a); done.add(u); fin.push(u);
+    adj[u].forEach(({v,w})=>{if(done.has(v)) return; const nd=dist[u]+w; if(nd<dist[v]){dist[v]=nd; ways[v]=ways[u]; prev[v]=u;} else if(nd===dist[v]) ways[v]+=ways[u];});}
+  const path={}; names.forEach(n=>{const p=[]; for(let x=n;x;x=prev[x]) p.unshift(x); path[n]=p;});
+  const inT=new Set([S]), prim=[S]; let mst=0;
+  while(inT.size<names.length){let best=null; E.forEach(e=>{if(inT.has(e.u)!==inT.has(e.v)&&(!best||e.w<best.w)) best=e;}); const nv=inT.has(best.u)?best.v:best.u; inT.add(nv); prim.push(nv); mst+=best.w;}
+  const par={}; names.forEach(n=>{par[n]=n;}); const find=x=>par[x]===x?x:(par[x]=find(par[x]));
+  let added=0, skip=null; E.slice().sort((a,b)=>a.w-b.w).forEach(e=>{if(added>=names.length-1) return; const a=find(e.u), b=find(e.v); if(a!==b){par[a]=b; added++;} else if(skip===null) skip=e.w;});
+  return {dfs,bfs,hops,dist,ways,fin,path,prim,mst,skip};
+}
+function graphFig(T,E){
+  let el='', wl='', nd='';
+  E.forEach(e=>{const a=T.nodes[e.u], b=T.nodes[e.v]; el+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'"/>'; wl+='<text class="wl" x="'+(a[0]+b[0])/2+'" y="'+(a[1]+b[1])/2+'" dy="0.35em">'+e.w+'</text>';});
+  Object.keys(T.nodes).forEach(n=>{const [x,y]=T.nodes[n]; nd+='<g class="gn" transform="translate('+x+','+y+')"><circle r="19"/><text dy="0.35em">'+n+'</text></g>';});
+  return '<svg class="gsvg act-fig" viewBox="0 0 660 360" role="img" aria-label="Weighted undirected graph">'+el+wl+nd+'</svg>';
+}
+function buildGraph(r){
+  const K=kit(r), {ri,pick,shuffle,mc,tfPool,num,lst}=K;
+  let T=null, E=[], S='A', Tg='B', A=null, names=[];
+  for(let t=0;t<500;t++){
+    T=GT[pick(['a','b'])]; names=Object.keys(T.nodes).sort();
+    const ws=shuffle(Array.from({length:15},(_,i)=>i+1)).slice(0,T.edges.length);
+    E=T.edges.map((e,i)=>({u:e[0],v:e[1],w:ws[i]}));
+    S=pick(names); A=analyzeGraph(names,E,S);
+    const far=names.filter(n=>n!==S&&A.hops[n]>=2&&A.ways[n]===1&&A.path[n].length>=3);
+    if(!far.length||A.skip===null) continue;
+    Tg=pick(far); break;
+  }
+  const fig=graphFig(T,E);
+  const g='<span>Undirected weighted graph (edge: weight). It is drawn above.</span><code>'+E.map(e=>e.u+'–'+e.v+': '+e.w).join(', ')+'</code>';
+  const ex={fig};
+  mc('Terms','In an undirected graph, what is the <b>degree</b> of a vertex?','The number of edges that touch it',['The total weight of its edges','Its distance from the start vertex','The number of vertices in the graph']);
+  const X=pick(names);
+  num('Terms','What is the degree of vertex <b>'+X+'</b> in this graph?',E.filter(e=>e.u===X||e.v===X).length,g,null,ex);
+  num('Terms','Add up the degrees of <b>all</b> the vertices in this graph. What is the total?',2*E.length,g,null,ex);
+  lst('DFS','Run <b>depth-first search</b> from '+S+' (recursive; when a vertex has several unvisited neighbours, take them in alphabetical order). Write the order in which vertices are visited.',A.dfs,g,'e.g. A, B, D',ex);
+  lst('BFS','Run <b>breadth-first search</b> from '+S+' (neighbours are enqueued in alphabetical order). Write the order in which vertices are dequeued.',A.bfs,g,'e.g. A, B, D',ex);
+  num('BFS','Ignoring the weights, what is the smallest number of edges on a path from '+S+' to '+Tg+'?',A.hops[Tg],g,null,ex);
+  num('Dijkstra','Using the weights, what is the length of the shortest path from '+S+' to '+Tg+'?',A.dist[Tg],g,null,ex);
+  lst('Dijkstra','Run <b>Dijkstra\'s algorithm</b> from '+S+'. In what order are the vertices <b>finalized</b>? (If two vertices tie on distance, take the alphabetically earlier one first.)',A.fin,g,'e.g. A, C, B',ex);
+  lst('Dijkstra','Write the shortest path from '+S+' to '+Tg+' as a list of vertices, starting with '+S+'.',A.path[Tg],g,'e.g. A, C, D',ex);
+  lst('Prim–Jarník','Run <b>Prim–Jarník</b> starting from '+S+'. Write the order in which vertices join the tree, starting with '+S+'.',A.prim,g,'e.g. A, C, B',ex);
+  num('MST','What is the total weight of the minimum spanning tree of this graph?',A.mst,g,null,ex);
+  num('Kruskal','Run <b>Kruskal\'s algorithm</b>. What is the weight of the <b>first</b> edge it skips because that edge would create a cycle?',A.skip,g,null,ex);
+  const V=ri(6,40), Ecount=ri(V,V*2);
+  num('MST','A connected graph has '+V+' vertices and '+Ecount+' edges. How many edges does every spanning tree of it have?',V-1);
+  mc('Dijkstra','Dijkstra\'s algorithm can give wrong answers when the graph has…','Edges with negative weights',['Cycles','More edges than vertices','Vertices with degree 1']);
+  mc('BFS','Which data structure does breadth-first search use to hold the vertices waiting to be explored?','A queue',['A stack','A priority queue keyed by weight','A hash table only']);
+  mc('BFS','When does BFS find a shortest path?','When the graph is unweighted (fewest edges is what counts)',['Always, even with different edge weights','Only when the graph has no cycles','Only when the graph is a tree']);
+  mc('Representation','A social network has millions of users, but each user has only a few hundred friends. Which representation uses much less memory?','An adjacency list, O(V + E)',['An adjacency matrix, O(V²)','Both use the same memory','A sorted array of vertices']);
+  mc('MST','How do Prim–Jarník and Kruskal differ?','Prim–Jarník grows one tree from a start vertex; Kruskal adds the cheapest edges overall and merges separate pieces',['Prim–Jarník finds shortest paths; Kruskal finds spanning trees','Kruskal needs a start vertex; Prim–Jarník does not','They can produce spanning trees with different total weights']);
+  mc('Traversal','Why must DFS and BFS mark vertices as visited?','Because graphs can have cycles, so without marks the search could loop forever',['To sort the vertices','To compute edge weights','Because every vertex has exactly two neighbours']);
+  tfPool([['A tree with V vertices has exactly V − 1 edges.',true],['Every weighted graph has exactly one minimum spanning tree.',false],['Dijkstra\'s algorithm always works with negative edge weights.',false],['On an unweighted graph, BFS finds paths with the fewest edges.',true],['Kruskal\'s algorithm needs a start vertex.',false],['In an undirected graph, the sum of all degrees is twice the number of edges.',true]],1);
+  return K.items;
+}
+
+/* ---------- catalogue ---------- */
+const rngFor=(id,sid)=>mulberry(hashStr('dsa-act-'+id+'|'+normId(sid)));
+const ACTS=[
+  {id:'stack',short:'Stack',title:'Stack Activity',topic:'Stack',mins:25,desc:'LIFO order, array and linked-list stacks, overflow and underflow, bracket matching, postfix evaluation and the call stack.',key:'dsa-act-stack-v1',build:sid=>buildStack(rngFor('stack',sid))},
+  {id:'queue',short:'Queue',title:'Queue Activity',topic:'Queue',mins:25,desc:'FIFO order, circular arrays and wrap-around, front/rear arithmetic, deques, priority queues and ring buffers.',key:'dsa-act-queue-v1',build:sid=>buildQueue(rngFor('queue',sid))},
+  {id:'hash',short:'Hash',title:'Hash Table Activity',topic:'Hash table',mins:30,desc:'Hash functions, collisions, chaining, linear probing, tombstones, load factor and resizing.',key:'dsa-act-hash-v1',build:sid=>buildHash(rngFor('hash',sid))},
+  {id:'sorting',short:'Sorting',title:'Sorting Activity',topic:'Sorting',mins:35,desc:'Trace bubble, selection, insertion, merge and quick sort, count their work, and choose the right one for the job.',key:'dsa-act-sorting-v1',build:sid=>buildSorting(rngFor('sorting',sid))},
+  {id:'tree',short:'Trees',title:'Trees Activity',topic:'Trees',mins:35,desc:'Build a BST by hand, then work out its four traversals, height, leaves, searches and inserts.',key:'dsa-act-tree-v1',build:sid=>buildTree(rngFor('tree',sid))},
+  {id:'graph',short:'Graphs',title:'Graphs Activity',topic:'Graphs',mins:40,desc:'Degrees, DFS and BFS orders, Dijkstra\'s shortest paths, and minimum spanning trees with Prim–Jarník and Kruskal.',key:'dsa-act-graph-v1',build:sid=>buildGraph(rngFor('graph',sid))},
+  {id:'mixed',short:'Mixed',title:'Trace It by Hand',topic:'Mixed review',mins:30,desc:'The original 13-item review: stacks, queues, hash tables and sorting traces in one sitting.',key:'dsa-activity-v1',build:sid=>buildItems(sid),variant:sid=>hashStr('dsa-act|'+normId(sid)).toString(36).toUpperCase().padStart(6,'0').slice(-6)}
+];
+const variantFor=(act,sid)=>act.variant?act.variant(sid):hashStr('dsa-act-'+act.id+'|'+normId(sid)).toString(36).toUpperCase().padStart(6,'0').slice(-6);
+
+/* ---------- grading ---------- */
 function norm(type,v){
   v=String(v==null?'':v).trim();
   if(type==='choice') return v;
   if(type==='number'){const n=parseInt(v,10); return Number.isFinite(n)?String(n):'';}
-  return v.replace(/[\[\](){}]/g,' ').split(/[\s,;]+/).filter(Boolean).map(x=>{const n=parseInt(x,10);return Number.isFinite(n)?String(n):x;}).join(',');
+  if(type==='decimal'){const m=v.match(/^(-?\d+)\s*\/\s*(\d+)$/); const n=m?(+m[1])/(+m[2]):parseFloat(v.replace(',','.')); return Number.isFinite(n)?String(n):'';}
+  if(type==='chars') return v.replace(/[\s,]/g,'').toUpperCase();
+  return v.replace(/[\[\](){}]/g,' ').split(/[\s,;→>-]+/).filter(Boolean).map(x=>{const n=parseInt(x,10);return Number.isFinite(n)&&/^-?\d+$/.test(x)?String(n):x.toUpperCase();}).join(',');
 }
-const plain=html=>{const d=document.createElement('div'); d.innerHTML=String(html).replace(/<\/span>/g,'</span>\n'); return d.textContent.replace(/\n+/g,'\n').trim();};
-const ascii=t=>String(t).replace(/[–—]/g,'-').replace(/…/g,'...').replace(/→/g,'->').replace(/·/g,'|').replace(/²/g,'^2').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[^\x0A\x20-\x7E]/g,'?');
+function isRight(it,v){
+  const a=norm(it.type,v); if(a==='') return false;
+  if(it.type==='decimal') return Math.abs(parseFloat(a)-parseFloat(it.answer))<0.006;
+  return a===it.answer;
+}
+const plain=html=>{const d=document.createElement('div'); d.innerHTML=String(html).replace(/<br\s*\/?>/g,'\n').replace(/<\/span>/g,'</span>\n'); return d.textContent.replace(/\n+/g,'\n').trim();};
+const ascii=t=>String(t).replace(/[–—]/g,'-').replace(/…/g,'...').replace(/→/g,'->').replace(/·/g,'|').replace(/²/g,'^2').replace(/α/g,'alpha').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[^\x0A\x20-\x7E]/g,'?');
 
-let S=null, items=[];
-function save(){store.set(S);}
-function answeredCount(){return items.filter((it,n)=>String(S.answers[n]==null?'':S.answers[n]).trim()!=='').length;}
+/* ---------- runner ---------- */
+let ACT=null, ST=null, S=null, items=[];
+const answered=st=>Object.keys(st.answers||{}).filter(k=>String(st.answers[k]).trim()!=='').length;
+function save(){ST.set(S);}
 function displayAnswer(it,n){
   const v=S.answers[n]; if(v==null||String(v).trim()==='') return '(no answer)';
-  if(it.type==='choice'){const k=+v; return String.fromCharCode(65+k)+') '+it.choices[k];}
+  if(it.type==='choice'){const k=+v; return String.fromCharCode(65+k)+') '+plain(it.choices[k]);}
   return String(v).trim();
 }
-
 function renderItems(){
   $('act-items').innerHTML=items.map((it,n)=>{
     let input;
@@ -1992,12 +2348,12 @@ function renderItems(){
     }else{
       input='<input type="text" class="ans" id="ans-'+n+'" data-n="'+n+'" placeholder="'+esc(it.ph||'')+'" autocomplete="off" value="'+esc(S.answers[n]||'')+'" aria-label="Answer to question '+(n+1)+'">';
     }
-    return '<li class="aq" id="aq-'+n+'"><div class="aq-head"><span class="aq-num">'+(n+1)+'</span><span class="chip">'+esc(it.topic)+'</span><span class="aq-mark"></span></div><p>'+it.prompt+'</p>'+(it.given?'<div class="given">'+it.given+'</div>':'')+input+'</li>';
+    const fig=it.fig&&(n===0||items[n-1].fig!==it.fig)?'<div class="fig-wrap">'+it.fig+'</div>':'';
+    return '<li class="aq" id="aq-'+n+'"><div class="aq-head"><span class="aq-num">'+(n+1)+'</span><span class="chip">'+esc(it.topic)+'</span><span class="aq-mark"></span></div>'+fig+'<p>'+it.prompt+'</p>'+(it.given?'<div class="given">'+it.given+'</div>':'')+input+'</li>';
   }).join('');
 }
 function updateProgress(){
-  const a=answeredCount();
-  $('act-prog').innerHTML=S.submitted?'Submitted · score <b>'+S.score+' / '+items.length+'</b>':'<b>'+a+'</b> of '+items.length+' answered · saved in this browser';
+  $('act-prog').innerHTML=S.submitted?'Submitted · score <b>'+S.score+' / '+items.length+'</b>':'<b>'+answered(S)+'</b> of '+items.length+' answered · saved in this browser';
 }
 function showWho(){
   $('act-who').innerHTML='<span>Name: <b>'+esc(S.name)+'</b></span><span>Student ID: <b>'+esc(S.sid)+'</b></span><span>Section: <b>'+esc(S.section)+'</b></span><span>Version: <b>'+esc(S.variant)+'</b></span>';
@@ -2009,7 +2365,7 @@ function applyGraded(){
     li.querySelectorAll('input').forEach(i=>{i.disabled=true;});
   });
   $('act-submit').hidden=true; $('act-confirm').hidden=true;
-  $('act-restart').textContent='New student on this computer';
+  $('act-restart').textContent='Clear this result';
   const pct=Math.round(S.score/items.length*100);
   $('act-result').hidden=false;
   $('act-result').innerHTML='<h2>Submitted</h2><div class="act-result-row"><div class="act-score">'+S.score+' <small>/ '+items.length+' · '+pct+'%</small></div>'+
@@ -2018,19 +2374,50 @@ function applyGraded(){
   $('act-pdf').onclick=downloadResult;
   updateProgress();
 }
-function openActivity(){
-  items=buildItems(S.sid);
-  $('act-start').hidden=true; $('act-body').hidden=false; $('act-result').hidden=true;
-  $('act-submit').hidden=false; $('act-restart').textContent='Not you? Start over';
-  showWho(); renderItems(); updateProgress();
-  if(S.submitted) applyGraded();
+function openAct(id){
+  ACT=ACTS.find(a=>a.id===id); if(!ACT){showHub(); return;}
+  ST=storeFor(ACT.key); S=ST.get();
+  $('act-hub').hidden=true; $('act-run').hidden=false;
+  $('act-eyebrow').textContent=ACT.topic+' · '+(ACT.id==='mixed'?13:20)+' items · about '+ACT.mins+' minutes';
+  $('act-title').textContent=ACT.title; $('act-lede').textContent=ACT.desc;
+  $('act-confirm').hidden=true; $('act-form-err').hidden=true;
+  if(S&&S.sid&&S.name){
+    items=ACT.build(S.sid);
+    $('act-start').hidden=true; $('act-body').hidden=false; $('act-result').hidden=true;
+    $('act-submit').hidden=false; $('act-restart').textContent='Not you? Start over';
+    showWho(); renderItems(); updateProgress();
+    if(S.submitted) applyGraded();
+  }else{
+    S=null; items=[];
+    const p=profile.get()||{};
+    $('act-name').value=p.name||''; $('act-sid').value=p.sid||''; $('act-section').value=p.section||'';
+    $('act-start').hidden=false; $('act-body').hidden=true;
+  }
 }
-function resetToStart(){
-  store.clear(); S=null; items=[];
-  $('act-body').hidden=true; $('act-start').hidden=false; $('act-confirm').hidden=true;
-  ['act-name','act-sid','act-section'].forEach(id=>{$(id).value='';});
-  window.scrollTo(0,0);
+function showHub(){
+  $('act-run').hidden=true; $('act-hub').hidden=false; $('hub-confirm').hidden=true;
+  const p=profile.get();
+  $('hub-who').innerHTML=p?'<span>Working as <b>'+esc(p.name)+'</b> · '+esc(p.sid)+' · '+esc(p.section)+'</span><button class="btn ghost danger" id="hub-switch" type="button">Switch student</button>':'';
+  if(p) $('hub-switch').onclick=()=>{
+    const c=$('hub-confirm'); c.hidden=false;
+    c.innerHTML='<span>This removes the saved name and <b>every activity\'s answers and results</b> from this browser. Make sure all result PDFs are downloaded first.</span><button class="btn danger" id="hub-switch-yes" type="button">Clear everything</button><button class="btn" id="hub-switch-no" type="button">Cancel</button>';
+    $('hub-switch-no').onclick=()=>{c.hidden=true;};
+    $('hub-switch-yes').onclick=()=>{profile.clear(); ACTS.forEach(a=>storeFor(a.key).clear()); showHub();};
+  };
+  $('hub-grid').innerHTML=ACTS.map(a=>{
+    const st=storeFor(a.key).get(), n=a.id==='mixed'?13:20;
+    let status='<span class="hs">Not started</span>';
+    if(st&&st.submitted) status='<span class="hs done">Submitted · '+st.score+' / '+n+'</span>';
+    else if(st&&st.sid) status='<span class="hs prog">In progress · '+answered(st)+' / '+n+' answered</span>';
+    return '<a class="hub-card" href="#activity-'+a.id+'"><span class="chip">'+esc(a.topic)+'</span><h3>'+esc(a.title)+'</h3><p>'+esc(a.desc)+'</p><div class="hub-meta"><span>'+n+' items · about '+a.mins+' min</span>'+status+'</div></a>';
+  }).join('');
 }
+function fromHash(){
+  const h=location.hash.slice(1);
+  if(h==='activity') showHub();
+  else if(h.indexOf('activity-')===0) openAct(h.slice(9));
+}
+window.addEventListener('hashchange',fromHash);
 
 $('act-form').addEventListener('submit',e=>{
   e.preventDefault();
@@ -2038,8 +2425,9 @@ $('act-form').addEventListener('submit',e=>{
   const err=$('act-form-err');
   if(!name||!sid||!section){err.textContent='Fill in your full name, student ID and section to start.'; err.hidden=false; return;}
   err.hidden=true;
-  S={name,sid,section,variant:variantOf(sid),startedAt:new Date().toISOString(),answers:{},submitted:false};
-  save(); openActivity();
+  profile.set({name,sid,section});
+  S={name,sid,section,act:ACT.id,variant:variantFor(ACT,sid),startedAt:new Date().toISOString(),answers:{},submitted:false};
+  save(); openAct(ACT.id);
 });
 $('act-items').addEventListener('input',e=>{
   const t=e.target; if(!S||S.submitted) return;
@@ -2052,34 +2440,34 @@ $('act-items').addEventListener('change',e=>{
   S.answers[t.name.slice(4)]=t.value; save(); updateProgress();
 });
 $('act-submit').onclick=()=>{
-  const left=items.length-answeredCount(), c=$('act-confirm');
+  const left=items.length-answered(S), c=$('act-confirm');
   c.hidden=false;
   c.innerHTML='<span>'+(left?'<b>'+left+' item'+(left===1?' is':'s are')+' still blank.</b> ':'')+'Submit now? You can\'t change your answers afterwards.</span><button class="btn primary" id="act-yes" type="button">Yes, submit</button><button class="btn" id="act-no" type="button">Keep working</button>';
   $('act-no').onclick=()=>{c.hidden=true;};
   $('act-yes').onclick=()=>{
-    S.marks=items.map((it,n)=>norm(it.type,S.answers[n])!==''&&norm(it.type,S.answers[n])===it.answer);
+    S.marks=items.map((it,n)=>isRight(it,S.answers[n]));
     S.score=S.marks.filter(Boolean).length; S.submitted=true; S.submittedAt=new Date().toISOString();
     save(); applyGraded(); $('act-result').scrollIntoView({behavior:'smooth',block:'start'});
   };
 };
 $('act-restart').onclick=()=>{
   const c=$('act-confirm'); c.hidden=false;
-  c.innerHTML='<span>'+(S&&S.submitted?'Make sure the result PDF is downloaded first. ':'')+'This clears '+(S&&S.submitted?'the submitted result':'all answers')+' from this browser.</span><button class="btn danger" id="act-clear-yes" type="button">Clear and start over</button><button class="btn" id="act-clear-no" type="button">Cancel</button>';
+  c.innerHTML='<span>'+(S&&S.submitted?'Make sure the result PDF is downloaded first. ':'')+'This clears '+(S&&S.submitted?'the submitted result':'all answers')+' for this activity from this browser.</span><button class="btn danger" id="act-clear-yes" type="button">Clear and start over</button><button class="btn" id="act-clear-no" type="button">Cancel</button>';
   $('act-clear-no').onclick=()=>{c.hidden=true;};
-  $('act-clear-yes').onclick=resetToStart;
+  $('act-clear-yes').onclick=()=>{ST.clear(); openAct(ACT.id); window.scrollTo(0,0);};
 };
 
 function resultBlocks(){
   const B=[], add=(text,o)=>B.push(Object.assign({text,size:10,style:'normal',color:[25,30,45],indent:0,gap:0},o||{}));
-  add('Data Structure Stepper - Mini Activity: Trace It by Hand',{size:15,style:'bold'});
-  add('Name: '+S.name,{size:11,gap:4}); add('Student ID: '+S.sid,{size:11}); add('Section: '+S.section,{size:11}); add('Version: '+S.variant,{size:11});
+  add('Data Structure Stepper - '+ACT.title,{size:15,style:'bold'});
+  add('Name: '+S.name,{size:11,gap:4}); add('Student ID: '+S.sid,{size:11}); add('Section: '+S.section,{size:11}); add('Activity: '+ACT.title+'  |  Version: '+S.variant,{size:11});
   add('Started: '+new Date(S.startedAt).toLocaleString(),{size:10,color:[90,100,120]}); add('Submitted: '+new Date(S.submittedAt).toLocaleString(),{size:10,color:[90,100,120]});
   add('Score: '+S.score+' / '+items.length+'  ('+Math.round(S.score/items.length*100)+'%)',{size:13,style:'bold',gap:6});
   add('',{rule:true,gap:6});
   items.forEach((it,n)=>{
     add((n+1)+'. ['+it.topic+'] '+plain(it.prompt),{size:10.5,style:'bold',gap:10});
     if(it.given) add('Given: '+plain(it.given).replace(/\n/g,'  |  '),{size:9.5,color:[80,90,110],indent:14});
-    if(it.type==='choice') it.choices.forEach((c,k)=>add(String.fromCharCode(65+k)+') '+c,{size:9.5,color:[80,90,110],indent:14}));
+    if(it.type==='choice') it.choices.forEach((c,k)=>add(String.fromCharCode(65+k)+') '+plain(c),{size:9.5,color:[80,90,110],indent:14}));
     add('Answer: '+displayAnswer(it,n),{size:10,indent:14});
     add(S.marks[n]?'Result: CORRECT':'Result: INCORRECT',{size:10,style:'bold',indent:14,color:S.marks[n]?[20,130,85]:[200,50,60]});
   });
@@ -2087,7 +2475,7 @@ function resultBlocks(){
 }
 function fileBase(){
   const last=(S.name.trim().split(/\s+/).pop()||'student').replace(/[^A-Za-z0-9-]/g,'');
-  return 'DSA-Activity_'+S.sid.replace(/[^A-Za-z0-9-]/g,'')+'_'+last;
+  return (ACT.id==='mixed'?'DSA-Activity':'DSA-'+ACT.short)+'_'+S.sid.replace(/[^A-Za-z0-9-]/g,'')+'_'+last;
 }
 function downloadBlob(blob,name){
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click();
@@ -2108,7 +2496,7 @@ function downloadResult(){
       });
     });
     const pc=doc.getNumberOfPages();
-    for(let i=1;i<=pc;i++){doc.setPage(i); doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(120,128,145); doc.text(ascii(S.name+' | '+S.sid+' | page '+i+' of '+pc),W-M,H-24,{align:'right'});}
+    for(let i=1;i<=pc;i++){doc.setPage(i); doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(120,128,145); doc.text(ascii(S.name+' | '+S.sid+' | '+ACT.title+' | page '+i+' of '+pc),W-M,H-24,{align:'right'});}
     doc.save(fileBase()+'.pdf');
   }catch(e){
     const txt=B.map(b=>b.rule?'----------------------------------------':(b.gap?'\n':'')+' '.repeat(b.indent?4:0)+b.text).join('\n');
@@ -2116,10 +2504,7 @@ function downloadResult(){
     const er=$('act-pdf-err'); if(er){er.textContent='The PDF library could not load, so a .txt file was downloaded instead. Upload that file.'; er.hidden=false;}
   }
 }
-
-/* restore an attempt in progress */
-const saved=store.get();
-if(saved&&saved.sid&&saved.name){S=saved; openActivity();}
+fromHash();
 })();
 </script>
 </body>
