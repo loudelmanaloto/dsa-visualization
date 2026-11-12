@@ -241,6 +241,45 @@ td.o{font-family:var(--f-mono);white-space:nowrap}
 .algo-card .meta span{font-family:var(--f-mono);font-size:.72rem;background:var(--surface-2);border:1px solid var(--line-2);border-radius:5px;padding:1px 6px}
 footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);font-size:.82rem}
 
+/* activity */
+.act-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:14px;max-width:860px}
+.act-card h2{font-size:1.3rem}
+.act-card ul{margin:0;padding-left:1.2em;display:grid;gap:4px;max-width:70ch}
+.act-form{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.act-form .field input[type=text]{width:220px}
+.err-text{color:var(--swap);font-size:.85rem;margin:0}
+.act-who{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:.88rem;color:var(--muted);max-width:860px;margin-bottom:6px}
+.act-who b{color:var(--ink);font-weight:600}
+.aq-list{list-style:none;padding:0;margin:16px 0;display:grid;gap:14px;max-width:860px}
+.aq{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:10px;min-width:0}
+.aq.right{border-color:var(--done);box-shadow:inset 4px 0 0 var(--done)}
+.aq.wrong{border-color:var(--swap);box-shadow:inset 4px 0 0 var(--swap)}
+.aq-head{display:flex;align-items:center;gap:10px}
+.aq-num{font-family:var(--f-display);font-weight:700;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.aq-mark{margin-left:auto;font-weight:600;font-size:.85rem}
+.aq.right .aq-mark{color:var(--done)} .aq.wrong .aq-mark{color:var(--swap)}
+.aq p{margin:0;max-width:72ch}
+.given{font-family:var(--f-mono);font-size:.86rem;background:var(--surface-2);border:1px solid var(--line-2);border-radius:8px;padding:8px 12px;overflow-x:auto;display:grid;gap:6px}
+.given code{background:none;border:0;padding:0}
+.arr{display:inline-flex;gap:4px;flex-wrap:wrap}
+.arr span{border:1px solid var(--line);border-radius:5px;padding:1px 8px;background:var(--surface);font-weight:600}
+.aq input.ans{height:38px;border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:0 10px;width:min(340px,100%);font-family:var(--f-mono)}
+.aq input.ans:disabled{opacity:.85}
+.choices{display:grid;gap:6px}
+.choices label{display:flex;gap:10px;align-items:center;cursor:pointer;padding:7px 10px;border:1px solid var(--line-2);border-radius:8px;background:var(--surface-2)}
+.choices label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.choices input{accent-color:var(--accent);flex:none}
+.choices .mono{font-family:var(--f-mono);font-weight:600}
+.act-bar{position:sticky;bottom:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;max-width:860px;margin-bottom:40px}
+.act-bar .prog{font-family:var(--f-mono);font-size:.88rem;color:var(--muted)}
+.act-bar .prog b{color:var(--ink)}
+.act-bar .grow{flex:1}
+.confirm{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;flex-basis:100%;border-top:1px solid var(--line-2);padding-top:10px;font-size:.9rem}
+.act-score{font-family:var(--f-display);font-size:2.6rem;font-weight:700;line-height:1}
+.act-score small{font-size:1.1rem;color:var(--muted);font-weight:500}
+.act-result-row{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center}
+.btn.danger{color:var(--swap)}
+
 @media (max-width:920px){
   .lab-grid{grid-template-columns:minmax(0,1fr)}
   .side{border-left:0;border-top:1px solid var(--line)}
@@ -276,6 +315,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
       <a href="#queue" data-view="queue">Queue</a>
       <a href="#hash" data-view="hash">Hash Table</a>
       <a href="#sorting" data-view="sorting">Sorting</a>
+      <a href="#activity" data-view="activity">Activity</a>
     </nav>
   </div>
 </header>
@@ -609,6 +649,45 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
       </div>
       <p class="callout"><b>Experiments to try:</b> pick <i>Nearly sorted</i> and compare insertion sort with selection sort. Then pick <i>Reversed</i> with quick sort and watch every partition peel off just one element: that's the O(n²) worst case.</p>
     </section>
+  </div>
+</section>
+
+<!-- ===================== ACTIVITY ===================== -->
+<section class="view" id="view-activity" hidden>
+  <div class="intro">
+    <p class="eyebrow">Mini activity · 13 items · about 30 minutes</p>
+    <h1>Trace It by Hand</h1>
+    <p class="lede">Work out what each data structure and sorting algorithm does, step by step, the way you would on paper in an exam. Every student gets their own numbers, generated from their student ID.</p>
+  </div>
+
+  <div class="act-card" id="act-start">
+    <h2>Before you start</h2>
+    <ul>
+      <li>Enter your details exactly as they appear in the class list. Your student ID decides your version of the activity.</li>
+      <li>Your answers are saved in this browser as you type, so a page refresh won't lose them.</li>
+      <li>You won't see whether an answer is right until you submit. After submitting, answers are locked and you'll see your score.</li>
+      <li>Then click <b>Download result PDF</b> and upload that file to the class submission page.</li>
+    </ul>
+    <form class="act-form" id="act-form" novalidate>
+      <div class="field"><label for="act-name">Full name</label><input type="text" id="act-name" maxlength="60" autocomplete="name" placeholder="Juan Dela Cruz"></div>
+      <div class="field"><label for="act-sid">Student ID</label><input type="text" id="act-sid" maxlength="20" autocomplete="off" placeholder="202312345"></div>
+      <div class="field"><label for="act-section">Section</label><input type="text" id="act-section" maxlength="20" autocomplete="off" placeholder="BSCS 2A"></div>
+      <button class="btn primary" type="submit">Start activity</button>
+    </form>
+    <p class="err-text" id="act-form-err" hidden></p>
+  </div>
+
+  <div id="act-body" hidden>
+    <div class="act-card" id="act-result" hidden></div>
+    <div class="act-who" id="act-who"></div>
+    <ol class="aq-list" id="act-items"></ol>
+    <div class="act-bar" id="act-bar">
+      <span class="prog" id="act-prog"></span>
+      <span class="grow"></span>
+      <button class="btn ghost danger" id="act-restart" type="button">Not you? Start over</button>
+      <button class="btn primary" id="act-submit" type="button">Submit answers</button>
+      <div class="confirm" id="act-confirm" hidden></div>
+    </div>
   </div>
 </section>
 </main>
@@ -1203,10 +1282,11 @@ sortInput=[38,27,43,3,9,82,10,56,21,64]; sortLoad();
 const PLAYERS={stack:stackPlayer,queue:queuePlayer,hash:hashPlayer,sorting:sortPlayer};
 let current='stack';
 function route(){
-  let v=location.hash.slice(1); if(!PLAYERS[v]) v='stack';
-  if(v!==current) PLAYERS[current].pause();
+  const VIEWS=['stack','queue','hash','sorting','activity'];
+  let v=location.hash.slice(1); if(!VIEWS.includes(v)) v='stack';
+  if(v!==current&&PLAYERS[current]) PLAYERS[current].pause();
   current=v;
-  Object.keys(PLAYERS).forEach(k=>{$('view-'+k).hidden=k!==v;});
+  VIEWS.forEach(k=>{$('view-'+k).hidden=k!==v;});
   document.querySelectorAll('nav.tabs a').forEach(a=>{if(a.dataset.view===v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');});
 }
 window.addEventListener('hashchange',()=>{route(); window.scrollTo(0,0);});
@@ -1214,11 +1294,279 @@ route();
 document.addEventListener('keydown',e=>{
   const t=e.target, tag=t&&t.tagName;
   if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA'||e.altKey||e.ctrlKey||e.metaKey) return;
-  const p=PLAYERS[current];
+  const p=PLAYERS[current]; if(!p) return;
   if(e.key==='ArrowRight'){e.preventDefault(); p.next();}
   else if(e.key==='ArrowLeft'){e.preventDefault(); p.prev();}
   else if(e.key===' '&&tag!=='BUTTON'){e.preventDefault(); p.play();}
 });
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* ======================================================
+   MINI ACTIVITY: per-student variants, graded on submit, PDF result
+   ====================================================== */
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const KEY='dsa-activity-v1';
+const store={
+  get(){try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){return null;}},
+  set(v){try{localStorage.setItem(KEY,JSON.stringify(v));}catch(e){}},
+  clear(){try{localStorage.removeItem(KEY);}catch(e){}}
+};
+function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const normId=s=>String(s||'').trim().toUpperCase().replace(/\s+/g,'');
+const variantOf=sid=>hashStr('dsa-act|'+normId(sid)).toString(36).toUpperCase().padStart(6,'0').slice(-6);
+
+function buildItems(sid){
+  const r=mulberry(hashStr('dsa-act|'+normId(sid)));
+  const ri=(a,b)=>a+Math.floor(r()*(b-a+1));
+  const pick=a=>a[Math.floor(r()*a.length)];
+  const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;};
+  const distinct=(n,lo,hi)=>{const s=new Set();while(s.size<n)s.add(ri(lo,hi));return [...s];};
+  const chips=a=>'<span class="arr">'+a.map(x=>'<span>'+x+'</span>').join('')+'</span>';
+  const items=[];
+
+  /* stack trace */
+  const pat=pick(['PPOPPOP','PPPOOPP','PPOPOPP','PPPOPPO','PPOPPPO']);
+  const sv=distinct(5,10,99); let k=0; const st=[]; let lastPop=null; const so=[];
+  for(const c of pat){if(c==='P'){const x=sv[k++];st.push(x);so.push('push('+x+')');}else{lastPop=st.pop();so.push('pop()');}}
+  const sOps='<code>'+so.join(', ')+'</code>';
+  items.push({topic:'Stack',type:'list',ph:'e.g. 4, 18, 7',answer:st.join(','),
+    prompt:'Start with an empty stack and run these operations in order. Write the final stack contents from <b>bottom to top</b>, separated by commas.',given:sOps});
+  items.push({topic:'Stack',type:'number',ph:'a number',answer:String(lastPop),
+    prompt:'Using the same operations, what value does the <b>last</b> <code>pop()</code> return?',given:sOps});
+
+  /* bracket checker */
+  const good=pick(['{[()]}','([]{})','(()[{}])','{()()[]}','[({})]()','({[]})[]']);
+  const bad=shuffle(['([)]','(()','{[}]','())(','[(])','{{}','({)}','[[]]]','{(})']).slice(0,3);
+  const bo=shuffle([good].concat(bad));
+  items.push({topic:'Stack',type:'choice',mono:true,choices:bo,answer:String(bo.indexOf(good)),
+    prompt:'A stack-based bracket checker reads each string from left to right. Which string is <b>balanced</b>?'});
+
+  /* circular queue */
+  const kq=ri(3,4), mq=ri(1,2), eq=ri(Math.max(6-kq,1),5-kq+mq);
+  const qv=distinct(kq+eq,10,99); const Q={d:[null,null,null,null,null],front:0,rear:4,count:0}; const qo=[]; let qi=0;
+  const enq=x=>{Q.rear=(Q.rear+1)%5;Q.d[Q.rear]=x;Q.count++;qo.push('enqueue('+x+')');};
+  const deq=()=>{Q.d[Q.front]=null;Q.front=(Q.front+1)%5;Q.count--;qo.push('dequeue()');};
+  for(let t=0;t<kq;t++)enq(qv[qi++]); for(let t=0;t<mq;t++)deq(); for(let t=0;t<eq;t++)enq(qv[qi++]);
+  const qOrder=[]; for(let t=0;t<Q.count;t++) qOrder.push(Q.d[(Q.front+t)%5]);
+  const qGiven='<span>Circular array, capacity 5. Starts empty: front = 0, rear = 4, count = 0.</span><span>enqueue: rear = (rear + 1) % 5 · dequeue: front = (front + 1) % 5</span><code>'+qo.join(', ')+'</code>';
+  items.push({topic:'Queue',type:'list',ph:'e.g. 12, 40, 7',answer:qOrder.join(','),
+    prompt:'Run these operations on the circular queue below. Write the queue contents from <b>front to rear</b>, separated by commas.',given:qGiven});
+  items.push({topic:'Queue',type:'list',ph:'front, rear',answer:Q.front+','+Q.rear,
+    prompt:'After the same operations, what are the <b>front</b> and <b>rear</b> indexes? Answer as <code>front, rear</code>.',given:qGiven});
+
+  /* hash index */
+  const w=pick(['cat','dog','sun','map','box','key','owl','pen','ice','jar','web','fox','bee','hat']);
+  const wsum=[...w].reduce((a,c)=>a+c.charCodeAt(0),0);
+  items.push({topic:'Hash table',type:'number',ph:'0 to 6',answer:String(wsum%7),
+    prompt:'A hash table with 7 buckets computes <code>index = (sum of the key\'s character codes) mod 7</code>. Which bucket index does the key <code>"'+w+'"</code> go to?',
+    given:'<span>Character codes: a = 97, b = 98, c = 99, d = 100, … , z = 122</span>'});
+
+  /* linear probing */
+  const names=shuffle(['ant','bat','cow','elk','yak','emu','ram','hen']).slice(0,5);
+  let homes=[], fin=0;
+  for(let tries=0;tries<300;tries++){
+    homes=names.map(()=>ri(0,6)); const slots=[null,null,null,null,null,null,null];
+    homes.forEach((h,ix)=>{let i=h;while(slots[i]!==null)i=(i+1)%7;slots[i]=ix;fin=i;});
+    if((fin-homes[4]+7)%7>=2) break;
+  }
+  items.push({topic:'Hash table',type:'number',ph:'0 to 6',answer:String(fin),
+    prompt:'These keys are inserted, in this order, into an empty 7-slot table that uses <b>linear probing</b> (on a collision, try <code>(i + 1) mod 7</code>). Each key\'s home index is given. Which slot does the last key, <code>"'+names[4]+'"</code>, end up in?',
+    given:'<code>'+names.map((n,i)=>n+' → home '+homes[i]).join(', ')+'</code>'});
+
+  /* sorting traces */
+  const ba=distinct(6,10,99), b1=ba.slice();
+  for(let j=0;j<5;j++) if(b1[j]>b1[j+1]){const t=b1[j];b1[j]=b1[j+1];b1[j+1]=t;}
+  items.push({topic:'Bubble sort',type:'list',ph:'6 numbers',answer:b1.join(','),
+    prompt:'Bubble sort (ascending) makes its <b>first pass</b> over this array, comparing neighbours left to right and swapping when the left one is bigger. Write the array after that one pass.',given:chips(ba)});
+  const sa=distinct(6,10,99), s2=sa.slice();
+  for(let i=0;i<2;i++){let m=i;for(let j=i+1;j<6;j++) if(s2[j]<s2[m]) m=j; const t=s2[i];s2[i]=s2[m];s2[m]=t;}
+  items.push({topic:'Selection sort',type:'list',ph:'6 numbers',answer:s2.join(','),
+    prompt:'Selection sort (ascending) runs <b>two passes</b> on this array: each pass finds the minimum of the unsorted part and swaps it to the front of that part. Write the array after two passes.',given:chips(sa)});
+  const ia=distinct(6,10,99), i3=ia.slice();
+  for(let i=1;i<=3;i++){const key=i3[i];let j=i-1;while(j>=0&&i3[j]>key){i3[j+1]=i3[j];j--;}i3[j+1]=key;}
+  items.push({topic:'Insertion sort',type:'list',ph:'6 numbers',answer:i3.join(','),
+    prompt:'Insertion sort (ascending) runs its outer loop for <code>i = 1, 2, 3</code> on this array, inserting each key into the sorted part on its left. Write the array after those three iterations.',given:chips(ia)});
+  let qa=distinct(6,10,99);
+  for(let tries=0;tries<300;tries++){const p=qa[5],rank=qa.filter(x=>x<p).length; if(rank>=2&&rank<=3) break; qa=distinct(6,10,99);}
+  const qp=qa.slice(), pv=qp[5]; let pi=0;
+  for(let j=0;j<5;j++) if(qp[j]<pv){const t=qp[pi];qp[pi]=qp[j];qp[j]=t;pi++;}
+  {const t=qp[pi];qp[pi]=qp[5];qp[5]=t;}
+  items.push({topic:'Quick sort',type:'list',ph:'6 numbers',answer:qp.join(','),
+    prompt:'Quick sort runs <b>one Lomuto partition</b> on this array with the <b>last element</b> as pivot (<code>i</code> starts at 0; for each <code>j</code>, if <code>a[j] &lt; pivot</code>, swap <code>a[i]</code> and <code>a[j]</code> and increase <code>i</code>; finally swap the pivot into <code>a[i]</code>). Write the array after the partition.',given:chips(qa)});
+
+  /* concepts */
+  const pool=[
+    {q:'A breadth-first search keeps a list of nodes waiting to be visited. Which structure should hold them?',c:['Queue','Stack','Hash table','Sorted array']},
+    {q:'An editor\'s Undo must reverse the most recent change first. Which structure fits best?',c:['Stack','Queue','Hash table','Circular array']},
+    {q:'Quick sort, using the last element as pivot, is given an array that is already sorted. What is its running time?',c:['O(n²)','O(n log n)','O(n)','O(log n)']},
+    {q:'With linear probing, why does remove() leave a DELETED tombstone instead of marking the slot EMPTY?',c:['So later searches don\'t stop early and miss keys that probed past that slot','To save memory','Because EMPTY slots can never be reused','To keep the keys in sorted order']},
+    {q:'Which of these sorting algorithms is stable (keeps equal values in their original order)?',c:['Merge sort','Selection sort','Quick sort (Lomuto)','None of them']},
+    {q:'What is the average time to look up a key in a hash table with a good hash function and a low load factor?',c:['O(1)','O(log n)','O(n)','O(n log n)']}
+  ];
+  shuffle(pool).slice(0,2).forEach(p=>{const opts=shuffle(p.c); items.push({topic:'Concepts',type:'choice',choices:opts,answer:String(opts.indexOf(p.c[0])),prompt:p.q});});
+  return items;
+}
+
+function norm(type,v){
+  v=String(v==null?'':v).trim();
+  if(type==='choice') return v;
+  if(type==='number'){const n=parseInt(v,10); return Number.isFinite(n)?String(n):'';}
+  return v.replace(/[\[\](){}]/g,' ').split(/[\s,;]+/).filter(Boolean).map(x=>{const n=parseInt(x,10);return Number.isFinite(n)?String(n):x;}).join(',');
+}
+const plain=html=>{const d=document.createElement('div'); d.innerHTML=String(html).replace(/<\/span>/g,'</span>\n'); return d.textContent.replace(/\n+/g,'\n').trim();};
+const ascii=t=>String(t).replace(/[–—]/g,'-').replace(/…/g,'...').replace(/→/g,'->').replace(/·/g,'|').replace(/²/g,'^2').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[^\x0A\x20-\x7E]/g,'?');
+
+let S=null, items=[];
+function save(){store.set(S);}
+function answeredCount(){return items.filter((it,n)=>String(S.answers[n]==null?'':S.answers[n]).trim()!=='').length;}
+function displayAnswer(it,n){
+  const v=S.answers[n]; if(v==null||String(v).trim()==='') return '(no answer)';
+  if(it.type==='choice'){const k=+v; return String.fromCharCode(65+k)+') '+it.choices[k];}
+  return String(v).trim();
+}
+
+function renderItems(){
+  $('act-items').innerHTML=items.map((it,n)=>{
+    let input;
+    if(it.type==='choice'){
+      input='<div class="choices" role="radiogroup" aria-label="Question '+(n+1)+' options">'+it.choices.map((c,k)=>'<label><input type="radio" name="ans-'+n+'" id="ans-'+n+'-'+k+'" value="'+k+'"'+(String(S.answers[n])===String(k)?' checked':'')+'><span'+(it.mono?' class="mono"':'')+'>'+String.fromCharCode(65+k)+') '+esc(c)+'</span></label>').join('')+'</div>';
+    }else{
+      input='<input type="text" class="ans" id="ans-'+n+'" data-n="'+n+'" placeholder="'+esc(it.ph||'')+'" autocomplete="off" value="'+esc(S.answers[n]||'')+'" aria-label="Answer to question '+(n+1)+'">';
+    }
+    return '<li class="aq" id="aq-'+n+'"><div class="aq-head"><span class="aq-num">'+(n+1)+'</span><span class="chip">'+esc(it.topic)+'</span><span class="aq-mark"></span></div><p>'+it.prompt+'</p>'+(it.given?'<div class="given">'+it.given+'</div>':'')+input+'</li>';
+  }).join('');
+}
+function updateProgress(){
+  const a=answeredCount();
+  $('act-prog').innerHTML=S.submitted?'Submitted · score <b>'+S.score+' / '+items.length+'</b>':'<b>'+a+'</b> of '+items.length+' answered · saved in this browser';
+}
+function showWho(){
+  $('act-who').innerHTML='<span>Name: <b>'+esc(S.name)+'</b></span><span>Student ID: <b>'+esc(S.sid)+'</b></span><span>Section: <b>'+esc(S.section)+'</b></span><span>Version: <b>'+esc(S.variant)+'</b></span>';
+}
+function applyGraded(){
+  items.forEach((it,n)=>{
+    const li=$('aq-'+n); li.classList.add(S.marks[n]?'right':'wrong');
+    li.querySelector('.aq-mark').textContent=S.marks[n]?'Correct':'Incorrect';
+    li.querySelectorAll('input').forEach(i=>{i.disabled=true;});
+  });
+  $('act-submit').hidden=true; $('act-confirm').hidden=true;
+  $('act-restart').textContent='New student on this computer';
+  const pct=Math.round(S.score/items.length*100);
+  $('act-result').hidden=false;
+  $('act-result').innerHTML='<h2>Submitted</h2><div class="act-result-row"><div class="act-score">'+S.score+' <small>/ '+items.length+' · '+pct+'%</small></div>'+
+    '<div style="display:grid;gap:4px;font-size:.9rem;color:var(--muted)"><span>Submitted '+esc(new Date(S.submittedAt).toLocaleString())+'</span><span>Correct items are marked green, incorrect ones red.</span></div></div>'+
+    '<div class="act-result-row"><button class="btn primary" id="act-pdf" type="button">Download result PDF</button><span style="font-size:.88rem;color:var(--muted)">Upload this PDF to the class submission page to hand in your work.</span></div><p class="err-text" id="act-pdf-err" hidden></p>';
+  $('act-pdf').onclick=downloadResult;
+  updateProgress();
+}
+function openActivity(){
+  items=buildItems(S.sid);
+  $('act-start').hidden=true; $('act-body').hidden=false; $('act-result').hidden=true;
+  $('act-submit').hidden=false; $('act-restart').textContent='Not you? Start over';
+  showWho(); renderItems(); updateProgress();
+  if(S.submitted) applyGraded();
+}
+function resetToStart(){
+  store.clear(); S=null; items=[];
+  $('act-body').hidden=true; $('act-start').hidden=false; $('act-confirm').hidden=true;
+  ['act-name','act-sid','act-section'].forEach(id=>{$(id).value='';});
+  window.scrollTo(0,0);
+}
+
+$('act-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const name=$('act-name').value.trim(), sid=$('act-sid').value.trim(), section=$('act-section').value.trim();
+  const err=$('act-form-err');
+  if(!name||!sid||!section){err.textContent='Fill in your full name, student ID and section to start.'; err.hidden=false; return;}
+  err.hidden=true;
+  S={name,sid,section,variant:variantOf(sid),startedAt:new Date().toISOString(),answers:{},submitted:false};
+  save(); openActivity();
+});
+$('act-items').addEventListener('input',e=>{
+  const t=e.target; if(!S||S.submitted) return;
+  if(t.matches('input.ans')) S.answers[t.dataset.n]=t.value;
+  else if(t.type==='radio') S.answers[t.name.slice(4)]=t.value;
+  save(); updateProgress();
+});
+$('act-items').addEventListener('change',e=>{
+  const t=e.target; if(!S||S.submitted||t.type!=='radio') return;
+  S.answers[t.name.slice(4)]=t.value; save(); updateProgress();
+});
+$('act-submit').onclick=()=>{
+  const left=items.length-answeredCount(), c=$('act-confirm');
+  c.hidden=false;
+  c.innerHTML='<span>'+(left?'<b>'+left+' item'+(left===1?' is':'s are')+' still blank.</b> ':'')+'Submit now? You can\'t change your answers afterwards.</span><button class="btn primary" id="act-yes" type="button">Yes, submit</button><button class="btn" id="act-no" type="button">Keep working</button>';
+  $('act-no').onclick=()=>{c.hidden=true;};
+  $('act-yes').onclick=()=>{
+    S.marks=items.map((it,n)=>norm(it.type,S.answers[n])!==''&&norm(it.type,S.answers[n])===it.answer);
+    S.score=S.marks.filter(Boolean).length; S.submitted=true; S.submittedAt=new Date().toISOString();
+    save(); applyGraded(); $('act-result').scrollIntoView({behavior:'smooth',block:'start'});
+  };
+};
+$('act-restart').onclick=()=>{
+  const c=$('act-confirm'); c.hidden=false;
+  c.innerHTML='<span>'+(S&&S.submitted?'Make sure the result PDF is downloaded first. ':'')+'This clears '+(S&&S.submitted?'the submitted result':'all answers')+' from this browser.</span><button class="btn danger" id="act-clear-yes" type="button">Clear and start over</button><button class="btn" id="act-clear-no" type="button">Cancel</button>';
+  $('act-clear-no').onclick=()=>{c.hidden=true;};
+  $('act-clear-yes').onclick=resetToStart;
+};
+
+function resultBlocks(){
+  const B=[], add=(text,o)=>B.push(Object.assign({text,size:10,style:'normal',color:[25,30,45],indent:0,gap:0},o||{}));
+  add('Data Structure Stepper - Mini Activity: Trace It by Hand',{size:15,style:'bold'});
+  add('Name: '+S.name,{size:11,gap:4}); add('Student ID: '+S.sid,{size:11}); add('Section: '+S.section,{size:11}); add('Version: '+S.variant,{size:11});
+  add('Started: '+new Date(S.startedAt).toLocaleString(),{size:10,color:[90,100,120]}); add('Submitted: '+new Date(S.submittedAt).toLocaleString(),{size:10,color:[90,100,120]});
+  add('Score: '+S.score+' / '+items.length+'  ('+Math.round(S.score/items.length*100)+'%)',{size:13,style:'bold',gap:6});
+  add('',{rule:true,gap:6});
+  items.forEach((it,n)=>{
+    add((n+1)+'. ['+it.topic+'] '+plain(it.prompt),{size:10.5,style:'bold',gap:10});
+    if(it.given) add('Given: '+plain(it.given).replace(/\n/g,'  |  '),{size:9.5,color:[80,90,110],indent:14});
+    if(it.type==='choice') it.choices.forEach((c,k)=>add(String.fromCharCode(65+k)+') '+c,{size:9.5,color:[80,90,110],indent:14}));
+    add('Answer: '+displayAnswer(it,n),{size:10,indent:14});
+    add(S.marks[n]?'Result: CORRECT':'Result: INCORRECT',{size:10,style:'bold',indent:14,color:S.marks[n]?[20,130,85]:[200,50,60]});
+  });
+  return B;
+}
+function fileBase(){
+  const last=(S.name.trim().split(/\s+/).pop()||'student').replace(/[^A-Za-z0-9-]/g,'');
+  return 'DSA-Activity_'+S.sid.replace(/[^A-Za-z0-9-]/g,'')+'_'+last;
+}
+function downloadBlob(blob,name){
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1000);
+}
+function downloadResult(){
+  const B=resultBlocks(), J=window.jspdf&&window.jspdf.jsPDF;
+  try{
+    if(!J) throw new Error('nolib');
+    const doc=new J({unit:'pt',format:'a4'}), W=doc.internal.pageSize.getWidth(), H=doc.internal.pageSize.getHeight(), M=50; let y=M;
+    B.forEach(b=>{
+      y+=b.gap;
+      if(b.rule){doc.setDrawColor(200,205,215); doc.line(M,y,W-M,y); y+=8; return;}
+      doc.setFont('helvetica',b.style); doc.setFontSize(b.size); doc.setTextColor(b.color[0],b.color[1],b.color[2]);
+      doc.splitTextToSize(ascii(b.text),W-2*M-b.indent).forEach(l=>{
+        if(y+b.size*1.4>H-M){doc.addPage(); y=M;}
+        doc.text(l,M+b.indent,y+b.size); y+=b.size*1.4;
+      });
+    });
+    const pc=doc.getNumberOfPages();
+    for(let i=1;i<=pc;i++){doc.setPage(i); doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(120,128,145); doc.text(ascii(S.name+' | '+S.sid+' | page '+i+' of '+pc),W-M,H-24,{align:'right'});}
+    doc.save(fileBase()+'.pdf');
+  }catch(e){
+    const txt=B.map(b=>b.rule?'----------------------------------------':(b.gap?'\n':'')+' '.repeat(b.indent?4:0)+b.text).join('\n');
+    downloadBlob(new Blob([txt],{type:'text/plain'}),fileBase()+'.txt');
+    const er=$('act-pdf-err'); if(er){er.textContent='The PDF library could not load, so a .txt file was downloaded instead. Upload that file.'; er.hidden=false;}
+  }
+}
+
+/* restore an attempt in progress */
+const saved=store.get();
+if(saved&&saved.sid&&saved.name){S=saved; openActivity();}
 })();
 </script>
 </body>
