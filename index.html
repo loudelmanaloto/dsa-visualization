@@ -241,6 +241,46 @@ td.o{font-family:var(--f-mono);white-space:nowrap}
 .algo-card .meta span{font-family:var(--f-mono);font-size:.72rem;background:var(--surface-2);border:1px solid var(--line-2);border-radius:5px;padding:1px 6px}
 footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);font-size:.82rem}
 
+/* trees + graphs */
+.tsvg,.gsvg{width:100%;height:auto;display:block}
+.tsvg line,.gsvg line{stroke:var(--line);stroke-width:2.5;transition:stroke .2s,stroke-width .2s}
+.tsvg line.act{stroke:var(--accent);stroke-width:4.5}
+.gsvg line.tree{stroke:var(--done);stroke-width:6}
+.gsvg line.cand{stroke:var(--cmp);stroke-width:4.5}
+.gsvg line.cur{stroke:var(--swap);stroke-width:6}
+.gsvg line.rej{stroke-dasharray:6 6;opacity:.45}
+.gn circle{fill:var(--surface);stroke:var(--muted);stroke-width:2.5;transition:fill .2s,stroke .2s}
+.gn text{font-family:var(--f-mono);font-weight:600;font-size:15px;fill:var(--ink);text-anchor:middle}
+.gn.ncur circle{fill:var(--cmp-soft);stroke:var(--cmp);stroke-width:4}
+.gn.ndone circle{fill:var(--done-soft);stroke:var(--done);stroke-width:3}
+.gn.nvis circle,.gn.nwait circle{fill:var(--read-soft);stroke:var(--read);stroke-width:3}
+.gn.npath circle{stroke:var(--accent);stroke-width:3.5}
+.gn.nnew circle,.gn.nfound circle{fill:var(--done);stroke:var(--done)}
+.gn.nnew text,.gn.nfound text{fill:var(--surface)}
+.gn.nnext circle{stroke:var(--accent);stroke-width:3;stroke-dasharray:4 3}
+.gn circle.ring{fill:none;stroke:var(--pivot);stroke-width:2;stroke-dasharray:3 3}
+.gsvg .gn{cursor:pointer}
+.gsvg .gn:focus{outline:none}
+.gsvg .gn:focus-visible circle:not(.ring){stroke:var(--accent);stroke-width:4}
+.wl{font-family:var(--f-mono);font-size:13px;font-weight:600;fill:var(--ink);text-anchor:middle;paint-order:stroke;stroke:var(--surface-2);stroke-width:5px;stroke-linejoin:round}
+.dl{font-family:var(--f-mono);font-size:12px;font-weight:600;fill:var(--accent);text-anchor:middle;paint-order:stroke;stroke:var(--surface-2);stroke-width:4px;stroke-linejoin:round}
+.tempty{min-height:200px;display:grid;place-items:center;color:var(--muted);border:2px dashed var(--line);border-radius:12px}
+.panels{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}
+.panel{background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:8px 12px;display:grid;gap:6px;min-width:0;align-content:start}
+.chips{display:flex;flex-wrap:wrap;gap:4px;min-height:28px;align-items:center}
+.chips span{font-family:var(--f-mono);font-weight:600;font-size:.82rem;border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:var(--surface-2)}
+.chips span.ok{border-color:var(--done);background:var(--done-soft)}
+.chips span.rej{opacity:.45;text-decoration:line-through}
+.chips span.cur{border-color:var(--swap);background:var(--swap-soft)}
+.chips span.top{border-color:var(--cmp);background:var(--cmp-soft)}
+.chips .muted{color:var(--muted);font-size:.78rem;border:0;background:none;padding:0;font-weight:400}
+.gtable-wrap{overflow-x:auto}
+.gtable{font-size:.82rem;font-family:var(--f-mono)}
+.gtable th,.gtable td{padding:3px 8px}
+.gtable tr.fin td{color:var(--done);font-weight:600}
+.gtable tr.cur td{background:var(--cmp-soft)}
+.stage-top{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:8px}
+
 /* activity */
 .act-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:grid;gap:14px;max-width:860px}
 .act-card h2{font-size:1.3rem}
@@ -315,6 +355,8 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
       <a href="#queue" data-view="queue">Queue</a>
       <a href="#hash" data-view="hash">Hash Table</a>
       <a href="#sorting" data-view="sorting">Sorting</a>
+      <a href="#tree" data-view="tree">Trees</a>
+      <a href="#graph" data-view="graph">Graphs</a>
       <a href="#activity" data-view="activity">Activity</a>
     </nav>
   </div>
@@ -648,6 +690,195 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
         </ul>
       </div>
       <p class="callout"><b>Experiments to try:</b> pick <i>Nearly sorted</i> and compare insertion sort with selection sort. Then pick <i>Reversed</i> with quick sort and watch every partition peel off just one element: that's the O(n²) worst case.</p>
+    </section>
+  </div>
+</section>
+
+<!-- ===================== TREES ===================== -->
+<section class="view" id="view-tree" hidden>
+  <div class="intro">
+    <p class="eyebrow">Hierarchy · Binary search tree</p>
+    <h1>Trees</h1>
+    <p class="lede">A tree stores data as a hierarchy: one root at the top, and every other node hanging below exactly one parent. In a binary search tree, everything left of a node is smaller and everything right of it is larger.</p>
+  </div>
+
+  <div class="lab">
+    <div class="ops">
+      <div class="field"><label for="tree-input">Value</label><input type="text" id="tree-input" maxlength="2" placeholder="1 to 99" autocomplete="off" inputmode="numeric"></div>
+      <div class="group">
+        <button class="btn primary" id="tree-insert">Insert</button>
+        <button class="btn" id="tree-search">Search</button>
+      </div>
+      <span class="vsep" aria-hidden="true"></span>
+      <div class="field"><span class="lbl">Depth-first (DFS)</span>
+        <div class="group">
+          <button class="btn soft" id="tree-inorder">In-order</button>
+          <button class="btn soft" id="tree-preorder">Pre-order</button>
+          <button class="btn soft" id="tree-postorder">Post-order</button>
+        </div></div>
+      <div class="field"><span class="lbl">Breadth-first (BFS)</span>
+        <button class="btn soft" id="tree-level">Level-order</button></div>
+      <span class="vsep" aria-hidden="true"></span>
+      <button class="btn" id="tree-random">Random tree</button>
+      <button class="btn ghost" id="tree-clear">Reset</button>
+      <p class="hint">Run the same traversal on the same tree and compare the outputs. The depth-first traversals use the <b>call stack</b>; level-order uses a <b>queue</b>. Both are shown under the tree.</p>
+    </div>
+    <div class="lab-grid">
+      <div class="stage" id="tree-stage"></div>
+      <aside class="side"><div class="explain" id="tree-explain"></div><pre class="code" id="tree-code"></pre></aside>
+    </div>
+    <div class="player" id="tree-player"></div>
+  </div>
+
+  <div class="notes">
+    <section>
+      <h2>How trees work</h2>
+      <div class="cols">
+        <div>
+          <p>A <b>tree</b> is a set of nodes joined by edges with no cycles. One node is the <b>root</b>. Every other node has exactly one <b>parent</b>; nodes with no children are <b>leaves</b>. The <b>depth</b> of a node is how many edges separate it from the root, and the <b>height</b> of the tree is the largest depth.</p>
+          <p>In a <b>binary tree</b> each node has at most two children, called left and right. File systems, HTML documents, organisation charts and compiler syntax trees are all trees.</p>
+        </div>
+        <div>
+          <h3>The binary search tree rule</h3>
+          <p>For every node, all keys in its left subtree are <b>smaller</b> and all keys in its right subtree are <b>larger</b>. That rule lets search, insert and delete skip half of what is left at each step, just like binary search on a sorted array.</p>
+          <p>The catch: the shape depends on insertion order. Insert 10, 20, 30, 40 in order and the "tree" becomes a straight line with height n − 1. Self-balancing trees (AVL, red–black) rotate nodes to keep the height near log₂ n.</p>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h3>Operations and cost</h3>
+      <div class="tablebox"><table>
+        <thead><tr><th>Operation</th><th>Balanced BST</th><th>Degenerate BST (a line)</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>search(x)</td><td class="o good">O(log n)</td><td class="o bad">O(n)</td><td>One comparison per level, so the cost is the height</td></tr>
+          <tr><td>insert(x)</td><td class="o good">O(log n)</td><td class="o bad">O(n)</td><td>Search for the spot, then attach a leaf</td></tr>
+          <tr><td>min / max</td><td class="o good">O(log n)</td><td class="o bad">O(n)</td><td>Keep going left (min) or right (max)</td></tr>
+          <tr><td>any traversal</td><td class="o">O(n)</td><td class="o">O(n)</td><td>Every node is visited exactly once</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+    <section>
+      <h3>The four traversals</h3>
+      <p>A traversal visits every node once. The three depth-first orders differ only in <b>when</b> the node itself is visited compared with its two subtrees. Level-order is breadth-first: it finishes each level before going deeper.</p>
+      <div class="tablebox"><table>
+        <thead><tr><th>Traversal</th><th>Order</th><th>Uses</th><th>Typical use</th></tr></thead>
+        <tbody>
+          <tr><td>In-order (DFS)</td><td><code>left, node, right</code></td><td>Stack (recursion)</td><td>On a BST, gives the keys in sorted order</td></tr>
+          <tr><td>Pre-order (DFS)</td><td><code>node, left, right</code></td><td>Stack (recursion)</td><td>Copying or saving a tree, since parents come before children; prefix expressions</td></tr>
+          <tr><td>Post-order (DFS)</td><td><code>left, right, node</code></td><td>Stack (recursion)</td><td>Deleting a tree, computing folder sizes, evaluating expression trees; children before parents</td></tr>
+          <tr><td>Level-order (BFS)</td><td>level 0, level 1, …</td><td>Queue</td><td>Printing a tree by levels, finding the shallowest node</td></tr>
+        </tbody>
+      </table></div>
+      <p class="callout"><b>A memory trick:</b> the name says where the node goes. <b>Pre</b> means the node comes before its subtrees, <b>in</b> means in between them, <b>post</b> means after them. Left always comes before right.</p>
+    </section>
+  </div>
+</section>
+
+<!-- ===================== GRAPHS ===================== -->
+<section class="view" id="view-graph" hidden>
+  <div class="intro">
+    <p class="eyebrow">Vertices · edges · weights</p>
+    <h1>Graphs</h1>
+    <p class="lede">A graph is a set of nodes (vertices) connected by edges, with no root and no fixed shape. Road maps, computer networks and friendships are graphs. Here you can traverse one, find shortest paths and build a minimum spanning tree.</p>
+  </div>
+
+  <div class="lab">
+    <div class="ops">
+      <div class="field"><label for="graph-algo">Algorithm</label>
+        <select id="graph-algo">
+          <option value="dfs">Depth-first search (DFS)</option>
+          <option value="bfs">Breadth-first search (BFS)</option>
+          <option value="dijkstra">Dijkstra's shortest paths</option>
+          <option value="prim">Prim–Jarník MST</option>
+          <option value="kruskal">Kruskal's MST</option>
+        </select></div>
+      <div class="field"><label for="graph-start">Start node</label><select id="graph-start"></select></div>
+      <div class="field"><label for="graph-preset">Graph</label>
+        <select id="graph-preset">
+          <option value="a">Network A (7 nodes)</option>
+          <option value="b">Network B (8 nodes)</option>
+        </select></div>
+      <button class="btn" id="graph-rand">Random weights</button>
+      <button class="btn ghost" id="graph-reset">Reset weights</button>
+      <p class="hint" id="graph-hint">Click a node in the drawing to start from it. Edges are undirected, and the numbers on them are weights (think distances).</p>
+    </div>
+    <div class="lab-grid">
+      <div class="stage" id="graph-stage"></div>
+      <aside class="side"><div class="explain" id="graph-explain"></div><pre class="code" id="graph-code"></pre></aside>
+    </div>
+    <div class="player" id="graph-player"></div>
+  </div>
+
+  <div class="notes">
+    <section>
+      <h2>How graphs work</h2>
+      <div class="cols">
+        <div>
+          <p>A graph <code>G = (V, E)</code> has a set of <b>vertices</b> V and a set of <b>edges</b> E. Edges can be <b>directed</b> (one-way streets, followers) or <b>undirected</b> (two-way roads, friendships), and <b>weighted</b> (a distance, cost or time) or unweighted. A tree is simply a connected graph with no cycles.</p>
+          <p>Unlike a tree, a graph can have cycles, so every graph algorithm must <b>mark nodes as visited</b>. Without that, a traversal would loop around a cycle forever.</p>
+        </div>
+        <div>
+          <h3>Storing a graph</h3>
+          <div class="tablebox"><table>
+            <thead><tr><th></th><th>Adjacency list</th><th>Adjacency matrix</th></tr></thead>
+            <tbody>
+              <tr><td>Idea</td><td>Each node keeps a list of its neighbours</td><td>V × V table; cell [u][v] holds the weight</td></tr>
+              <tr><td>Memory</td><td class="o">O(V + E)</td><td class="o">O(V²)</td></tr>
+              <tr><td>Is u–v an edge?</td><td class="o">O(degree)</td><td class="o">O(1)</td></tr>
+              <tr><td>Best for</td><td>Sparse graphs (most real ones)</td><td>Dense graphs</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h3>Traversal: DFS and BFS</h3>
+      <div class="cols">
+        <div>
+          <p><b>Depth-first search</b> goes as deep as it can along one path, then backtracks. It uses a <b>stack</b>, usually the call stack through recursion. Uses: detecting cycles, topological sorting, solving mazes, finding connected components.</p>
+        </div>
+        <div>
+          <p><b>Breadth-first search</b> visits all neighbours first, then their neighbours, in rings around the start. It uses a <b>queue</b>. In an <b>unweighted</b> graph, BFS finds the path with the fewest edges, e.g. "degrees of separation" in a social network.</p>
+        </div>
+      </div>
+      <p>Both run in <code>O(V + E)</code> with an adjacency list: each node is visited once and each edge is examined a constant number of times. The highlighted green edges form the <b>DFS tree</b> or <b>BFS tree</b>: the edges used to discover each node.</p>
+    </section>
+    <section>
+      <h3>Shortest paths: Dijkstra's algorithm</h3>
+      <div class="cols">
+        <div>
+          <p>Dijkstra finds the cheapest path from one source to every other node. It keeps a tentative distance for each node, starting at ∞ (0 for the source). It repeatedly <b>finalizes</b> the unfinished node with the smallest distance, then <b>relaxes</b> its edges: if going through that node is cheaper than the best known route to a neighbour, update the neighbour's distance and remember where it came from (<code>prev</code>).</p>
+        </div>
+        <div>
+          <p><b>Why it works:</b> with non-negative weights, no later detour can make the smallest unfinished distance shorter. That is also its limit: with <b>negative</b> edge weights Dijkstra can give wrong answers; use Bellman–Ford instead.</p>
+          <p>This demo picks the minimum by scanning, <code>O(V²)</code>. With a binary-heap priority queue it is <code>O((V + E) log V)</code>. GPS routing and network routing protocols such as OSPF are built on this idea.</p>
+        </div>
+      </div>
+    </section>
+    <section>
+      <h3>Minimum spanning trees: Prim–Jarník and Kruskal</h3>
+      <p>A <b>spanning tree</b> connects all V nodes using exactly V − 1 edges and no cycles. A <b>minimum spanning tree</b> (MST) does so with the smallest total weight: the cheapest way to wire up every house, or lay cable between every city. Both algorithms below are greedy, and both are correct because of the <b>cut property</b>: the cheapest edge crossing any split of the nodes into two groups is always safe to add.</p>
+      <div class="tablebox"><table>
+        <thead><tr><th></th><th>Prim–Jarník</th><th>Kruskal</th></tr></thead>
+        <tbody>
+          <tr><td>Grows</td><td>One tree outward from a start node</td><td>A forest of pieces that merge together</td></tr>
+          <tr><td>Each step</td><td>Add the cheapest edge leaving the tree</td><td>Take the next cheapest edge overall; skip it if it would close a cycle</td></tr>
+          <tr><td>Key tool</td><td>Priority queue of crossing edges</td><td>Sorting + union–find (disjoint sets)</td></tr>
+          <tr><td>Time</td><td class="o">O(E log V)</td><td class="o">O(E log E)</td></tr>
+          <tr><td>Good for</td><td>Dense graphs</td><td>Sparse graphs, or edges already sorted</td></tr>
+        </tbody>
+      </table></div>
+      <p class="callout"><b>Try this:</b> run Prim–Jarník and Kruskal on the same graph. They add edges in a different order, but the total weight is always the same. (If no two edges share a weight, the tree itself is identical too.) Then run Dijkstra: the shortest-path tree is usually <i>not</i> the minimum spanning tree, because it minimizes distance from one source, not total wiring.</p>
+      <div class="tablebox"><table>
+        <thead><tr><th>Algorithm</th><th>Solves</th><th>Data structure</th><th>Time (typical implementation)</th></tr></thead>
+        <tbody>
+          <tr><td>DFS</td><td>Reachability, cycles, ordering</td><td>Stack</td><td class="o">O(V + E)</td></tr>
+          <tr><td>BFS</td><td>Fewest-edges paths</td><td>Queue</td><td class="o">O(V + E)</td></tr>
+          <tr><td>Dijkstra</td><td>Shortest weighted paths, weights ≥ 0</td><td>Priority queue</td><td class="o">O((V + E) log V)</td></tr>
+          <tr><td>Prim–Jarník</td><td>Minimum spanning tree</td><td>Priority queue</td><td class="o">O(E log V)</td></tr>
+          <tr><td>Kruskal</td><td>Minimum spanning tree</td><td>Sorting + union–find</td><td class="o">O(E log E)</td></tr>
+        </tbody>
+      </table></div>
     </section>
   </div>
 </section>
@@ -1278,11 +1509,333 @@ $('sort-apply').onclick=()=>{
 $('sort-custom').addEventListener('keydown',e=>{if(e.key==='Enter') $('sort-apply').click();});
 sortInput=[38,27,43,3,9,82,10,56,21,64]; sortLoad();
 
+/* ======================================================
+   TREES (binary search tree + traversals)
+   ====================================================== */
+const TMAXD=4, TMAXN=15;
+const TREE_CODE={
+  insert:{title:'insert(x)',lines:['procedure insert(x):','  node = root','  loop:','    if x < node.value:','      if node.left is null: node.left = new Node(x); stop','      node = node.left','    else if x > node.value:','      if node.right is null: node.right = new Node(x); stop','      node = node.right','    else: stop    // duplicate key, ignore']},
+  search:{title:'search(x)',lines:['procedure search(x):','  node = root','  while node is not null:','    if x == node.value: return node','    if x < node.value: node = node.left','    else: node = node.right','  return NOT FOUND']},
+  inorder:{title:'inorder(node) · DFS',lines:['procedure inorder(node):','  if node is null: return','  inorder(node.left)','  visit(node)','  inorder(node.right)','  return to caller']},
+  preorder:{title:'preorder(node) · DFS',lines:['procedure preorder(node):','  if node is null: return','  visit(node)','  preorder(node.left)','  preorder(node.right)','  return to caller']},
+  postorder:{title:'postorder(node) · DFS',lines:['procedure postorder(node):','  if node is null: return','  postorder(node.left)','  postorder(node.right)','  visit(node)','  return to caller']},
+  level:{title:'levelOrder(root) · BFS',lines:['procedure levelOrder(root):','  queue = [root]','  while queue is not empty:','    node = dequeue()','    visit(node)','    if node.left: enqueue(node.left)','    if node.right: enqueue(node.right)']},
+  idle:{title:'ready',lines:['// Insert or search for a value,','// or pick one of the four traversals.']}
+};
+const TNAME={inorder:'In-order',preorder:'Pre-order',postorder:'Post-order',level:'Level-order'};
+const TREE_SAMPLE=[50,30,70,20,40,60,80,35,65];
+const tnode=v=>({v,l:null,r:null});
+function tInsertSilent(root,x){
+  if(!root) return tnode(x);
+  let n=root,d=0;
+  for(;;){ if(x===n.v) return root; const side=x<n.v?'l':'r'; if(!n[side]){ if(d+1>TMAXD) return root; n[side]=tnode(x); return root; } n=n[side]; d++; }
+}
+function tBuild(vals){let r=null; vals.forEach(v=>{r=tInsertSilent(r,v);}); return r;}
+const tCount=n=>n?1+tCount(n.l)+tCount(n.r):0;
+let treeState={root:tBuild(TREE_SAMPLE)};
+
+function treeInsert(st,x){
+  const {F,fr}=maker(); const s=clone(st); const path=[];
+  if(!s.root){s.root=tnode(x); fr(1,'<b>insert('+x+')</b>: the tree is empty, so '+x+' becomes the root.',s,{newv:x},'ok'); return {F,st:s};}
+  if(tCount(s.root)>=TMAXN){fr(1,'This demo holds at most '+TMAXN+' nodes so the drawing stays readable. Press <b>Reset</b> or <b>Random tree</b> first.',s,{},'error'); return {F,st};}
+  fr(1,'<b>insert('+x+')</b> is called. At every node, smaller keys go left and larger keys go right.',s,{x});
+  let n=s.root,d=0;
+  fr(2,'Start at the root, '+n.v+'.',s,{x,cur:n.v});
+  for(;;){
+    path.push(n.v);
+    if(x===n.v){fr(10,x+' is already in the tree. A BST keeps keys unique, so nothing is inserted.',s,{x,cur:n.v,path:path.slice()},'error'); return {F,st};}
+    const left=x<n.v, side=left?'l':'r', word=left?'left':'right';
+    fr(left?4:7,x+(left?' &lt; ':' &gt; ')+n.v+', so '+x+' belongs in the '+word+' subtree of '+n.v+'.',s,{x,cur:n.v,path:path.slice()});
+    if(!n[side]){
+      if(d+1>TMAXD){fr(left?5:8,'The new node would sit at depth '+(d+1)+'. This demo limits the tree to depth '+TMAXD+' so it fits on screen. Try a different value.',s,{x,cur:n.v,path:path.slice()},'error'); return {F,st};}
+      n[side]=tnode(x);
+      fr(left?5:8,n.v+' has no '+word+' child, so attach '+x+' there as a new leaf. That took '+path.length+' comparison'+(path.length===1?'':'s')+', one per level, so insert costs O(height).',s,{newv:x,path:path.slice()},'ok');
+      return {F,st:s};
+    }
+    fr(left?6:9,'Move down to the '+word+' child, '+n[side].v+'.',s,{x,cur:n[side].v,path:path.slice()});
+    n=n[side]; d++;
+  }
+}
+function treeSearch(st,x){
+  const {F,fr}=maker(); const s=st; const path=[];
+  fr(1,'<b>search('+x+')</b> is called.',s,{x});
+  let n=s.root;
+  if(n) fr(2,'Start at the root, '+n.v+'.',s,{x,cur:n.v});
+  while(n){
+    path.push(n.v);
+    if(n.v===x){fr(4,'Found '+x+' after '+path.length+' comparison'+(path.length===1?'':'s')+'. Each comparison ruled out a whole subtree.',s,{x,found:x,path:path.slice()},'ok',{label:'search returned',val:'node '+x}); return {F,st};}
+    const left=x<n.v, nxt=left?n.l:n.r;
+    fr(left?5:6,x+(left?' &lt; ':' &gt; ')+n.v+', so go '+(left?'left':'right')+(nxt?' to '+nxt.v+'.':'. That child is null.'),s,{x,cur:n.v,path:path.slice()});
+    n=nxt;
+  }
+  fr(7,'Reached a null link without finding '+x+'. If '+x+' were in the tree, it would have to be exactly here. <b>NOT FOUND.</b>',s,{x,path:path.slice()},'error',{label:'search returned',val:'NOT FOUND'});
+  return {F,st};
+}
+function treeTraverse(st,kind){
+  const {F,fr}=maker(); const s=st; const out=[], stack=[];
+  const H=o=>Object.assign({out:out.slice(),stack:stack.slice()},o);
+  if(!s.root){fr(1,'The tree is empty, so there is nothing to traverse.',s,{},'error'); return {F,st};}
+  if(kind==='level'){
+    const q=[s.root], qv=()=>q.map(n=>n.v);
+    fr(2,'Level-order (BFS) uses a <b>queue</b>. Start by enqueueing the root, '+s.root.v+'.',s,{queue:qv(),out:[]});
+    while(q.length){
+      const n=q.shift();
+      fr(4,'Dequeue '+n.v+' from the front of the queue.',s,{cur:n.v,queue:qv(),out:out.slice()});
+      out.push(n.v);
+      fr(5,'Visit '+n.v+'. Output so far: '+out.join(', ')+'.',s,{cur:n.v,queue:qv(),out:out.slice()});
+      [[n.l,'left',6],[n.r,'right',7]].forEach(([c,word,line])=>{
+        if(c){q.push(c); fr(line,n.v+' has a '+word+' child, '+c.v+'. Enqueue it at the rear: it waits behind everything already queued, which is what keeps the levels in order.',s,{cur:n.v,nb:c.v,queue:qv(),out:out.slice()});}
+        else fr(line,n.v+' has no '+word+' child.',s,{cur:n.v,queue:qv(),out:out.slice()});
+      });
+    }
+    fr(3,'The queue is empty, so the traversal is finished. Level order: <b>'+out.join(', ')+'</b>. Nodes came out level by level, left to right.',s,{out:out.slice(),queue:[]},'ok');
+    return {F,st};
+  }
+  const order={inorder:'LVR',preorder:'VLR',postorder:'LRV'}[kind];
+  const rec=n=>{
+    stack.push(n.v);
+    fr(1,'Call '+kind+'('+n.v+'). The call is pushed onto the <b>call stack</b>.',s,H({cur:n.v}));
+    for(let k=0;k<3;k++){
+      const ch=order[k], line=3+k;
+      if(ch==='V'){out.push(n.v); fr(line,'Visit '+n.v+': add it to the output.',s,H({cur:n.v}));}
+      else{
+        const c=ch==='L'?n.l:n.r, word=ch==='L'?'left':'right';
+        if(!c) fr(line,n.v+' has no '+word+' child, so '+kind+'(null) returns immediately.',s,H({cur:n.v}));
+        else{fr(line,'Go into the '+word+' subtree: call '+kind+'('+c.v+'). '+n.v+' waits on the call stack until it returns.',s,H({cur:n.v,nb:c.v})); rec(c);}
+      }
+    }
+    stack.pop();
+    fr(6,kind+'('+n.v+') is finished. Pop it off the call stack'+(stack.length?' and return to '+kind+'('+stack[stack.length-1]+').':'. The stack is now empty.'),s,H({cur:n.v}));
+  };
+  rec(s.root);
+  const extra=kind==='inorder'?' In-order on a BST always gives the keys in <b>sorted order</b>.':kind==='preorder'?' Every parent comes before its children, so inserting keys in this order rebuilds exactly the same tree.':' Every child comes before its parent, which is the safe order for deleting a tree.';
+  fr(0,TNAME[kind]+' traversal: <b>'+out.join(', ')+'</b>.'+extra,s,{out:out.slice(),stack:[]},'ok');
+  return {F,st};
+}
+function renderTree(f){
+  const root=f.s.root, hl=f.hl||{};
+  const pos=[]; let idx=0;
+  const walk=(n,d,p)=>{if(!n) return; walk(n.l,d+1,n); pos.push({n,d,i:idx++,p}); walk(n.r,d+1,n);};
+  walk(root,0,null);
+  const N=pos.length, W=640, maxD=pos.reduce((m,o)=>Math.max(m,o.d),0), H=maxD*72+72;
+  const P={}; pos.forEach(o=>{P[o.n.v]={x:30+(o.i+0.5)*(W-60)/Math.max(N,1),y:36+o.d*72};});
+  const out=new Set(hl.out||[]), wait=new Set((hl.stack||[]).concat(hl.queue||[])), path=new Set(hl.path||[]);
+  const tip=[hl.cur,hl.newv,hl.found];
+  let edges='', nodes='';
+  pos.forEach(o=>{if(!o.p) return; const a=P[o.p.v], b=P[o.n.v];
+    const act=(hl.nb===o.n.v&&hl.cur===o.p.v)||(path.has(o.p.v)&&(path.has(o.n.v)||tip.includes(o.n.v)));
+    edges+='<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'"'+(act?' class="act"':'')+'/>';});
+  pos.forEach(o=>{const v=o.n.v; let c='';
+    if(hl.newv===v) c='nnew'; else if(hl.found===v) c='nfound'; else if(hl.cur===v) c='ncur'; else if(out.has(v)) c='ndone'; else if(wait.has(v)) c='nwait'; else if(path.has(v)) c='npath';
+    if(hl.nb===v) c+=' nnext';
+    nodes+='<g class="gn '+c+'" transform="translate('+P[v].x+','+P[v].y+')"><circle r="18"/><text dy="0.35em">'+v+'</text></g>';});
+  const svg=N?'<svg class="tsvg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Binary search tree with '+N+' nodes">'+edges+nodes+'</svg>':'<div class="tempty">The tree is empty. Insert a value to create the root.</div>';
+  const chips=(a,cls)=>a&&a.length?a.map((v,k)=>'<span'+(cls&&cls(k,a)?' class="'+cls(k,a)+'"':'')+'>'+v+'</span>').join(''):'<span class="muted">(empty)</span>';
+  let panels='<div class="panel"><span class="lbl">Output (visit order)</span><div class="chips">'+chips(hl.out,null)+'</div></div>';
+  if(hl.queue) panels+='<div class="panel"><span class="lbl">Queue · front → rear</span><div class="chips">'+chips(hl.queue,k=>k===0?'top':'')+'</div></div>';
+  else if(hl.stack) panels+='<div class="panel"><span class="lbl">Call stack · bottom → top</span><div class="chips">'+chips(hl.stack,(k,a)=>k===a.length-1?'top':'')+'</div></div>';
+  else panels+='<div class="panel"><span class="lbl">Path followed</span><div class="chips">'+chips(hl.path,null)+'</div></div>';
+  const out2=f.out;
+  $('tree-stage').innerHTML='<div class="stage-top"><dl class="facts" style="flex:1 1 260px"><div><dt>Nodes</dt><dd>'+N+'</dd></div><div><dt>Height</dt><dd>'+(N?maxD:'—')+'</dd></div>'+(out2?'<div><dt>'+esc(out2.label)+'</dt><dd>'+esc(out2.val)+'</dd></div>':'')+'</dl>'+(hl.x!==undefined?'<span class="held">x = '+hl.x+'</span>':'')+'</div>'+svg+
+    '<div class="panels">'+panels+'</div><div class="legend"><span><i style="background:var(--cmp)"></i>Current node</span><span><i style="background:var(--read)"></i>Waiting on stack / queue</span><span><i style="background:var(--done)"></i>Visited / inserted</span><span><i style="background:var(--accent)"></i>Path taken</span></div>';
+}
+const treePlayer=new Player('tree',renderTree,3,true);
+function treeIdle(msg){treePlayer.load([{line:0,msg,s:clone(treeState),hl:{}}],TREE_CODE.idle,'ready',false);}
+function treeVal(){const inp=$('tree-input'); let v=parseInt(inp.value,10); if(!(v>=1&&v<=99)) v=rand(1,99); inp.value=''; return v;}
+$('tree-insert').onclick=()=>{const x=treeVal(); const r=treeInsert(treeState,x); treeState=r.st; treePlayer.load(r.F,TREE_CODE.insert,'insert('+x+')');};
+$('tree-search').onclick=()=>{const x=treeVal(); const r=treeSearch(treeState,x); treePlayer.load(r.F,TREE_CODE.search,'search('+x+')');};
+['inorder','preorder','postorder','level'].forEach(k=>{$('tree-'+k).onclick=()=>{const r=treeTraverse(treeState,k); treePlayer.load(r.F,TREE_CODE[k],TNAME[k]+' traversal');};});
+$('tree-input').addEventListener('keydown',e=>{if(e.key==='Enter') $('tree-insert').click();});
+$('tree-random').onclick=()=>{const vals=[]; while(vals.length<10){const v=rand(5,95); if(!vals.includes(v)) vals.push(v);} treeState={root:tBuild(vals)}; treeIdle('Built a random BST by inserting '+vals.join(', ')+' in that order (values that would go deeper than depth '+TMAXD+' were skipped). Pick a traversal to walk it.');};
+$('tree-clear').onclick=()=>{treeState={root:tBuild(TREE_SAMPLE)}; treeIdle('Tree reset. It was built by inserting '+TREE_SAMPLE.join(', ')+'.');};
+treeIdle('This BST was built by inserting <b>'+TREE_SAMPLE.join(', ')+'</b>. Pick a traversal, or type a value and press <b>Insert</b> or <b>Search</b>. Then step through with <b>Next</b>.');
+
+/* ======================================================
+   GRAPHS (DFS, BFS, Dijkstra, Prim–Jarník, Kruskal)
+   ====================================================== */
+const GPRESETS={
+  a:{nodes:{A:[80,180],B:[220,70],C:[220,290],D:[360,180],E:[500,70],F:[500,290],G:[600,180]},
+     edges:[['A','B',4],['A','C',2],['B','C',5],['B','D',10],['C','D',3],['C','F',8],['D','E',4],['D','F',6],['E','G',3],['F','G',1],['E','F',7]]},
+  b:{nodes:{A:[90,90],B:[250,60],C:[420,80],D:[570,120],E:[110,280],F:[270,220],G:[430,290],H:[580,270]},
+     edges:[['A','B',3],['B','C',6],['C','D',2],['A','E',7],['A','F',5],['B','F',2],['C','F',4],['C','G',3],['D','H',5],['E','F',6],['F','G',8],['G','H',1],['D','G',9],['E','G',10]]}
+};
+const GRAPH_CODE={
+  dfs:{title:'DFS(u) · recursive',lines:['procedure DFS(u):','  mark u visited; add u to the order','  for each neighbour v of u (A to Z):','    if v is not visited:','      DFS(v)      // edge u–v joins the DFS tree','  return to caller']},
+  bfs:{title:'BFS(start)',lines:['procedure BFS(start):','  mark start visited; queue = [start]','  while queue is not empty:','    u = dequeue(); add u to the order','    for each neighbour v of u (A to Z):','      if v is not visited:','        mark v visited; enqueue(v)']},
+  dijkstra:{title:'dijkstra(source)',lines:['procedure dijkstra(source):','  dist[every node] = ∞; dist[source] = 0','  while an unfinished node has dist < ∞:','    u = unfinished node with the smallest dist','    mark u finished','    for each unfinished neighbour v of u:','      if dist[u] + w(u,v) < dist[v]:','        dist[v] = dist[u] + w(u,v); prev[v] = u']},
+  prim:{title:'prim(start) · Prim–Jarník',lines:['procedure prim(start):','  tree = {start}','  while some node is not in the tree:','    candidates = edges with exactly one end in the tree','    (u, v) = the cheapest candidate','    add v and edge (u, v) to the tree']},
+  kruskal:{title:'kruskal(G)',lines:['procedure kruskal(G):','  sort all edges by weight','  put every node in its own set','  for each edge (u, v) in sorted order:','    if find(u) != find(v):','      add (u, v) to the tree; union(u, v)','    else: skip it   // would make a cycle','  stop once the tree has V − 1 edges']}
+};
+const GNAME={dfs:'DFS',bfs:'BFS',dijkstra:'Dijkstra',prim:'Prim–Jarník',kruskal:'Kruskal'};
+const eid=(u,v)=>u<v?u+'-'+v:v+'-'+u;
+const elabel=id=>id.replace('-','–');
+function gFrames(algo,G,start){
+  const F=[], names=Object.keys(G.nodes).sort(), N=names.length;
+  const E=G.edges.map(([u,v,w])=>({u,v,w,id:eid(u,v)}));
+  const W={}; E.forEach(e=>{W[e.id]=e.w;});
+  const adj=u=>E.filter(e=>e.u===u||e.v===u).map(e=>({v:e.u===u?e.v:e.u,w:e.w,id:e.id})).sort((a,b)=>a.v<b.v?-1:1);
+  const S={visited:new Set(),done:new Set(),tree:new Set(),rej:new Set(),order:[],stack:[],queue:[],dist:null,prev:null,elist:null,sets:null,total:0};
+  const emit=(line,msg,hl,kind)=>F.push({line,msg,kind,g:G,algo,start,hl:hl||{},s:{visited:[...S.visited],done:[...S.done],tree:[...S.tree],rej:[...S.rej],order:S.order.slice(),stack:S.stack.slice(),queue:S.queue.slice(),dist:S.dist&&Object.assign({},S.dist),prev:S.prev&&Object.assign({},S.prev),elist:S.elist&&S.elist.map(e=>Object.assign({},e)),sets:S.sets&&S.sets.map(x=>x.slice()),total:S.total}});
+  const list=a=>a.join(', ');
+  if(algo==='dfs'){
+    emit(1,'Depth-first search from <b>'+start+'</b>. It follows one path as deep as possible before backing up, using the <b>call stack</b>. Neighbours are tried in alphabetical order.',{});
+    const dfs=(u,via)=>{
+      S.visited.add(u); S.order.push(u); S.stack.push(u); if(via) S.tree.add(via);
+      emit(2,'Call DFS('+u+'). Mark '+u+' visited. Visit order so far: '+list(S.order)+'.',{cur:u,edge:via});
+      for(const {v,id} of adj(u)){
+        if(S.visited.has(v)) emit(4,'Neighbour '+v+' of '+u+' is already visited, so skip it. (Without this check, cycles would make DFS loop forever.)',{cur:u,edge:id,nb:v});
+        else{emit(5,'Neighbour '+v+' is not visited. Go deeper: call DFS('+v+'). '+u+' waits on the call stack.',{cur:u,edge:id,nb:v}); dfs(v,id);}
+      }
+      S.stack.pop(); S.done.add(u);
+      emit(6,'Every neighbour of '+u+' is handled. DFS('+u+') returns'+(S.stack.length?' and we back up to '+S.stack[S.stack.length-1]+'.':'. The call stack is empty.'),{cur:u});
+    };
+    dfs(start,null);
+    emit(0,'DFS order from '+start+': <b>'+list(S.order)+'</b>. The green edges form the <b>DFS tree</b>: the edge each node was first reached by.',{},'ok');
+  }
+  else if(algo==='bfs'){
+    S.visited.add(start); S.queue.push(start);
+    emit(2,'Breadth-first search from <b>'+start+'</b>. Mark '+start+' visited and put it in the <b>queue</b>. BFS explores in rings: all nodes 1 edge away, then 2 edges away, and so on.',{cur:start});
+    while(S.queue.length){
+      const u=S.queue.shift(); S.order.push(u); S.done.add(u);
+      emit(4,'Dequeue <b>'+u+'</b> from the front and add it to the visit order: '+list(S.order)+'.',{cur:u});
+      for(const {v,id} of adj(u)){
+        if(S.visited.has(v)) emit(6,'Neighbour '+v+' is already visited'+(S.done.has(v)?'':' (it is waiting in the queue)')+'. Skip it.',{cur:u,edge:id,nb:v});
+        else{S.visited.add(v); S.queue.push(v); S.tree.add(id); emit(7,'Neighbour '+v+' is new. Mark it visited and enqueue it at the rear. Queue: '+list(S.queue)+'.',{cur:u,edge:id,nb:v});}
+      }
+    }
+    emit(3,'The queue is empty. BFS order from '+start+': <b>'+list(S.order)+'</b>. Each green edge reaches its node with the <b>fewest edges</b> possible from '+start+'.',{},'ok');
+  }
+  else if(algo==='dijkstra'){
+    S.dist={}; S.prev={}; names.forEach(n=>{S.dist[n]=Infinity; S.prev[n]=null;}); S.dist[start]=0;
+    emit(2,'Dijkstra from <b>'+start+'</b>. Every distance starts at ∞ except the source, which is 0. The numbers above the nodes are the current best distances.',{cur:start});
+    for(;;){
+      const open=names.filter(n=>!S.done.has(n)&&S.dist[n]<Infinity);
+      if(!open.length) break;
+      const u=open.reduce((a,b)=>S.dist[b]<S.dist[a]?b:a);
+      emit(4,'Unfinished nodes with a known distance: '+open.map(n=>n+' ('+S.dist[n]+')').join(', ')+'. The smallest is <b>'+u+'</b> with '+S.dist[u]+'.',{cur:u,pick:u});
+      S.done.add(u); S.visited.add(u); if(S.prev[u]) S.tree.add(eid(S.prev[u],u));
+      emit(5,'Mark '+u+' finished: '+S.dist[u]+' is its true shortest distance. Every other route would have to pass through an unfinished node that is already at least as far away, and weights are never negative.',{cur:u});
+      for(const {v,w,id} of adj(u)){
+        if(S.done.has(v)) continue;
+        const nd=S.dist[u]+w, old=S.dist[v];
+        if(nd<old){
+          emit(7,'Edge '+u+'–'+v+' (weight '+w+'): '+S.dist[u]+' + '+w+' = '+nd+', which beats the current dist['+v+'] = '+(old===Infinity?'∞':old)+'.',{cur:u,edge:id,nb:v});
+          S.dist[v]=nd; S.prev[v]=u; S.visited.add(v);
+          emit(8,'Relax: dist['+v+'] = '+nd+', prev['+v+'] = '+u+'. The best known route to '+v+' now goes through '+u+'.',{cur:u,edge:id,nb:v});
+        }else emit(7,'Edge '+u+'–'+v+' (weight '+w+'): '+S.dist[u]+' + '+w+' = '+nd+', not better than dist['+v+'] = '+old+'. Keep the old route.',{cur:u,edge:id,nb:v});
+      }
+    }
+    const paths=names.filter(n=>n!==start&&S.dist[n]<Infinity).map(n=>{const p=[]; for(let x=n;x;x=S.prev[x]) p.unshift(x); return p.join('→')+' = '+S.dist[n];});
+    emit(3,'Every reachable node is finished. Shortest paths from '+start+': '+paths.join('; ')+'. The green edges form the <b>shortest-path tree</b>.',{},'ok');
+  }
+  else if(algo==='prim'){
+    S.visited.add(start);
+    emit(2,'Prim–Jarník grows one tree outward from <b>'+start+'</b>. At each step it adds the cheapest edge that connects the tree to a node outside it.',{cur:start});
+    while(S.visited.size<N){
+      const cand=E.filter(e=>S.visited.has(e.u)!==S.visited.has(e.v));
+      if(!cand.length) break;
+      emit(4,'Edges crossing from the tree to the outside: '+cand.map(e=>elabel(e.id)+' ('+e.w+')').join(', ')+'.',{cand:cand.map(e=>e.id)});
+      const best=cand.reduce((a,b)=>b.w<a.w||(b.w===a.w&&b.id<a.id)?b:a);
+      const nv=S.visited.has(best.u)?best.v:best.u;
+      emit(5,'The cheapest crossing edge is <b>'+elabel(best.id)+'</b> with weight '+best.w+'.',{cand:cand.map(e=>e.id),edge:best.id});
+      S.visited.add(nv); S.done.add(nv); S.tree.add(best.id); S.total+=best.w;
+      emit(6,'Add node '+nv+' and edge '+elabel(best.id)+' to the tree. Tree weight so far: '+S.total+'. Nodes in the tree: '+list([...S.visited].sort())+'.',{cur:nv});
+    }
+    emit(0,'All '+N+' nodes are connected using '+(N-1)+' edges. Minimum spanning tree weight: <b>'+S.total+'</b>.',{},'ok');
+  }
+  else{
+    const sorted=E.slice().sort((a,b)=>a.w-b.w||(a.id<b.id?-1:1));
+    S.elist=sorted.map(e=>({id:e.id,w:e.w,st:''}));
+    const parent={}; names.forEach(n=>{parent[n]=n;});
+    const find=x=>parent[x]===x?x:(parent[x]=find(parent[x]));
+    const groups=()=>{const g={}; names.forEach(n=>{(g[find(n)]=g[find(n)]||[]).push(n);}); return Object.values(g);};
+    emit(2,'Kruskal looks at edges from cheapest to most expensive. Sorted: '+sorted.map(e=>elabel(e.id)+' ('+e.w+')').join(', ')+'.',{});
+    S.sets=groups();
+    emit(3,'Every node starts as its own one-node piece (a set). Kruskal will merge pieces until only one is left.',{});
+    let added=0;
+    for(let i=0;i<sorted.length&&added<N-1;i++){
+      const e=sorted[i]; S.elist[i].st='cur';
+      emit(4,'Next cheapest edge: <b>'+elabel(e.id)+'</b> with weight '+e.w+'.',{edge:e.id});
+      const ru=find(e.u), rv=find(e.v);
+      const setOf=x=>'{'+groups().find(g=>g.includes(x)).join(', ')+'}';
+      if(ru!==rv){
+        emit(5,e.u+' is in '+setOf(e.u)+' and '+e.v+' is in '+setOf(e.v)+'. Different sets, so this edge joins two separate pieces without making a cycle.',{edge:e.id});
+        parent[ru]=rv; added++; S.tree.add(e.id); S.visited.add(e.u); S.visited.add(e.v); S.total+=e.w; S.elist[i].st='ok'; S.sets=groups();
+        emit(6,'Add '+elabel(e.id)+' to the tree and merge the two sets. Edges in the tree: '+added+' of '+(N-1)+'. Weight so far: '+S.total+'.',{});
+      }else{
+        S.elist[i].st='rej'; S.rej.add(e.id);
+        emit(7,e.u+' and '+e.v+' are already in the same set '+setOf(e.u)+', so they are already connected. Adding '+elabel(e.id)+' would close a <b>cycle</b>. Skip it.',{edge:e.id});
+      }
+    }
+    emit(8,'The tree has '+(N-1)+' edges, which is V − 1, so every node is connected. Minimum spanning tree weight: <b>'+S.total+'</b>.',{},'ok');
+  }
+  return F;
+}
+function renderGraph(f){
+  const G=f.g, s=f.s, hl=f.hl||{}, P=G.nodes;
+  const tree=new Set(s.tree), rej=new Set(s.rej), cand=new Set(hl.cand||[]), done=new Set(s.done), vis=new Set(s.visited);
+  let el='', wl='', nd='';
+  G.edges.forEach(([u,v,w])=>{
+    const id=eid(u,v); let c='';
+    if(hl.edge===id) c='cur'; else if(tree.has(id)) c='tree'; else if(cand.has(id)) c='cand'; else if(rej.has(id)) c='rej';
+    const a=P[u], b=P[v];
+    el+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'"'+(c?' class="'+c+'"':'')+'/>';
+    wl+='<text class="wl" x="'+(a[0]+b[0])/2+'" y="'+(a[1]+b[1])/2+'" dy="0.35em">'+w+'</text>';
+  });
+  Object.keys(P).sort().forEach(n=>{
+    const [x,y]=P[n]; let c='';
+    if(hl.cur===n) c='ncur'; else if(done.has(n)) c='ndone'; else if(vis.has(n)) c='nvis';
+    if(hl.nb===n) c+=' nnext';
+    const d=s.dist?'<text class="dl" y="-29">'+(s.dist[n]===Infinity?'∞':s.dist[n])+'</text>':'';
+    nd+='<g class="gn '+c+'" data-node="'+n+'" transform="translate('+x+','+y+')" tabindex="0" role="button" aria-label="Start from node '+n+'">'+(f.algo!=='kruskal'&&n===f.start?'<circle class="ring" r="25"/>':'')+'<circle r="19"/><text dy="0.35em">'+n+'</text>'+d+'</g>';
+  });
+  const chips=(a,cls)=>a&&a.length?a.map((v,k)=>'<span'+(cls&&cls(k,a)?' class="'+cls(k,a)+'"':'')+'>'+v+'</span>').join(''):'<span class="muted">(empty)</span>';
+  let panels='';
+  if(f.algo==='dfs'||f.algo==='bfs'){
+    panels+='<div class="panel"><span class="lbl">Visit order</span><div class="chips">'+chips(s.order)+'</div></div>';
+    panels+=f.algo==='dfs'?'<div class="panel"><span class="lbl">Call stack · bottom → top</span><div class="chips">'+chips(s.stack,(k,a)=>k===a.length-1?'top':'')+'</div></div>'
+      :'<div class="panel"><span class="lbl">Queue · front → rear</span><div class="chips">'+chips(s.queue,k=>k===0?'top':'')+'</div></div>';
+  }else if(f.algo==='dijkstra'){
+    const names=Object.keys(P).sort();
+    panels+='<div class="panel"><span class="lbl">Distance table</span><div class="gtable-wrap"><table class="gtable"><thead><tr><th>Node</th><th>dist</th><th>prev</th><th>Status</th></tr></thead><tbody>'+
+      names.map(n=>'<tr class="'+(hl.cur===n?'cur':done.has(n)?'fin':'')+'"><td>'+n+'</td><td>'+(s.dist[n]===Infinity?'∞':s.dist[n])+'</td><td>'+(s.prev[n]||'—')+'</td><td>'+(done.has(n)?'finished':'')+'</td></tr>').join('')+'</tbody></table></div></div>';
+  }else if(f.algo==='prim'){
+    panels+='<div class="panel"><span class="lbl">Nodes in the tree</span><div class="chips">'+chips([...s.visited].sort())+'</div></div><div class="panel"><span class="lbl">Tree edges · total weight '+s.total+'</span><div class="chips">'+chips(s.tree.map(elabel))+'</div></div>';
+  }else{
+    panels+='<div class="panel" style="grid-column:1/-1"><span class="lbl">Edges in sorted order · total weight '+s.total+'</span><div class="chips">'+(s.elist?s.elist.map(e=>'<span class="'+e.st+'">'+elabel(e.id)+' '+e.w+'</span>').join(''):'<span class="muted">(not sorted yet)</span>')+'</div></div>'+
+      '<div class="panel" style="grid-column:1/-1"><span class="lbl">Sets (connected pieces)</span><div class="chips">'+(s.sets?s.sets.map(g=>'<span>{'+g.join(', ')+'}</span>').join(''):'<span class="muted">(not created yet)</span>')+'</div></div>';
+  }
+  $('graph-stage').innerHTML='<svg class="gsvg" viewBox="0 0 660 360" role="img" aria-label="Weighted graph">'+el+wl+nd+'</svg><div class="panels">'+panels+'</div>'+
+    '<div class="legend"><span><i style="background:var(--cmp)"></i>Current node</span><span><i style="background:var(--read)"></i>Discovered / in tree</span><span><i style="background:var(--done)"></i>Finished node / chosen edge</span><span><i style="background:var(--swap)"></i>Edge being checked</span>'+(f.algo==='prim'?'<span><i style="background:var(--cmp)"></i>Candidate edge</span>':'')+(f.algo==='kruskal'?'<span><i style="background:var(--line)"></i>Dashed: skipped (cycle)</span>':'<span><i style="border:2px dashed var(--pivot);background:none"></i>Start node</span>')+'</div>';
+}
+let graphPreset='a', graphW={};
+const graphPlayer=new Player('graph',renderGraph,4,false);
+function currentGraph(){const p=GPRESETS[graphPreset]; return {nodes:p.nodes,edges:p.edges.map(([u,v,w])=>[u,v,graphW[eid(u,v)]!==undefined?graphW[eid(u,v)]:w])};}
+function graphFillStart(){const names=Object.keys(GPRESETS[graphPreset].nodes).sort(); const sel=$('graph-start'); const cur=sel.value; sel.innerHTML=names.map(n=>'<option value="'+n+'">'+n+'</option>').join(''); sel.value=names.includes(cur)?cur:'A';}
+function graphLoad(){
+  const algo=$('graph-algo').value, start=$('graph-start').value;
+  $('graph-start').disabled=algo==='kruskal';
+  graphPlayer.load(gFrames(algo,currentGraph(),start),GRAPH_CODE[algo],GNAME[algo]+(algo==='kruskal'?'':' from '+start),false);
+}
+$('graph-algo').onchange=graphLoad;
+$('graph-start').onchange=graphLoad;
+$('graph-preset').onchange=e=>{graphPreset=e.target.value; graphW={}; graphFillStart(); graphLoad();};
+$('graph-rand').onclick=()=>{graphW={}; GPRESETS[graphPreset].edges.forEach(([u,v])=>{graphW[eid(u,v)]=rand(1,15);}); graphLoad();};
+$('graph-reset').onclick=()=>{graphW={}; graphLoad();};
+function graphPickNode(e){
+  const g=e.target.closest&&e.target.closest('[data-node]'); if(!g) return;
+  if($('graph-algo').value==='kruskal'){$('graph-hint').textContent='Kruskal has no start node: it works on all edges at once. Pick another algorithm to choose a start.'; return;}
+  $('graph-start').value=g.dataset.node; graphLoad();
+}
+$('graph-stage').addEventListener('click',graphPickNode);
+$('graph-stage').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest&&e.target.closest('[data-node]')){e.preventDefault(); e.stopPropagation(); graphPickNode(e);}});
+graphFillStart(); graphLoad();
+
 /* ---------------- routing + keyboard ---------------- */
-const PLAYERS={stack:stackPlayer,queue:queuePlayer,hash:hashPlayer,sorting:sortPlayer};
+const PLAYERS={stack:stackPlayer,queue:queuePlayer,hash:hashPlayer,sorting:sortPlayer,tree:treePlayer,graph:graphPlayer};
 let current='stack';
 function route(){
-  const VIEWS=['stack','queue','hash','sorting','activity'];
+  const VIEWS=['stack','queue','hash','sorting','tree','graph','activity'];
   let v=location.hash.slice(1); if(!VIEWS.includes(v)) v='stack';
   if(v!==current&&PLAYERS[current]) PLAYERS[current].pause();
   current=v;
