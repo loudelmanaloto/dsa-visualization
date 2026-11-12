@@ -281,6 +281,45 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
 .gtable tr.cur td{background:var(--cmp-soft)}
 .stage-top{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center;margin-bottom:8px}
 
+/* labeled diagrams */
+.dg-sec .dg-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.dg{display:block;width:100%;min-width:640px;height:auto}
+.dg text{font-family:var(--f-body);font-size:12.5px;fill:var(--ink)}
+.dg .m{fill:var(--muted);font-size:11.5px}
+.dg .b{font-weight:700}
+.dg .c{text-anchor:middle}
+.dg .e2{text-anchor:end}
+.dg .ac{fill:var(--accent)}
+.dg .h{font-family:var(--f-display);font-weight:700;font-size:14px}
+.dg .v{font-family:var(--f-mono);font-weight:600;font-size:14px;text-anchor:middle}
+.dg .v.sm{font-size:11.5px}
+.dg .w{font-family:var(--f-mono);font-weight:600;font-size:13px;text-anchor:middle;paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
+.dg-cell{fill:var(--surface);stroke:var(--muted);stroke-width:1.5}
+.dg-cell.e{fill:none;stroke-dasharray:5 4;opacity:.7}
+.dg-cell.hi{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.5}
+.dg-cell.ok{fill:var(--done-soft);stroke:var(--done);stroke-width:2}
+.dg-cell.warn{fill:var(--cmp-soft);stroke:var(--cmp);stroke-width:2.5}
+.dg-cell.pv{fill:var(--pivot-soft);stroke:var(--pivot);stroke-width:2.5}
+.dg-ln{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:3 3}
+.dg-ar{stroke:var(--accent);stroke-width:2;fill:none;marker-end:url(#dgA)}
+.dg-ar.both{marker-start:url(#dgA)}
+.dg-ar.m{stroke:var(--muted);marker-end:url(#dgM)}
+.dg-ar.m.both{marker-start:url(#dgM)}
+.dg-head{fill:var(--accent)}
+.dg-head.m{fill:var(--muted)}
+.dg-br{stroke:var(--muted);stroke-width:1.5;fill:none}
+.dg-g{stroke:var(--line);stroke-width:1;stroke-dasharray:4 5}
+.dg-floor{stroke:var(--ink);stroke-width:3}
+.dg-edge{stroke:var(--muted);stroke-width:2.5}
+.dg-edge.path{stroke:var(--accent);stroke-width:5}
+.dg-edge.cyc{stroke:var(--pivot);stroke-width:3;stroke-dasharray:7 5}
+.dg-sub{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:6 5}
+.dg .dg-node circle{fill:var(--surface);stroke:var(--ink);stroke-width:2}
+.dg .dg-node.hi circle{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2.5}
+.dg .dg-node text{font-family:var(--f-mono);font-weight:600;font-size:14px;text-anchor:middle}
+.dg .dg-badge circle{fill:var(--accent)}
+.dg .dg-badge text{fill:var(--accent-ink);font-size:11px;font-weight:700;text-anchor:middle}
+
 /* key terms */
 .terms-head{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:flex-end;justify-content:space-between}
 .terms-head .field input{height:36px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:0 10px;width:220px;max-width:100%}
@@ -365,6 +404,7 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><marker id="dgA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="dg-head"/></marker><marker id="dgM" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="dg-head m"/></marker></defs></svg>
 
 <header class="top">
   <div class="wrap">
@@ -416,6 +456,34 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 
   <div class="notes">
+    <section class="dg-sec">
+      <h2>Parts of a stack</h2>
+      <p>An array-based stack holding 12, 7, 31 and 25. Only the top is ever touched: 25 was pushed last, so it is the next to be popped.</p>
+      <div class="dg-wrap"><svg class="dg" viewBox="0 0 760 392" role="img" aria-labelledby="dg-stack-t"><title id="dg-stack-t">Labeled diagram of an array-based stack: top pointer, bottom, free slots, push, pop and peek</title>
+        <text class="m c" x="360" y="46">data[ ] array · capacity 6</text>
+        <rect class="dg-cell e" x="300" y="60" width="120" height="44" rx="6"/>
+        <rect class="dg-cell e" x="300" y="104" width="120" height="44" rx="6"/>
+        <rect class="dg-cell hi" x="300" y="148" width="120" height="44" rx="6"/><text class="v" x="360" y="175">25</text>
+        <rect class="dg-cell" x="300" y="192" width="120" height="44" rx="6"/><text class="v" x="360" y="219">31</text>
+        <rect class="dg-cell" x="300" y="236" width="120" height="44" rx="6"/><text class="v" x="360" y="263">7</text>
+        <rect class="dg-cell" x="300" y="280" width="120" height="44" rx="6"/><text class="v" x="360" y="307">12</text>
+        <text class="m e2" x="292" y="86">[5]</text><text class="m e2" x="292" y="130">[4]</text><text class="m e2" x="292" y="174">[3]</text><text class="m e2" x="292" y="218">[2]</text><text class="m e2" x="292" y="262">[1]</text><text class="m e2" x="292" y="306">[0]</text>
+        <line class="dg-floor" x1="296" y1="328" x2="424" y2="328"/>
+        <path class="dg-br" d="M434 62 h10 V146 h-10"/>
+        <text class="b" x="454" y="100">Free slots</text><text class="m" x="454" y="118">room for 2 more pushes</text>
+        <line class="dg-ar" x1="556" y1="170" x2="428" y2="170"/>
+        <text class="b ac" x="564" y="166">top = 3</text><text class="m" x="564" y="184">index of the newest item</text>
+        <line class="dg-ar m" x1="556" y1="302" x2="428" y2="302"/>
+        <text class="b" x="564" y="298">Bottom</text><text class="m" x="564" y="316">first in, last out</text>
+        <path class="dg-ar" d="M200 104 C 250 104, 262 126, 296 126"/>
+        <text class="b ac" x="40" y="100">push(x)</text><text class="m" x="40" y="118">writes to data[top + 1]</text>
+        <path class="dg-ar" d="M296 172 C 256 172, 246 198, 204 198"/>
+        <text class="b ac" x="40" y="194">pop()</text><text class="m" x="40" y="212">removes data[top]</text>
+        <text class="b ac" x="40" y="258">peek()</text><text class="m" x="40" y="276">reads data[top], removes nothing</text>
+        <text class="m c" x="360" y="358">size = top + 1 = 4 · capacity = 6</text>
+        <text class="m c" x="360" y="378">overflow: push when top = 5 · underflow: pop when top = −1</text>
+      </svg></div>
+    </section>
     <section class="terms-sec" data-glossary="stack"></section>
     <section>
       <h2>How a stack works</h2>
@@ -493,6 +561,38 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 
   <div class="notes">
+    <section class="dg-sec">
+      <h2>Parts of a queue</h2>
+      <p>The same four values seen two ways: as the line the user thinks about, and as the circular array that actually stores them. Here the stored items wrap past the end of the array.</p>
+      <div class="dg-wrap"><svg class="dg" viewBox="0 0 760 410" role="img" aria-labelledby="dg-queue-t"><title id="dg-queue-t">Labeled diagram of a queue: front, rear, enqueue, dequeue, and a circular array with wrap-around</title>
+        <text class="h" x="40" y="30">What the user sees: a line</text>
+        <rect class="dg-cell hi" x="220" y="60" width="70" height="40" rx="6"/><text class="v" x="255" y="85">14</text>
+        <rect class="dg-cell" x="300" y="60" width="70" height="40" rx="6"/><text class="v" x="335" y="85">9</text>
+        <rect class="dg-cell" x="380" y="60" width="70" height="40" rx="6"/><text class="v" x="415" y="85">27</text>
+        <rect class="dg-cell" x="460" y="60" width="70" height="40" rx="6"/><text class="v" x="495" y="85">5</text>
+        <line class="dg-ar" x1="214" y1="80" x2="132" y2="80"/>
+        <text class="b ac" x="40" y="66">dequeue()</text><text class="m" x="40" y="100">leaves from the front</text>
+        <line class="dg-ar" x1="636" y1="80" x2="538" y2="80"/>
+        <text class="b ac" x="646" y="76">enqueue(x)</text><text class="m" x="646" y="94">joins at the rear</text>
+        <text class="b c" x="255" y="122">↑ front</text><text class="m c" x="255" y="138">waited longest</text>
+        <text class="b c" x="495" y="122">↑ rear</text><text class="m c" x="495" y="138">newest item</text>
+        <text class="h" x="40" y="182">How it is stored: a circular array (capacity 8)</text>
+        <text class="m e2" x="720" y="182">count = 4</text>
+        <text class="m c" x="168" y="212">0</text><text class="m c" x="228" y="212">1</text><text class="m c" x="288" y="212">2</text><text class="m c" x="348" y="212">3</text><text class="m c" x="408" y="212">4</text><text class="m c" x="468" y="212">5</text><text class="m c" x="528" y="212">6</text><text class="m c" x="588" y="212">7</text>
+        <rect class="dg-cell" x="140" y="220" width="56" height="44" rx="6"/><text class="v" x="168" y="247">27</text>
+        <rect class="dg-cell" x="200" y="220" width="56" height="44" rx="6"/><text class="v" x="228" y="247">5</text>
+        <rect class="dg-cell e" x="260" y="220" width="56" height="44" rx="6"/><text class="m c" x="288" y="246">empty</text>
+        <rect class="dg-cell e" x="320" y="220" width="56" height="44" rx="6"/><text class="m c" x="348" y="246">empty</text>
+        <rect class="dg-cell e" x="380" y="220" width="56" height="44" rx="6"/><text class="m c" x="408" y="246">empty</text>
+        <rect class="dg-cell e" x="440" y="220" width="56" height="44" rx="6"/><text class="m c" x="468" y="246">empty</text>
+        <rect class="dg-cell hi" x="500" y="220" width="56" height="44" rx="6"/><text class="v" x="528" y="247">14</text>
+        <rect class="dg-cell" x="560" y="220" width="56" height="44" rx="6"/><text class="v" x="588" y="247">9</text>
+        <line class="dg-ar" x1="528" y1="304" x2="528" y2="270"/><text class="b ac c" x="528" y="322">front = 6</text>
+        <line class="dg-ar" x1="228" y1="304" x2="228" y2="270"/><text class="b ac c" x="228" y="322">rear = 1</text>
+        <path class="dg-ar m" d="M620 242 C 724 242, 724 362, 400 362 C 76 362, 70 242, 136 242"/>
+        <text class="m c" x="400" y="388">wrap-around: after slot 7 comes slot 0, because next = (i + 1) % 8</text>
+      </svg></div>
+    </section>
     <section class="terms-sec" data-glossary="queue"></section>
     <section>
       <h2>How a queue works</h2>
@@ -572,6 +672,49 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 
   <div class="notes">
+    <section class="dg-sec">
+      <h2>Parts of a hash table</h2>
+      <p>Looking up <code>"mango"</code> in a table with 7 buckets that uses separate chaining. The numbered parts are listed under the drawing.</p>
+      <div class="dg-wrap"><svg class="dg" viewBox="0 0 760 392" role="img" aria-labelledby="dg-hash-t"><title id="dg-hash-t">Labeled diagram of a hash table: key, hash function, index, buckets, entries, a collision, a chain and empty buckets</title>
+        <text class="m c" x="75" y="140">key</text><text class="m c" x="240" y="130">hash function</text><text class="m c" x="410" y="140">index</text>
+        <rect class="dg-cell hi" x="20" y="150" width="110" height="44" rx="6"/><text class="v" x="75" y="177">"mango"</text>
+        <line class="dg-ar" x1="132" y1="172" x2="161" y2="172"/>
+        <rect class="dg-cell warn" x="165" y="140" width="150" height="64" rx="8"/><text class="b c" x="240" y="166">hash(key)</text><text class="m c" x="240" y="186">sum of codes = 530</text>
+        <line class="dg-ar" x1="317" y1="172" x2="346" y2="172"/>
+        <rect class="dg-cell" x="350" y="150" width="120" height="44" rx="6"/><text class="v" x="410" y="177">530 mod 7 = 5</text>
+        <path class="dg-ar" d="M472 172 C 494 172, 484 278, 506 278"/>
+        <text class="m c" x="528" y="26">bucket</text><text class="m c" x="645" y="26">entries (key : value)</text>
+        <rect class="dg-cell" x="510" y="40" width="36" height="36" rx="5"/><text class="v" x="528" y="63">0</text>
+        <line class="dg-ar m" x1="547" y1="58" x2="558" y2="58"/><rect class="dg-cell" x="560" y="40" width="74" height="36" rx="5"/><text class="v sm" x="597" y="63">lemon : 8</text>
+        <rect class="dg-cell" x="510" y="84" width="36" height="36" rx="5"/><text class="v" x="528" y="107">1</text><text class="m" x="560" y="106">empty</text>
+        <rect class="dg-cell" x="510" y="128" width="36" height="36" rx="5"/><text class="v" x="528" y="151">2</text>
+        <line class="dg-ar m" x1="547" y1="146" x2="558" y2="146"/><rect class="dg-cell" x="560" y="128" width="74" height="36" rx="5"/><text class="v sm" x="597" y="151">kiwi : 30</text>
+        <line class="dg-ar m" x1="635" y1="146" x2="652" y2="146"/><rect class="dg-cell" x="654" y="128" width="74" height="36" rx="5"/><text class="v sm" x="691" y="151">fig : 17</text>
+        <rect class="dg-cell" x="510" y="172" width="36" height="36" rx="5"/><text class="v" x="528" y="195">3</text><text class="m" x="560" y="194">empty</text>
+        <rect class="dg-cell" x="510" y="216" width="36" height="36" rx="5"/><text class="v" x="528" y="239">4</text><text class="m" x="560" y="238">empty</text>
+        <rect class="dg-cell hi" x="510" y="260" width="36" height="36" rx="5"/><text class="v" x="528" y="283">5</text>
+        <line class="dg-ar m" x1="547" y1="278" x2="558" y2="278"/><rect class="dg-cell" x="560" y="260" width="74" height="36" rx="5"/><text class="v sm" x="597" y="283">apple : 12</text>
+        <line class="dg-ar m" x1="635" y1="278" x2="652" y2="278"/><rect class="dg-cell hi" x="654" y="260" width="74" height="36" rx="5"/><text class="v sm" x="691" y="283">mango : 5</text>
+        <rect class="dg-cell" x="510" y="304" width="36" height="36" rx="5"/><text class="v" x="528" y="327">6</text><text class="m" x="560" y="326">empty</text>
+        <g class="dg-badge"><circle cx="22" cy="148" r="9"/><text x="22" y="152">1</text></g>
+        <g class="dg-badge"><circle cx="167" cy="138" r="9"/><text x="167" y="142">2</text></g>
+        <g class="dg-badge"><circle cx="352" cy="148" r="9"/><text x="352" y="152">3</text></g>
+        <g class="dg-badge"><circle cx="498" cy="44" r="9"/><text x="498" y="48">4</text></g>
+        <g class="dg-badge"><circle cx="634" cy="40" r="9"/><text x="634" y="44">5</text></g>
+        <g class="dg-badge"><circle cx="740" cy="270" r="9"/><text x="740" y="274">6</text></g>
+        <g class="dg-badge"><circle cx="643" cy="124" r="9"/><text x="643" y="128">7</text></g>
+        <g class="dg-badge"><circle cx="612" cy="190" r="9"/><text x="612" y="194">8</text></g>
+        <g class="dg-badge"><circle cx="28" cy="242" r="8"/><text x="28" y="246">1</text></g><text x="44" y="246"><tspan class="b">Key:</tspan> what you look up ("mango")</text>
+        <g class="dg-badge"><circle cx="28" cy="260" r="8"/><text x="28" y="264">2</text></g><text x="44" y="264"><tspan class="b">Hash function:</tspan> turns the key into a number</text>
+        <g class="dg-badge"><circle cx="28" cy="278" r="8"/><text x="28" y="282">3</text></g><text x="44" y="282"><tspan class="b">Index:</tspan> that number reduced to a bucket (mod 7)</text>
+        <g class="dg-badge"><circle cx="28" cy="296" r="8"/><text x="28" y="300">4</text></g><text x="44" y="300"><tspan class="b">Bucket:</tspan> one slot of the underlying array</text>
+        <g class="dg-badge"><circle cx="28" cy="314" r="8"/><text x="28" y="318">5</text></g><text x="44" y="318"><tspan class="b">Entry:</tspan> a key stored together with its value</text>
+        <g class="dg-badge"><circle cx="28" cy="332" r="8"/><text x="28" y="336">6</text></g><text x="44" y="336"><tspan class="b">Collision:</tspan> apple and mango share bucket 5</text>
+        <g class="dg-badge"><circle cx="28" cy="350" r="8"/><text x="28" y="354">7</text></g><text x="44" y="354"><tspan class="b">Chain:</tspan> a linked list of one bucket's entries</text>
+        <g class="dg-badge"><circle cx="28" cy="368" r="8"/><text x="28" y="372">8</text></g><text x="44" y="372"><tspan class="b">Empty bucket:</tspan> no key has hashed here yet</text>
+        <text class="m e2" x="740" y="372">load factor α = 5 entries / 7 buckets ≈ 0.71</text>
+      </svg></div>
+    </section>
     <section class="terms-sec" data-glossary="hash"></section>
     <section>
       <h2>How a hash table works</h2>
@@ -667,6 +810,43 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 
   <div class="notes">
+    <section class="dg-sec">
+      <h2>Parts of a sorting step</h2>
+      <p>Two snapshots of arrays being sorted. Most sorting algorithms split the array into regions and repeatedly compare and move values between them.</p>
+      <div class="dg-wrap"><svg class="dg" viewBox="0 0 760 376" role="img" aria-labelledby="dg-sort-t"><title id="dg-sort-t">Labeled diagram of sorting: sorted and unsorted parts, key, comparison, pivot, partition regions, i and j indexes, and a swap</title>
+        <text class="h" x="40" y="18">Insertion sort, partway through</text>
+        <path class="dg-br" d="M82 54 V46 H376 V54"/><text class="b c" x="229" y="38">sorted part</text>
+        <line class="dg-br" x1="418" y1="46" x2="418" y2="54"/><text class="b c ac" x="418" y="38">key</text>
+        <path class="dg-br" d="M460 54 V46 H680 V54"/><text class="b c" x="570" y="38">unsorted part</text>
+        <text class="m c" x="114" y="66">0</text><text class="m c" x="190" y="66">1</text><text class="m c" x="266" y="66">2</text><text class="m c" x="342" y="66">3</text><text class="m c" x="418" y="66">4</text><text class="m c" x="494" y="66">5</text><text class="m c" x="570" y="66">6</text><text class="m c" x="646" y="66">7</text>
+        <rect class="dg-cell ok" x="80" y="72" width="68" height="46" rx="6"/><text class="v" x="114" y="100">3</text>
+        <rect class="dg-cell ok" x="156" y="72" width="68" height="46" rx="6"/><text class="v" x="190" y="100">9</text>
+        <rect class="dg-cell ok" x="232" y="72" width="68" height="46" rx="6"/><text class="v" x="266" y="100">14</text>
+        <rect class="dg-cell ok" x="308" y="72" width="68" height="46" rx="6"/><text class="v" x="342" y="100">27</text>
+        <rect class="dg-cell warn" x="384" y="72" width="68" height="46" rx="6"/><text class="v" x="418" y="100">11</text>
+        <rect class="dg-cell" x="460" y="72" width="68" height="46" rx="6"/><text class="v" x="494" y="100">40</text>
+        <rect class="dg-cell" x="536" y="72" width="68" height="46" rx="6"/><text class="v" x="570" y="100">22</text>
+        <rect class="dg-cell" x="612" y="72" width="68" height="46" rx="6"/><text class="v" x="646" y="100">35</text>
+        <path class="dg-ar" d="M412 122 Q 380 148 348 122"/><text class="b c ac" x="380" y="160">compare</text>
+        <text class="m" x="470" y="140">27 &gt; 11, so 27 shifts right. Each pass</text><text class="m" x="470" y="156">grows the sorted part by one value.</text>
+        <text class="h" x="40" y="194">Quick sort, partway through a partition</text>
+        <path class="dg-br" d="M82 228 V220 H300 V228"/><text class="b c" x="191" y="212">&lt; pivot</text>
+        <path class="dg-br" d="M308 228 V220 H452 V228"/><text class="b c" x="380" y="212">≥ pivot</text>
+        <path class="dg-br" d="M460 228 V220 H604 V228"/><text class="b c" x="532" y="212">not checked yet</text>
+        <path class="dg-br" d="M612 228 V220 H680 V228"/><text class="b c" x="646" y="212" style="fill:var(--pivot)">pivot</text>
+        <rect class="dg-cell ok" x="80" y="240" width="68" height="46" rx="6"/><text class="v" x="114" y="268">5</text>
+        <rect class="dg-cell ok" x="156" y="240" width="68" height="46" rx="6"/><text class="v" x="190" y="268">11</text>
+        <rect class="dg-cell ok" x="232" y="240" width="68" height="46" rx="6"/><text class="v" x="266" y="268">3</text>
+        <rect class="dg-cell" x="308" y="240" width="68" height="46" rx="6"/><text class="v" x="342" y="268">40</text>
+        <rect class="dg-cell" x="384" y="240" width="68" height="46" rx="6"/><text class="v" x="418" y="268">27</text>
+        <rect class="dg-cell warn" x="460" y="240" width="68" height="46" rx="6"/><text class="v" x="494" y="268">18</text>
+        <rect class="dg-cell e" x="536" y="240" width="68" height="46" rx="6"/><text class="v" x="570" y="268">35</text>
+        <rect class="dg-cell pv" x="612" y="240" width="68" height="46" rx="6"/><text class="v" x="646" y="268">22</text>
+        <text class="b c ac" x="342" y="306">i</text><text class="b c ac" x="494" y="306">j</text>
+        <path class="dg-ar both" d="M350 314 Q 418 348 486 314"/>
+        <text class="m c" x="418" y="364">swap: 18 &lt; 22, so it trades places with 40 and joins the left part</text>
+      </svg></div>
+    </section>
     <section class="terms-sec" data-glossary="sorting"></section>
     <section>
       <h2>How the algorithms compare</h2>
@@ -757,6 +937,34 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 
   <div class="notes">
+    <section class="dg-sec">
+      <h2>Parts of a tree</h2>
+      <p>A binary search tree with 8 nodes. The same node can play several roles: 30 is a child of 50, the parent of 20 and 40, and the root of its own subtree.</p>
+      <div class="dg-wrap"><svg class="dg" viewBox="0 0 760 400" role="img" aria-labelledby="dg-tree-t"><title id="dg-tree-t">Labeled diagram of a binary search tree: root, edge, internal node, leaf, parent and child, siblings, subtree, depth and height</title>
+        <line class="dg-g" x1="110" y1="50" x2="640" y2="50"/><line class="dg-g" x1="110" y1="130" x2="640" y2="130"/><line class="dg-g" x1="110" y1="210" x2="640" y2="210"/><line class="dg-g" x1="110" y1="290" x2="640" y2="290"/>
+        <text class="m" x="20" y="54">depth 0</text><text class="m" x="20" y="134">depth 1</text><text class="m" x="20" y="214">depth 2</text><text class="m" x="20" y="294">depth 3</text>
+        <line class="dg-ar m both" x1="88" y1="62" x2="88" y2="280"/><text class="b c" x="88" y="318">height = 3</text>
+        <rect class="dg-sub" x="120" y="104" width="262" height="212" rx="18"/><text class="b ac" x="126" y="96">subtree rooted at 30</text>
+        <line class="dg-edge" x1="380" y1="50" x2="230" y2="130"/><line class="dg-edge" x1="380" y1="50" x2="530" y2="130"/>
+        <line class="dg-edge" x1="230" y1="130" x2="150" y2="210"/><line class="dg-edge" x1="230" y1="130" x2="310" y2="210"/><line class="dg-edge" x1="530" y1="130" x2="610" y2="210"/>
+        <line class="dg-edge" x1="310" y1="210" x2="270" y2="290"/><line class="dg-edge" x1="310" y1="210" x2="350" y2="290"/>
+        <text class="b ac" x="470" y="80">edge</text>
+        <g class="dg-node hi"><circle cx="380" cy="50" r="20"/><text x="380" y="55">50</text></g>
+        <g class="dg-node"><circle cx="230" cy="130" r="20"/><text x="230" y="135">30</text></g>
+        <g class="dg-node"><circle cx="530" cy="130" r="20"/><text x="530" y="135">70</text></g>
+        <g class="dg-node"><circle cx="150" cy="210" r="20"/><text x="150" y="215">20</text></g>
+        <g class="dg-node"><circle cx="310" cy="210" r="20"/><text x="310" y="215">40</text></g>
+        <g class="dg-node"><circle cx="610" cy="210" r="20"/><text x="610" y="215">80</text></g>
+        <g class="dg-node"><circle cx="270" cy="290" r="20"/><text x="270" y="295">35</text></g>
+        <g class="dg-node"><circle cx="350" cy="290" r="20"/><text x="350" y="295">45</text></g>
+        <line class="dg-ln" x1="402" y1="50" x2="652" y2="50"/><text class="b" x="660" y="46">root</text><text class="m" x="660" y="62">has no parent</text>
+        <line class="dg-ln" x1="552" y1="130" x2="652" y2="130"/><text class="b" x="660" y="126">internal node</text><text class="m" x="660" y="142">has a child (80)</text>
+        <line class="dg-ln" x1="632" y1="210" x2="652" y2="210"/><text class="b" x="660" y="206">leaf</text><text class="m" x="660" y="222">has no children</text>
+        <line class="dg-ln" x1="372" y1="290" x2="652" y2="290"/><text class="b" x="660" y="286">child of 40</text><text class="m" x="660" y="302">40 is its parent</text>
+        <path class="dg-br" d="M262 322 V330 H358 V322"/><text class="b c" x="310" y="346">siblings</text><text class="m c" x="310" y="362">same parent (40)</text>
+        <text class="m c" x="380" y="392">BST rule: keys in a left subtree are smaller, keys in a right subtree are larger</text>
+      </svg></div>
+    </section>
     <section class="terms-sec" data-glossary="tree"></section>
     <section>
       <h2>How trees work</h2>
@@ -837,6 +1045,42 @@ footer{border-top:1px solid var(--line);padding-block:20px;color:var(--muted);fo
   </div>
 
   <div class="notes">
+    <section class="dg-sec">
+      <h2>Parts of a graph</h2>
+      <p>An undirected, weighted graph with two connected components. The blue edges form a path, and the dashed purple edges close a cycle.</p>
+      <div class="dg-wrap"><svg class="dg" viewBox="0 0 760 400" role="img" aria-labelledby="dg-graph-t"><title id="dg-graph-t">Labeled diagram of a graph: vertex, weighted edge, degree, adjacent vertices, a path, a cycle, a separate connected component and a directed edge</title>
+        <line class="dg-edge" x1="100" y1="110" x2="280" y2="60"/>
+        <line class="dg-edge path" x1="100" y1="110" x2="240" y2="220"/>
+        <line class="dg-edge" x1="280" y1="60" x2="240" y2="220"/>
+        <line class="dg-edge" x1="280" y1="60" x2="440" y2="150"/>
+        <line class="dg-edge path" x1="240" y1="220" x2="440" y2="150"/>
+        <line class="dg-edge cyc" x1="440" y1="150" x2="620" y2="80"/>
+        <line class="dg-edge path" x1="440" y1="150" x2="600" y2="260"/>
+        <line class="dg-edge cyc" x1="620" y1="80" x2="600" y2="260"/>
+        <line class="dg-edge" x1="110" y1="330" x2="260" y2="340"/>
+        <text class="w" x="190" y="89">4</text><text class="w" x="170" y="169">2</text><text class="w" x="260" y="144">5</text><text class="w" x="360" y="109">7</text><text class="w" x="340" y="189">3</text><text class="w" x="530" y="119">6</text><text class="w" x="520" y="209">1</text><text class="w" x="610" y="174">8</text><text class="w" x="185" y="339">2</text>
+        <g class="dg-node"><circle cx="100" cy="110" r="20"/><text x="100" y="115">A</text></g>
+        <g class="dg-node hi"><circle cx="280" cy="60" r="20"/><text x="280" y="65">B</text></g>
+        <g class="dg-node"><circle cx="240" cy="220" r="20"/><text x="240" y="225">C</text></g>
+        <g class="dg-node"><circle cx="440" cy="150" r="20"/><text x="440" y="155">D</text></g>
+        <g class="dg-node"><circle cx="620" cy="80" r="20"/><text x="620" y="85">E</text></g>
+        <g class="dg-node"><circle cx="600" cy="260" r="20"/><text x="600" y="265">F</text></g>
+        <g class="dg-node"><circle cx="110" cy="330" r="20"/><text x="110" y="335">G</text></g>
+        <g class="dg-node"><circle cx="260" cy="340" r="20"/><text x="260" y="345">H</text></g>
+        <text class="b c" x="280" y="26">vertex (node)</text>
+        <text class="b c" x="185" y="54">edge, weight 4</text>
+        <text class="b c" x="440" y="112">degree(D) = 4</text>
+        <text class="b" x="24" y="196">adjacent:</text><text class="m" x="24" y="212">A and C share an edge</text>
+        <text class="b c" x="556" y="160" style="fill:var(--pivot)">cycle</text><text class="m c" x="556" y="176">D-E-F-D</text>
+        <rect class="dg-sub" x="80" y="302" width="212" height="64" rx="14"/>
+        <text class="b" x="302" y="330">separate connected component</text><text class="m" x="302" y="346">G and H can't reach A to F</text>
+        <text class="b ac" x="302" y="388">path A → C → D → F, total weight 2 + 3 + 1 = 6</text>
+        <g class="dg-node"><circle cx="630" cy="340" r="14"/><text x="630" y="345">X</text></g>
+        <g class="dg-node"><circle cx="730" cy="340" r="14"/><text x="730" y="345">Y</text></g>
+        <line class="dg-ar m" x1="646" y1="340" x2="712" y2="340"/>
+        <text class="m c" x="680" y="374">directed edge:</text><text class="m c" x="680" y="390">X → Y only</text>
+      </svg></div>
+    </section>
     <section class="terms-sec" data-glossary="graph"></section>
     <section>
       <h2>How graphs work</h2>
